@@ -1,0 +1,27 @@
+# Example Proxmox /etc/network/interfaces fragment
+#
+# Apply carefully per node.
+# Change IP address per Proxmox host.
+#
+# Example:
+# pve01: 10.10.10.11/24
+# pve02: 10.10.10.12/24
+# pve03: 10.10.10.13/24
+#
+# FortiGate VLAN 10 gateway: 10.10.10.2
+
+auto lo
+iface lo inet loopback
+
+auto eno1
+iface eno1 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+    address 10.10.10.11/24
+    gateway 10.10.10.2
+    bridge-ports eno1
+    bridge-stp off
+    bridge-fd 0
+    bridge-vlan-aware yes
+    bridge-vids 2-4094

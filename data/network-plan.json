@@ -1,0 +1,104 @@
+{
+  "project": "Homelab Proxmox SDN Design",
+  "devices": {
+    "fortigate_100f": {
+      "role": "main firewall and VLAN gateway",
+      "management_ip": "10.99.99.2/24",
+      "gateway_convention": ".2 on every VLAN"
+    },
+    "cisco_c9300": {
+      "role": "core L2 switch",
+      "management_ip": "10.99.99.1/24",
+      "default_gateway": "10.99.99.2"
+    },
+    "proxmox": {
+      "nodes": [
+        "pve01",
+        "pve02",
+        "pve03"
+      ],
+      "base_bridge": "vmbr0",
+      "sdn_zone": "ztrunk"
+    }
+  },
+  "vlans": [
+    {
+      "purpose": "Proxmox management",
+      "vlan": 10,
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.2",
+      "vnet": "vmgmt"
+    },
+    {
+      "purpose": "Storage / Ceph",
+      "vlan": 20,
+      "subnet": "10.20.20.0/24",
+      "gateway": "10.20.20.2",
+      "vnet": "vstore"
+    },
+    {
+      "purpose": "VM services",
+      "vlan": 30,
+      "subnet": "10.10.30.0/24",
+      "gateway": "10.10.30.2",
+      "vnet": "vsvc"
+    },
+    {
+      "purpose": "Containers / apps",
+      "vlan": 40,
+      "subnet": "10.10.40.0/24",
+      "gateway": "10.10.40.2",
+      "vnet": "vapps"
+    },
+    {
+      "purpose": "Lab / test",
+      "vlan": 50,
+      "subnet": "10.10.50.0/24",
+      "gateway": "10.10.50.2",
+      "vnet": "vlab"
+    },
+    {
+      "purpose": "DMZ / public-facing",
+      "vlan": 60,
+      "subnet": "10.10.60.0/24",
+      "gateway": "10.10.60.2",
+      "vnet": "vdmz"
+    },
+    {
+      "purpose": "Infrastructure management",
+      "vlan": 99,
+      "subnet": "10.99.99.0/24",
+      "gateway": "10.99.99.2",
+      "vnet": null
+    }
+  ],
+  "trunks": {
+    "c9300_to_fortigate": {
+      "interface": "TenGigabitEthernet1/1/1",
+      "allowed_vlans": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        99
+      ]
+    },
+    "c9300_to_proxmox": {
+      "interfaces": [
+        "TenGigabitEthernet1/1/2",
+        "TenGigabitEthernet1/1/3",
+        "TenGigabitEthernet1/1/4"
+      ],
+      "allowed_vlans": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60
+      ]
+    }
+  }
+}
