@@ -12,6 +12,7 @@ This folder is prepared for OpenAI Codex or Codex CLI.
    - `CODEX_TASK.md`
    - `README.md`
    - `data/network-plan.json`
+   - `docs/1password-secrets.md`
    - `docs/multi-agent-deepseek-contract.md`
 
 ## Suggested first prompt for Codex
@@ -53,6 +54,7 @@ git commit -m "Initial homelab Proxmox SDN design handoff"
 - `AGENTS.md` — persistent project instructions for Codex/agents.
 - `CODEX_TASK.md` — first task prompt and execution constraints.
 - `configs/` — candidate device configs and Proxmox scripts.
+- `docs/1password-secrets.md` — 1Password vault `d3HLPRV` credential handling.
 - `docs/context7-prompts.md` — prompts for Context7-backed MCP execution.
 - `docs/multi-agent-deepseek-contract.md` — Codex and DeepSeek ownership, handoff, and validation contract.
 - `docs/safe-implementation-runbook.md` — safe implementation sequence.

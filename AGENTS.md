@@ -106,6 +106,18 @@ When using MCP/automation tools:
 6. Validate before saving persistent config.
 7. Save/write memory only after validation succeeds.
 
+## Secrets and credentials
+
+Use 1Password for all live credentials and secrets.
+
+- Vault: `d3HLPRV`
+- Follow `docs/1password-secrets.md`.
+- Prefer 1Password secret references and `op run` scoped environment injection.
+- Never store plaintext credentials, tokens, SSH keys, service account secrets, or exported `.env` files in this repository.
+- Never paste secret values into agent prompts, markdown, handoff notes, or validation output.
+- Do not use `op run --no-masking`.
+- If a required 1Password item or field is missing, report the missing reference path only.
+
 ## Validation commands
 
 ### Cisco IOS XE

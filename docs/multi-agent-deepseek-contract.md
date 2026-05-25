@@ -51,10 +51,13 @@ Both agents start from the same source files:
 - `CODEX_TASK.md`
 - `README.md`
 - `data/network-plan.json`
+- `docs/1password-secrets.md`
 - `docs/safe-implementation-runbook.md`
 - `docs/validation-checklist.md`
 
 Discovery is read-only. No agent applies changes in this phase.
+
+Credentials come only from 1Password vault `d3HLPRV`. Agents must use secret references or short-lived `op run`/environment injection and must never record plaintext credential values in handoff notes.
 
 Required outputs:
 
@@ -77,6 +80,7 @@ Codex implementation rules:
 - Only `interface Vlan99` is configured as an SVI.
 - FortiGate parent interface must be discovered and substituted for `__CONFIRM_PARENT_INTERFACE__`.
 - FortiGate firewall policies are separate from VLAN interface creation.
+- Cisco and FortiGate credentials must be retrieved through 1Password vault `d3HLPRV`; do not embed them in configs.
 
 Codex handoff to DeepSeek:
 
@@ -94,6 +98,11 @@ DeepSeek uses:
 
 DeepSeek implementation order:
 
+0. Confirm 1Password access if credentialed Proxmox access is needed:
+   ```bash
+   op --version
+   op account list
+   ```
 1. Run Proxmox discovery:
    ```bash
    bash configs/proxmox-sdn-pvesh.sh discover
@@ -169,6 +178,7 @@ Agent:
 Phase:
 Device/domain:
 Files used:
+Credential source:
 Discovery summary:
 Candidate diff:
 Commands executed:

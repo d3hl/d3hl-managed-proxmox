@@ -4,6 +4,7 @@
 
 - [ ] Run the read-only discovery commands in `docs/safe-implementation-runbook.md`.
 - [ ] Review candidate diff and mark conflicts before mutation.
+- [ ] Confirm 1Password CLI access and vault `d3HLPRV` availability for any required credentials.
 - [ ] Confirm FortiGate parent trunk interface name.
 - [ ] Confirm C9300 FortiGate uplink port.
 - [ ] Confirm C9300 Proxmox node ports.

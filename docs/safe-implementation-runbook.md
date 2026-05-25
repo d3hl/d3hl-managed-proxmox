@@ -2,6 +2,8 @@
 
 This runbook implements the Homelab Proxmox SDN design without assuming live device state. Run discovery first, compare output against the target design, then apply only reviewed changes.
 
+Use 1Password vault `d3HLPRV` for credentials. Follow `docs/1password-secrets.md`; do not put plaintext usernames, passwords, tokens, SSH keys, or exported `.env` files in this repository.
+
 ## Target Summary
 
 FortiGate owns the `.2` gateway on every VLAN. The Cisco C9300 remains L2-only with only `Vlan99` for switch management. Proxmox uses VLAN SDN zone `ztrunk` on `vmbr0` and does not create `vinfra` / VLAN 99.
@@ -17,6 +19,15 @@ FortiGate owns the `.2` gateway on every VLAN. The Cisco C9300 remains L2-only w
 | 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 | none |
 
 ## Read-Only Discovery
+
+If a device login requires credentials, verify 1Password CLI access first without printing secrets:
+
+```bash
+op --version
+op account list
+```
+
+Use secret references such as `op://d3HLPRV/cisco-c9300/username` and short-lived `op run` environment injection for tools that need credentials.
 
 ### Proxmox
 

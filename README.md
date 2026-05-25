@@ -51,6 +51,7 @@ Cisco C9300 is used as the L2 core switch. Only VLAN 99 has an SVI on the switch
 - `configs/fortigate-100f-vlan-cli.conf` — FortiGate VLAN interface candidate configuration.
 - `configs/proxmox-sdn-pvesh.sh` — safe Proxmox SDN `pvesh` discovery, plan, apply, and validation helper.
 - `configs/proxmox-vmbr0-example.interfaces` — example Proxmox host bridge config.
+- `docs/1password-secrets.md` — 1Password vault `d3HLPRV` credential handling standard.
 - `docs/context7-prompts.md` — MCP/Context7 execution prompts.
 - `docs/multi-agent-deepseek-contract.md` — Codex and DeepSeek role split, handoff format, and validation contract.
 - `docs/safe-implementation-runbook.md` — discovery, diff, apply, validation, and rollback runbook.
@@ -67,6 +68,9 @@ Do not paste directly into production devices without checking:
 - Proxmox node names
 - Existing VLANs and trunks
 - Existing management access path
+- 1Password vault `d3HLPRV` access for required credentials
+
+Do not store plaintext secrets in this repository. Use `docs/1password-secrets.md`.
 
 
 ## Continue in Codex
