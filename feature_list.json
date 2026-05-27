@@ -1,6 +1,6 @@
 {
-  "project": "Add Vlans to C9300",
-  "last_updated": "2026-05-27",
+  "project": "Homelab Proxmox SDN Design",
+  "last_updated": "2026-05-28",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -14,20 +14,50 @@
   },
   "features": [
     {
-      "id": "chat-001",
+      "id": "cisco-001",
       "priority": 1,
-      "area": "chat",
-      "title": "Create a new conversation",
-      "user_visible_behavior": "A user can click New Chat and see a fresh empty conversation.",
+      "area": "cisco",
+      "title": "Configure C9300 VLANs, trunks, and SVI",
+      "user_visible_behavior": "C9300 has all 7 VLANs, correct trunk configs, and can ping FortiGate 10.10.10.2",
+      "status": "passing",
+      "verification": [
+        "show vlan brief shows VLANs 10,20,30,40,50,60,99",
+        "show interfaces trunk shows correct allowed VLANs",
+        "show ip interface brief shows Vlan10 up/up",
+        "ping 10.10.10.2 source vlan10 returns 5/5"
+      ],
+      "evidence": ["Session 001: ping 10.10.10.2 source vlan10 returned 5/5"],
+      "notes": "Running-config validated but NOT saved with write memory. Trunk descriptions match configs/cisco-c9300-iosxe.cfg."
+    },
+    {
+      "id": "fortigate-001",
+      "priority": 2,
+      "area": "fortigate",
+      "title": "Confirm FortiGate parent interface & create VLAN interfaces",
+      "user_visible_behavior": "FortiGate has VLAN interfaces with .2 addresses on all VLANs",
       "status": "not_started",
       "verification": [
-        "Open the app.",
-        "Click New Chat.",
-        "Verify a new conversation appears in the sidebar.",
-        "Verify the main panel shows an empty conversation state."
+        "show system interface shows all VLAN interfaces",
+        "execute ping 10.10.10.1 from 10.10.10.2 succeeds"
       ],
       "evidence": [],
-      "notes": ""
+      "notes": "Parent interface __CONFIRM_PARENT_INTERFACE__ must be discovered first."
+    },
+    {
+      "id": "proxmox-001",
+      "priority": 3,
+      "area": "proxmox",
+      "title": "Proxmox SDN discovery and configuration",
+      "user_visible_behavior": "Proxmox SDN zone ztrunk and VNets exist, VMs can attach to VNets",
+      "status": "in_progress",
+      "verification": [
+        "pvesh get /cluster/sdn/zones shows ztrunk",
+        "pvesh get /cluster/sdn/vnets shows vmgmt,vstore,vsvc,vapps,vlab,vdmz",
+        "ip -br link shows VNet interfaces on all nodes",
+        "vmbr0 is VLAN-aware on all nodes"
+      ],
+      "evidence": [],
+      "notes": "Phase 1: read-only discovery first. Node names (pve01/pve02/pve03 vs nodeA/nodeB/nodeD/nodeF) must be confirmed."
     }
   ]
 }

@@ -11,7 +11,7 @@
 ## Session Log
 
 ### Session 001
-
+1. What we have done:
 - Date:
 - Goal:
 - Completed:
@@ -21,15 +21,5 @@
 - Files or artifacts updated:
 - Known risk or unresolved issue:
 - Next best step:
-
-### Session 002
-
-- Date:
-- Goal:
-- Completed:
-- Verification run:
-- Evidence captured:
-- Commits:
-- Files or artifacts updated:
-- Known risk or unresolved issue:
-- Next best step:
+2. Decisions:
+3. Issues:
