@@ -6,7 +6,7 @@ Use 1Password vault `d3HLPRV` for credentials. Follow `docs/1password-secrets.md
 
 ## Target Summary
 
-FortiGate owns the `.2` gateway on every VLAN. The Cisco C9300 remains L2-only with only `Vlan99` for switch management. Proxmox uses VLAN SDN zone `ztrunk` on `vmbr0` and does not create `vinfra` / VLAN 99.
+FortiGate owns the `.2` gateway on every VLAN. The Cisco C9300 is reached for management at `10.10.10.1` on VLAN 10. Proxmox uses VLAN SDN zone `ztrunk` on `vmbr0` and does not create `vinfra` / VLAN 99.
 
 | VLAN | Purpose | Subnet | Gateway | Proxmox VNet |
 |---:|---|---|---|---|
@@ -59,11 +59,11 @@ show version
 show running-config | include ^ip routing|^no ip routing|^ip default-gateway
 show vlan brief
 show interfaces trunk
-show running-config interface TenGigabitEthernet1/1/1
-show running-config interface TenGigabitEthernet1/1/2
-show running-config interface TenGigabitEthernet1/1/3
-show running-config interface TenGigabitEthernet1/1/4
-show running-config interface Vlan99
+show running-config interface TwentyFiveGigE2/1/2
+show running-config interface TenGigabitEthernet2/0/39
+show running-config interface TenGigabitEthernet2/0/41
+show running-config interface TenGigabitEthernet2/0/46
+show running-config interface Vlan10
 show ip interface brief
 ```
 
@@ -122,8 +122,8 @@ Confirm the FortiGate parent trunk interface before using `configs/fortigate-100
 show vlan brief
 show interfaces trunk
 show ip interface brief
-show running-config interface vlan99
-ping 10.99.99.2 source vlan99
+show running-config interface vlan10
+ping 10.10.10.2 source vlan10
 ```
 
 ### FortiGate
@@ -131,8 +131,8 @@ ping 10.99.99.2 source vlan99
 ```text
 show system interface
 get system interface
-execute ping-options source 10.99.99.2
-execute ping 10.99.99.1
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
 ```
 
 ### Proxmox

@@ -20,29 +20,29 @@
 show vlan brief
 show interfaces trunk
 show ip interface brief
-show running-config interface vlan99
-ping 10.99.99.2 source vlan99
+show running-config interface vlan10
+ping 10.10.10.2 source vlan10
 ```
 
 Expected:
 - VLANs 10,20,30,40,50,60,99 exist.
 - FortiGate trunk allows VLANs 10,20,30,40,50,60,99.
 - Proxmox trunks allow VLANs 10,20,30,40,50,60.
-- VLAN99 SVI is up/up.
-- C9300 can ping FortiGate 10.99.99.2 from VLAN99.
+- VLAN10 SVI is up/up.
+- C9300 can ping FortiGate 10.10.10.2 from VLAN10.
 
 ## FortiGate validation
 
 ```text
 show system interface
 get system interface
-execute ping-options source 10.99.99.2
-execute ping 10.99.99.1
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
 ```
 
 Expected:
 - VLAN interfaces exist with `.2` addresses.
-- FortiGate can ping C9300 management IP 10.99.99.1.
+- FortiGate can ping C9300 management IP 10.10.10.1.
 - Firewall policies are created separately according to security requirements.
 
 ## Proxmox validation

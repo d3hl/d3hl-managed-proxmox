@@ -1,6 +1,6 @@
 {
-  "project": "replace-with-project-name",
-  "last_updated": "YYYY-MM-DD",
+  "project": "Add Vlans to C9300",
+  "last_updated": "2026-05-27",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -29,3 +29,5 @@
       "evidence": [],
       "notes": ""
     }
+  ]
+}

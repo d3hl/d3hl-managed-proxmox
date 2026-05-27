@@ -76,8 +76,8 @@ Codex prepares and reviews:
 Codex implementation rules:
 
 - Cisco trunk changes use `switchport trunk allowed vlan add ...`.
-- Cisco remains L2-only; do not enable inter-VLAN routing.
-- Only `interface Vlan99` is configured as an SVI.
+- Cisco management is reached at `10.10.10.1` on VLAN 10.
+- Do not change Cisco inter-VLAN routing behavior or SVI inventory without an explicit reviewed plan.
 - FortiGate parent interface must be discovered and substituted for `__CONFIRM_PARENT_INTERFACE__`.
 - FortiGate firewall policies are separate from VLAN interface creation.
 - Cisco and FortiGate credentials must be retrieved through 1Password vault `d3HLPRV`; do not embed them in configs.
@@ -132,8 +132,8 @@ Cisco:
 show vlan brief
 show interfaces trunk
 show ip interface brief
-show running-config interface vlan99
-ping 10.99.99.2 source vlan99
+show running-config interface vlan10
+ping 10.10.10.2 source vlan10
 ```
 
 FortiGate:
@@ -141,8 +141,8 @@ FortiGate:
 ```text
 show system interface
 get system interface
-execute ping-options source 10.99.99.2
-execute ping 10.99.99.1
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
 ```
 
 Proxmox:

@@ -46,13 +46,13 @@ Use Context7 to load the latest Cisco IOS XE documentation for Catalyst 9300 VLA
 Target device:
 - Cisco Catalyst C9300
 - Core switch
-- Management IP: 10.99.99.1/24
-- Default gateway: FortiGate 100F at 10.99.99.2
+- Management IP: 10.10.10.1/24
+- Default gateway: FortiGate 100F at 10.10.10.2
 
 Design:
 - FortiGate 100F is the L3 gateway/firewall for all VLANs.
-- C9300 is the L2 core switch.
-- Do not enable inter-VLAN routing on the C9300 for this design.
+- C9300 is the L3 core switch.
+- Do not change inter-VLAN routing behavior without an explicit reviewed plan.
 - VLAN 99 is infrastructure management.
 - VLAN 99 should be allowed only on the FortiGate uplink unless explicitly needed elsewhere.
 - Proxmox trunks should carry VLANs 10,20,30,40,50,60.
@@ -68,22 +68,22 @@ Create VLANs:
 - VLAN 99: INFRA_MGMT
 
 Configure SVI:
-- interface Vlan99
+- interface Vlan10
 - description Core switch management
-- ip address 10.99.99.1 255.255.255.0
+- ip address 10.10.10.1 255.255.255.0
 - no shutdown
 
 Configure default gateway:
-- ip default-gateway 10.99.99.2
+- ip default-gateway 10.10.10.2
 
 Configure trunk to FortiGate:
-- interface TenGigabitEthernet1/1/1
+- interface TwentyFiveGigE2/1/2
 - description Trunk_to_FortiGate_100F
 - mode trunk
 - allowed VLANs: 10,20,30,40,50,60,99
 
 Configure trunks to Proxmox:
-- interfaces TenGigabitEthernet1/1/2-4
+- interfaces TenGigabitEthernet2/0/39, TenGigabitEthernet2/0/41, TenGigabitEthernet2/0/46
 - description Trunk_to_Proxmox_Nodes
 - mode trunk
 - allowed VLANs: 10,20,30,40,50,60
@@ -92,7 +92,7 @@ Validate:
 - show vlan brief
 - show interfaces trunk
 - show ip interface brief
-- show running-config interface vlan99
-- ping 10.99.99.2 source vlan99
+- show running-config interface vlan10
+- ping 10.10.10.2 source vlan10
 - write memory only after successful validation
 ```

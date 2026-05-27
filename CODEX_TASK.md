@@ -10,7 +10,7 @@ Use this repository as the source of truth for a practical homelab network desig
 
 - Proxmox VE SDN
 - FortiGate 100F as main firewall and VLAN gateway
-- Cisco Catalyst C9300 as core L2 switch
+- Cisco Catalyst C9300 as core L3 switch
 - VLAN-based segmentation
 - Context7 MCP for vendor documentation lookups
 - Proxmox MCP for Proxmox execution when available
@@ -19,12 +19,12 @@ Use this repository as the source of truth for a practical homelab network desig
 ## Important existing decisions
 
 1. FortiGate owns `.2` on every VLAN.
-2. C9300 management IP is `10.99.99.1/24`.
+2. C9300 management IP is `10.10.10.1/24`.
 3. FortiGate infrastructure management IP is `10.99.99.2/24`.
 4. FortiGate is the L3 gateway/firewall for all VLANs.
-5. C9300 is L2 core only.
-6. Do not enable C9300 inter-VLAN routing.
-7. Do not create C9300 SVIs for VLANs 10,20,30,40,50,60.
+5. C9300 is reached for management at `10.10.10.1` on VLAN 10.
+6. Do not change C9300 inter-VLAN routing behavior without an explicit reviewed plan.
+7. Do not create or remove C9300 SVIs without an explicit reviewed plan.
 8. VLAN 99 is infrastructure management.
 9. Do not trunk VLAN 99 to Proxmox nodes unless explicitly requested.
 10. Proxmox SDN uses VLAN Zone `ztrunk` on `vmbr0`.

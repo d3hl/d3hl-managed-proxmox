@@ -7,9 +7,10 @@
       "gateway_convention": ".2 on every VLAN"
     },
     "cisco_c9300": {
-      "role": "core L2 switch",
-      "management_ip": "10.99.99.1/24",
-      "default_gateway": "10.99.99.2"
+      "role": "core L3 switch",
+      "management_ip": "10.10.10.1/24",
+      "management_vlan": 10,
+      "default_gateway": "10.10.10.2"
     },
     "proxmox": {
       "nodes": [
@@ -74,7 +75,7 @@
   ],
   "trunks": {
     "c9300_to_fortigate": {
-      "interface": "TenGigabitEthernet1/1/1",
+      "interface": "TwentyFiveGigE2/1/2",
       "allowed_vlans": [
         10,
         20,
@@ -87,9 +88,9 @@
     },
     "c9300_to_proxmox": {
       "interfaces": [
-        "TenGigabitEthernet1/1/2",
-        "TenGigabitEthernet1/1/3",
-        "TenGigabitEthernet1/1/4"
+        "TenGigabitEthernet2/0/39",
+        "TenGigabitEthernet2/0/41",
+        "TenGigabitEthernet2/0/46"
       ],
       "allowed_vlans": [
         10,

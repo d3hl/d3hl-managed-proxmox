@@ -19,7 +19,7 @@ Mgmt / VLAN 99 IP: 10.99.99.2/24
 802.1Q trunk
      |
 Cisco C9300 Core Switch
-Mgmt / VLAN 99 IP: 10.99.99.1/24
+Mgmt / VLAN 10 IP: 10.10.10.1/24
      |
 802.1Q trunks
      |
@@ -30,7 +30,7 @@ Proxmox Nodes: nodeA, nodeB, nodeD, nodeF
 
 FortiGate owns `.2` on every VLAN and is the default gateway for routed VLANs.
 
-Cisco C9300 is used as the L2 core switch. Only VLAN 99 has an SVI on the switch for management.
+Cisco C9300 is reached for management on VLAN 10 at `10.10.10.1/24`.
 
 ## VLAN table
 

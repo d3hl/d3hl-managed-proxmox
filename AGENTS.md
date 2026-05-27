@@ -61,7 +61,7 @@ The goal is to maintain a practical VLAN-based homelab network using:
 
 - Proxmox VE SDN
 - FortiGate 100F as the main firewall and VLAN gateway
-- Cisco Catalyst C9300 as the L2 core switch
+- Cisco Catalyst C9300 as the L3 core switch
 - VLAN trunking to Proxmox nodes
 - Isolated networks for management, storage, VM services, apps, lab, DMZ, and infrastructure management
 
@@ -72,7 +72,7 @@ The goal is to maintain a practical VLAN-based homelab network using:
 | Device | Role | IP |
 |---|---|---|
 | FortiGate 100F | Main firewall and VLAN gateway | 10.99.99.2/24 on VLAN 99 |
-| Cisco C9300 | Core L2 switch | 10.99.99.1/24 on VLAN 99 |
+| Cisco C9300 | Core L3 switch | 10.10.10.1/24 on VLAN 10 |
 | Proxmox nodes | Virtualization hosts | pve01, pve02, pve03 |
 
 ### Routing model
@@ -91,7 +91,7 @@ Use `.2` for FortiGate interfaces:
 | 60 | DMZ / public-facing | 10.10.60.0/24 | 10.10.60.2 |
 | 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 |
 
-Cisco C9300 should not route between VLANs in this design. Only `interface Vlan99` exists for switch management.
+Cisco C9300 is reached for management at `10.10.10.1` on VLAN 10. Do not remove or change existing SVIs without a reviewed migration plan.
 
 ## Proxmox SDN target
 
@@ -119,12 +119,12 @@ Do not create `vinfra` / VLAN 99 in Proxmox unless explicitly requested.
 
 FortiGate trunk:
 
-- Interface: `TenGigabitEthernet1/1/1`
+- Interface: `TwentyFiveGigE2/1/2`
 - Allowed VLANs: `10,20,30,40,50,60,99`
 
 Proxmox trunks:
 
-- Interfaces: `TenGigabitEthernet1/1/2-4`
+- Interfaces: `TenGigabitEthernet2/0/39`, `TenGigabitEthernet2/0/41`, `TenGigabitEthernet2/0/46`
 - Allowed VLANs: `10,20,30,40,50,60`
 
 Do not allow VLAN 99 to Proxmox trunks unless explicitly requested.
@@ -179,8 +179,8 @@ Use 1Password for all live credentials and secrets.
 show vlan brief
 show interfaces trunk
 show ip interface brief
-show running-config interface vlan99
-ping 10.99.99.2 source vlan99
+show running-config interface vlan10
+ping 10.10.10.2 source vlan10
 ```
 
 ### FortiGate
@@ -188,8 +188,8 @@ ping 10.99.99.2 source vlan99
 ```text
 show system interface
 get system interface
-execute ping-options source 10.99.99.2
-execute ping 10.99.99.1
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
 ```
 
 ### Proxmox
@@ -204,8 +204,8 @@ bridge vlan show
 
 ## Do not do
 
-- Do not enable C9300 inter-VLAN routing unless the design changes.
-- Do not create C9300 SVIs for VLANs 10,20,30,40,50,60.
+- Do not change C9300 inter-VLAN routing behavior unless the design changes.
+- Do not create or remove C9300 SVIs without an explicit reviewed plan.
 - Do not trunk VLAN 99 to Proxmox by default.
 - Do not change production trunks without preserving existing allowed VLANs.
 - Do not save configuration until reachability is validated.

@@ -2,7 +2,7 @@
 
 ## Current Verified State
 
-- Repository root: /d3hl-managed-proxmox
+- Repository root: C:\Users\phong.dinh\Github\d3hl-managed-proxmox 
 - Standard startup path:
 - Standard verification path:
 - Current highest-priority unfinished feature:

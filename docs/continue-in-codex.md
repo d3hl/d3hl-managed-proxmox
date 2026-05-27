@@ -26,7 +26,7 @@ Do not apply changes yet.
 
 Create a safe implementation plan for:
 - Proxmox VE SDN VLAN Zone and VNets
-- Cisco C9300 L2 core switch config
+- Cisco C9300 L3 core switch config
 - FortiGate 100F VLAN interfaces using .2 gateway addresses
 
 Use Context7 MCP for latest Proxmox, Cisco IOS XE, and FortiGate/FortiOS documentation if available.
