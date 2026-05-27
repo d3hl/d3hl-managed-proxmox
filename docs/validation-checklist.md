@@ -26,8 +26,8 @@ ping 10.10.10.2 source vlan10
 
 Expected:
 - VLANs 10,20,30,40,50,60,99 exist.
-- FortiGate trunk allows VLANs 10,20,30,40,50,60,99.
-- Proxmox trunks allow VLANs 10,20,30,40,50,60.
+- FortiGate trunk allows VLANs 10,11,100.
+- Node trunks allow VLANs 3,10,11.
 - VLAN10 SVI is up/up.
 - C9300 can ping FortiGate 10.10.10.2 from VLAN10.
 

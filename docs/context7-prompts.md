@@ -55,8 +55,8 @@ Design:
 - Do not change inter-VLAN routing behavior without an explicit reviewed plan.
 - VLAN 99 is infrastructure management.
 - VLAN 99 should be allowed only on the FortiGate uplink unless explicitly needed elsewhere.
-- Proxmox trunks should carry VLANs 10,20,30,40,50,60.
-- FortiGate trunk should carry VLANs 10,20,30,40,50,60,99.
+- Node trunks should carry VLANs 3,10,11.
+- FortiGate trunk should carry VLANs 10,11,100.
 
 Create VLANs:
 - VLAN 10: PROXMOX_MGMT
@@ -80,13 +80,13 @@ Configure trunk to FortiGate:
 - interface TwentyFiveGigE2/1/2
 - description Trunk_to_FortiGate_100F
 - mode trunk
-- allowed VLANs: 10,20,30,40,50,60,99
+- allowed VLANs: 10,11,100
 
 Configure trunks to Proxmox:
 - interfaces TenGigabitEthernet2/0/39, TenGigabitEthernet2/0/41, TenGigabitEthernet2/0/46
 - description Trunk_to_Proxmox_Nodes
 - mode trunk
-- allowed VLANs: 10,20,30,40,50,60
+- allowed VLANs: 3,10,11
 
 Validate:
 - show vlan brief

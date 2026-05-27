@@ -82,8 +82,7 @@ Confirm the FortiGate parent trunk interface before using `configs/fortigate-100
 ## Diff Rules
 
 - Create missing VLANs, VNets, subnets, and VLAN interfaces only.
-- Treat duplicate VLAN IDs, conflicting IPs, unexpected Cisco SVIs, and Proxmox VLAN 99 VNet/interface presence as review-required.
-- Preserve existing Cisco trunk VLANs. The candidate config uses `switchport trunk allowed vlan add ...`.
+- Treat duplicate VLAN IDs, conflicting IPs, unexpected Cisco SVIs, and Proxmox VLAN 99 VNet/interface presence as review-required
 - Do not prune VLANs from trunks unless a separate approved maintenance step says to do so.
 - Do not save Cisco or FortiGate persistent config until validation succeeds.
 
@@ -95,7 +94,7 @@ Confirm the FortiGate parent trunk interface before using `configs/fortigate-100
    - Proxmox: `pvesh get /cluster/sdn`, zones, VNets, and subnets
 2. Cisco:
    - Apply `configs/cisco-c9300-iosxe.cfg`.
-   - Confirm `ip routing` is not enabled for this L2 design.
+   - Confirm `ip routing` is not enabled for this L3 design.
    - Do not save yet.
 3. FortiGate:
    - Replace `__CONFIRM_PARENT_INTERFACE__` with the confirmed parent interface.

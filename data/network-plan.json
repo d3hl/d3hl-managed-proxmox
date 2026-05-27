@@ -25,6 +25,7 @@
   "vlans": [
     {
       "purpose": "Proxmox management",
+      "name": "PROXMOX_MGMT",
       "vlan": 10,
       "subnet": "10.10.10.0/24",
       "gateway": "10.10.10.2",
@@ -32,6 +33,7 @@
     },
     {
       "purpose": "Storage / Ceph",
+      "name": "STORAGE_CEPH",
       "vlan": 20,
       "subnet": "10.20.20.0/24",
       "gateway": "10.20.20.2",
@@ -39,6 +41,7 @@
     },
     {
       "purpose": "VM services",
+      "name": "VM_SERVICES",
       "vlan": 30,
       "subnet": "10.10.30.0/24",
       "gateway": "10.10.30.2",
@@ -46,6 +49,7 @@
     },
     {
       "purpose": "Containers / apps",
+      "name": "CONTAINERS_APPS",
       "vlan": 40,
       "subnet": "10.10.40.0/24",
       "gateway": "10.10.40.2",
@@ -53,6 +57,7 @@
     },
     {
       "purpose": "Lab / test",
+      "name": "LAB_TEST",
       "vlan": 50,
       "subnet": "10.10.50.0/24",
       "gateway": "10.10.50.2",
@@ -60,6 +65,7 @@
     },
     {
       "purpose": "DMZ / public-facing",
+      "name": "DMZ",
       "vlan": 60,
       "subnet": "10.10.60.0/24",
       "gateway": "10.10.60.2",
@@ -67,6 +73,7 @@
     },
     {
       "purpose": "Infrastructure management",
+      "name": "INFRA_MGMT",
       "vlan": 99,
       "subnet": "10.99.99.0/24",
       "gateway": "10.99.99.2",
@@ -76,29 +83,32 @@
   "trunks": {
     "c9300_to_fortigate": {
       "interface": "TwentyFiveGigE2/1/2",
+      "description": "Trunk_to_FortiGate_100F",
       "allowed_vlans": [
         10,
-        20,
-        30,
-        40,
-        50,
-        60,
-        99
+        11,
+        100
       ]
     },
     "c9300_to_proxmox": {
       "interfaces": [
-        "TenGigabitEthernet2/0/39",
-        "TenGigabitEthernet2/0/41",
-        "TenGigabitEthernet2/0/46"
+        {
+          "interface": "TenGigabitEthernet2/0/39",
+          "description": "Trunk_to_Proxmox_nodeA"
+        },
+        {
+          "interface": "TenGigabitEthernet2/0/41",
+          "description": "Trunk_to_Proxmox_nodeB"
+        },
+        {
+          "interface": "TenGigabitEthernet2/0/46",
+          "description": "Trunk_to_Proxmox_nodeD"
+        }
       ],
       "allowed_vlans": [
+        3,
         10,
-        20,
-        30,
-        40,
-        50,
-        60
+        11
       ]
     }
   }

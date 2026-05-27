@@ -120,12 +120,12 @@ Do not create `vinfra` / VLAN 99 in Proxmox unless explicitly requested.
 FortiGate trunk:
 
 - Interface: `TwentyFiveGigE2/1/2`
-- Allowed VLANs: `10,20,30,40,50,60,99`
+- Allowed VLANs: `10,11,100`
 
 Proxmox trunks:
 
 - Interfaces: `TenGigabitEthernet2/0/39`, `TenGigabitEthernet2/0/41`, `TenGigabitEthernet2/0/46`
-- Allowed VLANs: `10,20,30,40,50,60`
+- Allowed VLANs: `3,10,11`
 
 Do not allow VLAN 99 to Proxmox trunks unless explicitly requested.
 
