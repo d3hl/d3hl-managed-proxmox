@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
 # Replace these commands with the correct commands for your repository.
-INSTALL_CMD=(pip install -r requirements.txt)
+INSTALL_CMD=(pip install -r mcp/requirements.txt)
 VERIFY_CMD=(pytest)
 START_CMD=(python app.py)
 
