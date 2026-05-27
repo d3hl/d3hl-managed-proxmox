@@ -8,9 +8,10 @@ Use Context7 to load the latest Proxmox VE SDN documentation.
 Configure Proxmox SDN for a VLAN-based homelab network.
 
 Cluster nodes:
-- pve01
-- pve02
-- pve03
+- nodeA : 10.10.10.18/24, 10.20.20.18/24, 192.168.3.18/24
+- nodeB : 10.10.10.15/24, 10.20.20.15/24, 192.168.3.15/24
+- nodeD : 10.10.10.17/24, 10.20.20.17/24, 192.168.3.17/24
+- nodeF : 10.10.10.10/24, 10.20.20.10/24, 192.168.3.10/24
 
 Base bridge:
 - vmbr0
@@ -23,12 +24,13 @@ Create SDN VLAN zone:
 - Nodes: pve01,pve02,pve03
 
 Create VNets:
-- vmgmt, VLAN 10, subnet 10.10.10.0/24, gateway 10.10.10.2
-- vstore, VLAN 20, subnet 10.20.20.0/24, gateway 10.20.20.2
-- vsvc, VLAN 30, subnet 10.10.30.0/24, gateway 10.10.30.2
+- vmgmt, VLAN 10, subnet 10.99.99.0/24, gateway 10.99.99.2
+- vceph, VLAN 20, subnet 10.20.20.0/24, gateway 10.20.20.1
+- vvm, VLAN 30, subnet 10.10.30.0/24, gateway 10.10.30.2
 - vapps, VLAN 40, subnet 10.10.40.0/24, gateway 10.10.40.2
 - vlab, VLAN 50, subnet 10.10.50.0/24, gateway 10.10.50.2
 - vdmz, VLAN 60, subnet 10.10.60.0/24, gateway 10.10.60.2
+- vquorum, VLAN3, subnet 192.168.3.0/24, gateway 192.168.3.1 
 
 Do not create vinfra/VLAN 99 on Proxmox unless explicitly requested.
 
