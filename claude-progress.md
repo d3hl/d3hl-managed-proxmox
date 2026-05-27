@@ -4,9 +4,9 @@
 
 - Repository root: `C:\Users\phong.dinh\Github\d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
-- Standard verification path: Cisco read-only validation completed; Proxmox discovery/plan still pending.
-- Current highest-priority unfinished feature: Proxmox SDN discovery and implementation planning for VLAN zone `ztrunk`.
-- Current blocker: Cisco C9300 changes are validated in running-config only; `write memory` has not been run.
+- Standard verification path: Cisco validated; Proxmox API discovery completed; vmbr0 VLAN-aware blocker identified.
+- Current highest-priority unfinished feature: `proxmox-001` (blocked — vmbr0 not VLAN-aware)
+- Current blocker: `vmbr0` is NOT VLAN-aware on any Proxmox node. Must edit `/etc/network/interfaces` on all 4 nodes.
 
 ## Quick Report - 2026-05-28
 
@@ -54,4 +54,84 @@ bash configs/proxmox-sdn-pvesh.sh plan
 ```
 
 - Confirm `vmbr0` is VLAN-aware on all target Proxmox nodes before any SDN apply.
+
+### Session 002 - Proxmox API Discovery
+
+- Date: 2026-05-28
+- Goal: Read-only Proxmox SDN discovery via API (1Password-backed)
+- Completed:
+  - Authenticated to Proxmox 9.2.2 API using `root@pam!claude` token from 1Password vault `d3HLPRV`
+  - Discovered 4 nodes: `nodeA`, `nodeB`, `nodeD`, `nodeF` (NOT `pve01,pve02,pve03`)
+  - Confirmed SDN is completely empty (no zones, no VNets, no subnets)
+  - Discovered `vmbr0` exists on all 4 nodes but is **NOT VLAN-aware** on any node
+- Verification run: `python configs/proxmox-api-discover.py` via `op run`
+- Evidence captured:
+  - Node list: `nodeA, nodeB, nodeD, nodeF` all online
+  - SDN zones: empty
+  - SDN VNets: empty
+  - vmbr0: VLAN-aware=NO on all nodes
+- Files updated:
+  - `configs/proxmox-sdn-pvesh.sh`: NODES changed to `nodeA,nodeB,nodeD,nodeF`
+  - `data/network-plan.json`: node list updated
+  - `AGENTS.md`: node names updated
+  - `configs/proxmox-vmbr0-example.interfaces`: node names and IPs updated
+  - `docs/context7-prompts.md`: node names updated
+  - `docs/multi-agent-deepseek-contract.md`: node names updated
+  - `feature_list.json`: proxmox-001 marked `blocked`
+  - New: `configs/proxmox-api-discover.py` (Python API discovery script)
+  - New: `configs/proxmox-api-discover.ps1` (PowerShell discovery script)
+- Known risk or unresolved issue:
+  - **BLOCKER**: `vmbr0` is not VLAN-aware on any node. Must add `bridge-vlan-aware yes` and `bridge-vids 2-4094` to `/etc/network/interfaces` on all 4 Proxmox nodes before SDN can be applied.
+  - Need to confirm the actual IPs of `nodeA`, `nodeB`, `nodeD`, `nodeF` for SSH access before editing `/etc/network/interfaces`.
+  - Cisco changes still not saved with `write memory`.
+- Next best step: Continue with FortiGate VLAN interface creation or cross-platform validation.
+
+### Session 004 - Repo Sync from Live Proxmox
+
+- Date: 2026-05-28
+- Goal: Sync repo configs to match live Proxmox state
+- Completed:
+  - Full network discovery on all 4 nodes
+  - Updated `configs/proxmox-sdn-apply.py`: TRUNK_UPDATES synced
+  - Updated `data/network-plan.json`: added OVS trunk section, updated allowed VLANs on Cisco trunks
+  - Updated `session-handoff.md`: full state table with ports, bridges, IPs
+  - Updated `feature_list.json`: evidence synced
+- Live state captured:
+  - nodeA: en10basep2 → `3,10,11,30,40,50,60`
+  - nodeB: ennic1s1 → `3,10,11,30,40,50,60`
+  - nodeD: eno1 → `3,10,11,30,40,50,60`
+  - nodeF: sfp1 → `10,11,30,40,50,60` (VLAN 3 via dedicated vmbr3/nic4)
+  - Bridges: vmbr0, vmbr20, vmbr3(nodeF)
+  - SDN: ztrunk + 6 VNets intact
+- Known risks:
+  - nodeF esfp1 is now a plain eth interface (not OVSPort) — sfp1 is the active trunk
+  - VLAN 3 still present on nodeA/B/D trunks per live discovery
+
+### Session 003 - OVS SDN Implementation
+
+- Date: 2026-05-28
+- Goal: Implement Proxmox SDN with OVS bridges (vmbr0 already OVS)
+- Completed:
+  - Discovered vmbr0 is already OVS on all 4 nodes (not Linux bridge)
+  - Created SDN VLAN zone `ztrunk` on `vmbr0`
+  - Created 6 VNets: `vmgmt`(10), `vstore`(20), `vsvc`(30), `vapps`(40), `vlab`(50), `vdmz`(60)
+  - Created subnets for all VNets with FortiGate .2 gateways
+  - Applied SDN cluster-wide
+  - Updated OVS trunk ports on nodeA/B/D: trunk VLANs `3,10,11` → `3,10,11,30,40,50,60`
+- Verification run: `python configs/proxmox-sdn-apply.py validate`
+- Evidence captured:
+  - Zone `ztrunk` confirmed on `vmbr0`
+  - All 6 VNets confirmed with correct tags
+  - Trunk ports nodeA/B/D confirmed: `trunks=3,10,11,30,40,50,60 vlan_mode=native-untagged`
+  - nodeF esfp1 still access port (tag=10) — skipped for safety
+- Files created/updated:
+  - New: `configs/proxmox-sdn-apply.py` (idempotent plan/apply/validate)
+  - New: `configs/proxmox-net-discover.py` (deep network discovery)
+  - New: `configs/proxmox-api-discover.py` (Python API discovery)
+  - New: `configs/proxmox-api-discover.ps1` (PowerShell API discovery)
+  - Updated: `feature_list.json`, `claude-progress.md`, `session-handoff.md`
+- Known risks:
+  - nodeF esfp1 still access port — needs trunk conversion
+  - Cisco `write memory` still not run
+- Next best step: Convert nodeF esfp1 to trunk, then run full cross-platform validation (Cisco↔Proxmox↔FortiGate)
 

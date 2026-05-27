@@ -17,7 +17,7 @@ set -euo pipefail
 MODE="${1:-plan}"
 ZONE="ztrunk"
 BRIDGE="vmbr0"
-NODES="pve01,pve02,pve03"
+NODES="nodeA,nodeB,nodeD,nodeF"
 
 VNETS=(
   "vmgmt:10:10.10.10.0/24:10.10.10.2"

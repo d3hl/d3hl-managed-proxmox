@@ -111,7 +111,7 @@ DeepSeek implementation order:
    ```bash
    bash configs/proxmox-sdn-pvesh.sh plan
    ```
-3. Confirm `vmbr0` is VLAN-aware on `pve01`, `pve02`, and `pve03`.
+3. Confirm `vmbr0` is VLAN-aware on `nodeA`, `nodeB`, `nodeD`, and `nodeF`.
 4. Create only missing SDN objects:
    ```bash
    CONFIRM_PROXMOX_SDN_APPLY=yes bash configs/proxmox-sdn-pvesh.sh apply

@@ -14,9 +14,10 @@
     },
     "proxmox": {
       "nodes": [
-        "pve01",
-        "pve02",
-        "pve03"
+        "nodeA",
+        "nodeB",
+        "nodeD",
+        "nodeF"
       ],
       "base_bridge": "vmbr0",
       "sdn_zone": "ztrunk"
@@ -108,8 +109,17 @@
       "allowed_vlans": [
         3,
         10,
-        11
+        11,
+        30,
+        40,
+        50,
+        60
       ]
+    },
+    "proxmox_ovs_trunks": {
+      "nodeA": {"port": "en10basep2", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeB": {"port": "ennic1s1", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeD": {"port": "eno1", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeF": {"port": "sfp1", "vlans": "10,11,30,40,50,60", "bridge": "vmbr0", "note": "VLAN 3 via dedicated vmbr3/nic4"}
     }
-  }
 }

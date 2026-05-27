@@ -86,8 +86,45 @@ Follow `docs/1password-secrets.md`.
 ## Risks / Blockers
 
 - Cisco changes are validated in running-config but not saved with `write memory`.
-- Confirm Proxmox node names before applying SDN. Some docs mention
-  `pve01,pve02,pve03`; other historical docs mention `nodeA,nodeB,nodeD,nodeF`.
-- Confirm `vmbr0` exists and is VLAN-aware on all Proxmox nodes before applying SDN.
-- Preserve existing Proxmox SDN objects; create missing objects only.
+- ✅ Node names confirmed: `nodeA, nodeB, nodeD, nodeF`. Repo updated.
+- ✅ vmbr0 is OVS (not Linux bridge) — natively VLAN-aware. Trunks updated on A,B,D.
+- ⚠️ **nodeF esfp1** still access port (tag=10, native-untagged). Needs trunk conversion to `trunks=3,10,11,30,40,50,60`.
+- SDN was empty; all objects are new.
+
+## Applied State (2026-05-28 — synced from live)
+
+### SDN
+- Zone: `ztrunk` (vlan, bridge=vmbr0) ✅
+- VNets: `vmgmt`(10), `vstore`(20), `vsvc`(30), `vapps`(40), `vlab`(50), `vdmz`(60) ✅
+- Subnets: All with FortiGate .2 gateways ✅
+- SDN applied cluster-wide ✅
+
+### OVS Trunks (synced from live)
+| Node | Port | Trunk VLANs | Bridge |
+|---|---|---|---|
+| nodeA | en10basep2 | 3,10,11,30,40,50,60 | vmbr0 |
+| nodeB | ennic1s1 | 3,10,11,30,40,50,60 | vmbr0 |
+| nodeD | eno1 | 3,10,11,30,40,50,60 | vmbr0 |
+| nodeF | sfp1 | 10,11,30,40,50,60 | vmbr0 |
+
+### OVS Bridges
+| Bridge | Purpose | Nodes |
+|---|---|---|
+| vmbr0 | Management / VM trunk | all 4 |
+| vmbr20 | Ceph storage (MTU 9000) | all 4 |
+| vmbr3 | Quorum / VLAN 3 | nodeF only |
+
+### Node Management IPs
+| Node | IP | Gateway |
+|---|---|---|
+| nodeA | 10.10.10.18 | 10.10.10.2 |
+| nodeB | 10.10.10.15 | 10.10.10.2 |
+| nodeD | 10.10.10.17 | 10.10.10.2 |
+| nodeF | 10.10.10.10 | 10.10.10.2 |
+
+### Next Actions
+1. Full cross-platform validation: Cisco↔Proxmox↔FortiGate
+2. Cisco `write memory` after validation
+3. FortiGate VLAN interface creation
+4. Test VM attachment to VNets
 

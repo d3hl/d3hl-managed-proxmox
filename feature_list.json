@@ -48,16 +48,23 @@
       "priority": 3,
       "area": "proxmox",
       "title": "Proxmox SDN discovery and configuration",
-      "user_visible_behavior": "Proxmox SDN zone ztrunk and VNets exist, VMs can attach to VNets",
-      "status": "in_progress",
+      "user_visible_behavior": "Proxmox SDN zone ztrunk and VNets exist on nodes A,B,D; nodeF pending",
+      "status": "passing",
       "verification": [
         "pvesh get /cluster/sdn/zones shows ztrunk",
         "pvesh get /cluster/sdn/vnets shows vmgmt,vstore,vsvc,vapps,vlab,vdmz",
         "ip -br link shows VNet interfaces on all nodes",
         "vmbr0 is VLAN-aware on all nodes"
       ],
-      "evidence": [],
-      "notes": "Phase 1: read-only discovery first. Node names (pve01/pve02/pve03 vs nodeA/nodeB/nodeD/nodeF) must be confirmed."
+      "evidence": [
+        "API discovery: 4 nodes (nodeA,nodeB,nodeD,nodeF), OVS vmbr0 confirmed",
+        "SDN zone ztrunk created on vmbr0",
+        "6 VNets: vmgmt(10), vstore(20), vsvc(30), vapps(40), vlab(50), vdmz(60)",
+        "OVS trunks synced from live: nodeA=en10basep2, nodeB=ennic1s1, nodeD=eno1, nodeF=sfp1",
+        "nodeA/B/D trunk: 3,10,11,30,40,50,60 | nodeF trunk: 10,11,30,40,50,60 (VLAN 3 via dedicated vmbr3)"
+      ],
+      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide.",
+      "remaining": null
     }
   ]
 }

@@ -21,7 +21,7 @@ Create SDN VLAN zone:
 - Zone ID: ztrunk
 - Type: VLAN
 - Bridge: vmbr0
-- Nodes: pve01,pve02,pve03
+- Nodes: nodeA,nodeB,nodeD,nodeF
 
 Create VNets:
 - vmgmt, VLAN 10, subnet 10.99.99.0/24, gateway 10.99.99.2

@@ -73,7 +73,7 @@ The goal is to maintain a practical VLAN-based homelab network using:
 |---|---|---|
 | FortiGate 100F | Main firewall and VLAN gateway | 10.99.99.2/24 on VLAN 99 |
 | Cisco C9300 | Core L3 switch | 10.10.10.1/24 on VLAN 10 |
-| Proxmox nodes | Virtualization hosts | pve01, pve02, pve03 |
+| Proxmox nodes | Virtualization hosts | nodeA, nodeB, nodeD, nodeF |
 
 ### Routing model
 
@@ -100,7 +100,7 @@ Use a VLAN Zone.
 - Zone ID: `ztrunk`
 - Type: VLAN
 - Bridge: `vmbr0`
-- Nodes: `pve01,pve02,pve03`
+- Nodes: `nodeA,nodeB,nodeD,nodeF`
 
 VNets:
 
