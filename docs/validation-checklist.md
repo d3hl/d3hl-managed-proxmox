@@ -7,7 +7,7 @@
 - [ ] Confirm 1Password CLI access and vault `d3HLPRV` availability for any required credentials.
 - [ ] Confirm FortiGate parent trunk interface `x2`.
 - [ ] Confirm C9300 FortiGate uplink port.
-- [ ] Confirm C9300 FortiGate trunk carries VLANs 30,40,50,60 before FortiGate apply.
+- [ ] Confirm C9300 FortiGate trunk carries VLANs 10,11,30,40,50,60,100 before FortiGate apply.
 - [ ] Confirm C9300 Proxmox node ports.
 - [ ] Confirm Proxmox node names.
 - [ ] Confirm `vmbr0` exists and is VLAN-aware on all Proxmox nodes.
@@ -27,7 +27,7 @@ ping 10.10.10.2 source vlan10
 
 Expected:
 - VLANs 10,20,30,40,50,60,99 exist.
-- FortiGate trunk allows current live VLANs 10,11,100 and reviewed routed VLANs 30,40,50,60 before FortiGate gateway apply.
+- FortiGate trunk allows VLANs 10,11,30,40,50,60,100 before FortiGate gateway apply.
 - Node trunks allow VLANs 3,10,11.
 - VLAN10 SVI is up/up.
 - C9300 can ping FortiGate 10.10.10.2 from VLAN10.

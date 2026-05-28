@@ -27,7 +27,7 @@ op --version
 op account list
 ```
 
-Use secret references such as `op://d3HLPRV/cisco-c9300/username` and short-lived `op run` environment injection for tools that need credentials.
+Use secret references such as `op://d3HLPRV/C9300/username` and short-lived `op run` environment injection for tools that need credentials.
 
 ### Proxmox
 
@@ -77,7 +77,7 @@ show system zone
 get router info routing-table all
 ```
 
-Confirm the C9300-to-FortiGate trunk carries the required routed VLANs before using `configs/fortigate-100f-vlan-cli.conf`. The file uses the verified parent interface `x2` and intentionally excludes VLAN 20 and VLAN 99.
+Confirm the C9300-to-FortiGate trunk carries `10,11,30,40,50,60,100` before using `configs/fortigate-100f-vlan-cli.conf`. The file uses the verified parent interface `x2` and intentionally excludes VLAN 20 and VLAN 99.
 
 ## Diff Rules
 

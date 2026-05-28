@@ -66,7 +66,7 @@ Cisco C9300 is reached for management on VLAN 10 at `10.10.10.1/24`.
 Review interface names before applying.
 
 Do not paste directly into production devices without checking:
-- FortiGate parent interface `x2` and C9300 trunk allowance for VLANs 30,40,50,60
+- FortiGate parent interface `x2` and C9300 trunk allowance for VLANs `10,11,30,40,50,60,100`
 - C9300 port names
 - Proxmox node names
 - Existing VLANs and trunks

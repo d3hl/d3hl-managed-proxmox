@@ -18,7 +18,7 @@ flowchart LR
 
   c9300["Cisco Catalyst C9300<br/>Core switch<br/>Vlan10: 10.10.10.1/24<br/>Default gateway: 10.10.10.2"]
 
-  fg ==>|Trunk to C9300<br/>C9300 port: TwentyFiveGigE2/1/2<br/>Allowed VLANs: 10,11,100| c9300
+  fg ==>|Trunk to C9300<br/>C9300 port: TwentyFiveGigE2/1/2<br/>Allowed VLANs: 10,11,30,40,50,60,100| c9300
 
   subgraph pve["Proxmox VE cluster"]
     direction TB
@@ -85,7 +85,7 @@ flowchart LR
 - VLAN 99 stays on existing `mgt` hard-switch using `10.99.99.2/24`; do not create a VLAN 99 interface.
 - VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
 - FortiGate candidate VLAN interface names not present yet: `VLAN30_VM_SERVICES`, `VLAN40_CONTAINERS_APPS`, `VLAN50_LAB_TEST`, and `VLAN60_DMZ`.
-- The validated C9300 FortiGate trunk currently allows VLANs `10,11,100`, while the FortiGate candidate gateway config includes VLANs `30,40,50,60`. Review trunk allowance before expecting those gateways to pass on that link.
+- The C9300 FortiGate trunk target preserves VLANs `10,11,100` and adds routed VLANs `30,40,50,60` for FortiGate gateway reachability.
 - `configs/cisco-c9300-iosxe.cfg` and `session-handoff.md` show Proxmox-facing C9300 trunks allowing `3,10,11`; `data/network-plan.json` now records the expanded target `3,10,11,30,40,50,60`.
 - Proxmox SDN is represented as applied cluster-wide in `session-handoff.md`: zone `ztrunk` plus VNets `vmgmt`, `vstore`, `vsvc`, `vapps`, `vlab`, and `vdmz`.
 - `vinfra` / VLAN 99 is intentionally not created in Proxmox.

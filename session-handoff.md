@@ -12,7 +12,7 @@ Validated Cisco state:
 
 - Management SVI: `Vlan10`, `10.10.10.1/24`
 - Default gateway: `10.10.10.2`
-- FortiGate trunk: `TwentyFiveGigE2/1/2`, allowed VLANs `10,11,100`
+- FortiGate trunk: `TwentyFiveGigE2/1/2`, allowed VLANs `10,11,30,40,50,60,100` in running-config
 - Node trunks:
   - `TenGigabitEthernet2/0/39`, allowed VLANs `3,10,11`
   - `TenGigabitEthernet2/0/41`, allowed VLANs `3,10,11`
@@ -125,5 +125,5 @@ Follow `docs/1password-secrets.md`.
 ### Next Actions
 1. Full cross-platform validation: Cisco↔Proxmox↔FortiGate
 2. Cisco `write memory` after validation
-3. FortiGate VLAN interface creation for VLANs 30,40,50,60 after C9300 trunk review
+3. FortiGate VLAN interface creation for VLANs 30,40,50,60
 4. Test VM attachment to VNets

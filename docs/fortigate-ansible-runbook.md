@@ -80,7 +80,7 @@ op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 - The apply playbook refuses to run while `fortigate_parent_interface` is `__CONFIRM_PARENT_INTERFACE__`.
 - The apply playbook refuses to run unless `CONFIRM_FORTIGATE_APPLY=yes`.
 - The apply playbook also refuses to run unless `CONFIRM_FORTIGATE_TRUNK_REVIEW=yes`.
-- FortiGate candidate VLAN interfaces currently include only VLANs `30,40,50,60`; verify the C9300 trunk to FortiGate carries those VLANs before expecting end-to-end reachability.
+- FortiGate candidate VLAN interfaces currently include only VLANs `30,40,50,60`; verify the C9300 trunk to FortiGate carries `10,11,30,40,50,60,100` before expecting end-to-end reachability.
 - The 2026-05-28 retry verified the FortiGate API at `https://10.99.99.2:7443`.
 - Current adopted live model:
   - VLAN 10 is tracked as existing interface `hlvl` on parent `x2` with `10.10.10.2/24`.

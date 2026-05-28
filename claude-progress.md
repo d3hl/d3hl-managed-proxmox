@@ -295,3 +295,29 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Existing live Proxmox `vstore` subnet may still have the old gateway value from prior state; review before any Proxmox mutation.
 - Next best step:
   - Review/update the C9300-to-FortiGate trunk allowance for VLANs 30,40,50,60, then render and apply the FortiGate plan from a supported Ansible control host.
+
+### Session 011 - C9300 FortiGate Trunk Update
+
+- Date: 2026-05-29
+- Goal: Review and update the C9300-to-FortiGate trunk so FortiGate can carry routed VLANs 30,40,50,60.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Added `configs/cisco-c9300-fortigate-trunk.py` for safe C9300 trunk review/apply using 1Password-scoped environment variables.
+  - Read live C9300 trunk `TwentyFiveGigE2/1/2` before mutation.
+  - Confirmed pre-change allowed VLANs were `10,11,100`.
+  - Applied additive live change only: `switchport trunk allowed vlan add 30,40,50,60`.
+  - Confirmed post-change allowed VLANs are `10,11,30,40,50,60,100`.
+  - Updated repo Cisco intent, network plan, validation docs, diagram, and handoff notes.
+- Verification run:
+  - Read-only pre-check: VLAN10 ping to FortiGate succeeded.
+  - Post-change validation: VLAN10 ping to FortiGate still succeeded.
+  - Artifact written to ignored path `ansible/artifacts/cisco-fortigate-trunk-review.json`.
+- Evidence captured:
+  - Before allowed VLANs: `10,11,100`.
+  - After allowed VLANs: `10,11,30,40,50,60,100`.
+  - Missing after: none.
+- Known risks or unresolved issues:
+  - Live C9300 running-config was changed but not saved with `write memory`.
+  - FortiGate VLAN interfaces 30,40,50,60 are still not created.
+- Next best step:
+  - Render and apply the FortiGate VLAN interface plan from a supported Ansible control host, then validate gateway reachability.

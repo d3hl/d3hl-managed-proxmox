@@ -16,7 +16,7 @@ Use stable item names so both Codex and DeepSeek can reference credentials witho
 | Domain | Suggested item | Expected fields |
 |---|---|---|
 | Proxmox | `proxmox-cluster` | `username`, `password`, `host` |
-| Cisco C9300 | `cisco-c9300` | `username`, `password`, `enable_password`, `host` |
+| Cisco C9300 | `C9300` | `username`, `password`, `IP`; optional `enable_password` |
 | FortiGate 100F | `fortigate-100f` | `username`, `password`, `host`, optional `access_token` |
 
 If the real item names differ, document only the item names and field labels. Never document the values.
@@ -28,9 +28,9 @@ Prefer 1Password secret references over direct secret reads:
 ```bash
 op://d3HLPRV/proxmox-cluster/username
 op://d3HLPRV/proxmox-cluster/password
-op://d3HLPRV/cisco-c9300/username
-op://d3HLPRV/cisco-c9300/password
-op://d3HLPRV/cisco-c9300/enable_password
+op://d3HLPRV/C9300/username
+op://d3HLPRV/C9300/password
+op://d3HLPRV/C9300/IP
 op://d3HLPRV/fortigate-100f/username
 op://d3HLPRV/fortigate-100f/password
 op://d3HLPRV/fortigate-100f/access_token

@@ -26,8 +26,11 @@
         "show ip interface brief shows Vlan10 up/up",
         "ping 10.10.10.2 source vlan10 returns 5/5"
       ],
-      "evidence": ["Session 001: ping 10.10.10.2 source vlan10 returned 5/5"],
-      "notes": "Running-config validated but NOT saved with write memory. Trunk descriptions match configs/cisco-c9300-iosxe.cfg."
+      "evidence": [
+        "Session 001: ping 10.10.10.2 source vlan10 returned 5/5",
+        "2026-05-29 live C9300 FortiGate trunk TwentyFiveGigE2/1/2 updated additively from 10,11,100 to 10,11,30,40,50,60,100; VLAN10 ping to FortiGate remained OK"
+      ],
+      "notes": "Running-config validated but NOT saved with write memory. FortiGate trunk now carries 10,11,30,40,50,60,100 for routed VLAN gateway work."
     },
     {
       "id": "fortigate-001",
@@ -51,7 +54,7 @@
         "2026-05-29 adopted live FortiGate names: hlvl tracks VLAN10, mgt tracks VLAN99, VLAN20 excluded from FortiGate routing, and only VLANs 30,40,50,60 remain as FortiGate candidates",
         "2026-05-29 read-only verification after intent update: hlvl and mgt matched; VLANs 30,40,50,60 are the only missing FortiGate targets"
       ],
-      "notes": "No live FortiGate changes applied. Parent interface verified as x2. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
+      "notes": "No live FortiGate changes applied. Parent interface verified as x2. C9300-to-FortiGate trunk now carries 10,11,30,40,50,60,100 in running-config. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
     },
     {
       "id": "proxmox-001",
