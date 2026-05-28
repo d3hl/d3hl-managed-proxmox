@@ -1,0 +1,66 @@
+---
+ansible_connection: httpapi
+ansible_network_os: fortinet.fortios.fortios
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+ansible_httpapi_port: 443
+
+fortigate_vdom: root
+fortigate_access_token: "{{ lookup('env', 'FORTIOS_ACCESS_TOKEN') }}"
+fortigate_parent_interface: "__CONFIRM_PARENT_INTERFACE__"
+fortigate_apply_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_APPLY') }}"
+
+fortigate_vlan_interfaces:
+  - name: VLAN10_PROXMOX_MGMT
+    vlanid: 10
+    ip: 10.10.10.2/24
+    allowaccess:
+      - ping
+      - https
+      - ssh
+    alias: Proxmox management
+    role: lan
+  - name: VLAN20_STORAGE_CEPH
+    vlanid: 20
+    ip: 10.20.20.2/24
+    allowaccess:
+      - ping
+    alias: Storage / Ceph
+    role: lan
+  - name: VLAN30_VM_SERVICES
+    vlanid: 30
+    ip: 10.10.30.2/24
+    allowaccess:
+      - ping
+    alias: VM services
+    role: lan
+  - name: VLAN40_CONTAINERS_APPS
+    vlanid: 40
+    ip: 10.10.40.2/24
+    allowaccess:
+      - ping
+    alias: Containers / apps
+    role: lan
+  - name: VLAN50_LAB_TEST
+    vlanid: 50
+    ip: 10.10.50.2/24
+    allowaccess:
+      - ping
+    alias: Lab / test
+    role: lan
+  - name: VLAN60_DMZ
+    vlanid: 60
+    ip: 10.10.60.2/24
+    allowaccess:
+      - ping
+    alias: DMZ / public-facing
+    role: dmz
+  - name: VLAN99_INFRA_MGMT
+    vlanid: 99
+    ip: 10.99.99.2/24
+    allowaccess:
+      - ping
+      - https
+      - ssh
+    alias: Infrastructure management
+    role: lan

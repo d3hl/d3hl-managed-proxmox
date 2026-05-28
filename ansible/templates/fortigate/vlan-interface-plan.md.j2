@@ -1,0 +1,32 @@
+# FortiGate VLAN Interface Plan
+
+This plan is rendered from `ansible/group_vars/fortigates.yml`.
+
+## Assumptions
+
+- FortiGate is the gateway/firewall for all VLANs.
+- FortiGate uses `.2` as the gateway convention.
+- VDOM: `{{ fortigate_vdom }}`
+- Parent interface: `{{ fortigate_parent_interface }}`
+- Apply is blocked until `fortigate_parent_interface` is replaced and `CONFIRM_FORTIGATE_APPLY=yes` is set.
+
+## Candidate Interfaces
+
+| Interface | VLAN | IP | Access | Alias | Role |
+|---|---:|---|---|---|---|
+{% for item in fortigate_vlan_interfaces -%}
+| {{ item.name }} | {{ item.vlanid }} | {{ item.ip }} | {{ item.allowaccess | join(',') }} | {{ item.alias }} | {{ item.role }} |
+{% endfor %}
+
+## Validation Commands
+
+```text
+show system interface
+get system interface
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
+```
+
+## Rollback Hint
+
+Remove only the VLAN interfaces created by this plan after confirming no firewall policies or DHCP services depend on them.

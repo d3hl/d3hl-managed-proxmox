@@ -157,3 +157,36 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - `configs/cisco-c9300-iosxe.cfg` and `session-handoff.md` show Proxmox-facing C9300 trunks allowing `3,10,11`; `data/network-plan.json` records the expanded target `3,10,11,30,40,50,60`.
 - Next best step:
   - Review FortiGate parent interface and trunk allowed VLAN design before applying FortiGate VLAN gateways.
+
+### Session 006 - FortiGate Ansible Scaffold
+
+- Date: 2026-05-28
+- Goal: Use the `fortinet.fortios` Ansible collection for FortiGate configuration.
+- Completed:
+  - Added `ansible/collections/requirements.yml` for `fortinet.fortios >=2.5.1`.
+  - Added FortiGate inventory and group vars:
+    - `ansible/inventory/fortigate.ini`
+    - `ansible/group_vars/fortigates.yml`
+  - Added safe FortiGate playbooks:
+    - `ansible/playbooks/fortigate/discover.yml`
+    - `ansible/playbooks/fortigate/render-vlan-plan.yml`
+    - `ansible/playbooks/fortigate/apply-vlan-interfaces.yml`
+  - Added plan template:
+    - `ansible/templates/fortigate/vlan-interface-plan.md.j2`
+  - Added runbook:
+    - `docs/fortigate-ansible-runbook.md`
+  - Updated `docs/1password-secrets.md` to include optional FortiGate `access_token` reference.
+  - Added `ansible/artifacts/` to `.gitignore`.
+- Verification run:
+  - `bash ./init.sh`
+  - Static YAML parse for Ansible YAML files.
+  - Static Jinja render of `vlan-interface-plan.md.j2`.
+- Evidence captured:
+  - YAML validation passed for 5 Ansible YAML files.
+  - Template render included `VLAN10_PROXMOX_MGMT`.
+- Known risks or unresolved issues:
+  - No live FortiGate changes were applied.
+  - `fortigate_parent_interface` remains `__CONFIRM_PARENT_INTERFACE__` and must be discovered before apply.
+  - Windows Ansible CLI fails during startup with `OSError: [WinError 87] The parameter is incorrect`; `ansible-galaxy`, `ansible-playbook`, and `ansible-inventory` should be run from WSL/Linux or another supported control host.
+- Next best step:
+  - From a working Ansible control node, install the collection, run FortiGate interface discovery through `op run`, confirm the parent interface, render the VLAN plan, then apply with `CONFIRM_FORTIGATE_APPLY=yes`.

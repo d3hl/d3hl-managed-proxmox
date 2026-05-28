@@ -17,7 +17,7 @@ Use stable item names so both Codex and DeepSeek can reference credentials witho
 |---|---|---|
 | Proxmox | `proxmox-cluster` | `username`, `password`, `host` |
 | Cisco C9300 | `cisco-c9300` | `username`, `password`, `enable_password`, `host` |
-| FortiGate 100F | `fortigate-100f` | `username`, `password`, `host` |
+| FortiGate 100F | `fortigate-100f` | `username`, `password`, `host`, optional `access_token` |
 
 If the real item names differ, document only the item names and field labels. Never document the values.
 
@@ -33,6 +33,7 @@ op://d3HLPRV/cisco-c9300/password
 op://d3HLPRV/cisco-c9300/enable_password
 op://d3HLPRV/fortigate-100f/username
 op://d3HLPRV/fortigate-100f/password
+op://d3HLPRV/fortigate-100f/access_token
 ```
 
 Use `op read` only when a tool cannot consume a secret reference directly:

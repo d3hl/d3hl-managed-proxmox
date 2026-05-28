@@ -1,0 +1,20 @@
+---
+- name: Render FortiGate VLAN interface plan
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - ../../group_vars/fortigates.yml
+
+  tasks:
+    - name: Ensure artifacts directory exists
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../../artifacts"
+        state: directory
+        mode: "0750"
+
+    - name: Render FortiGate VLAN interface plan
+      ansible.builtin.template:
+        src: ../../templates/fortigate/vlan-interface-plan.md.j2
+        dest: "{{ playbook_dir }}/../../artifacts/fortigate-vlan-interface-plan.md"
+        mode: "0640"

@@ -1,0 +1,43 @@
+---
+- name: Apply FortiGate VLAN interfaces
+  hosts: fortigates
+  gather_facts: false
+  collections:
+    - fortinet.fortios
+
+  pre_tasks:
+    - name: Require explicit apply confirmation
+      ansible.builtin.assert:
+        that:
+          - fortigate_apply_confirm == 'yes'
+        fail_msg: "Refusing to apply: set CONFIRM_FORTIGATE_APPLY=yes after discovery and plan review."
+
+    - name: Require confirmed FortiGate parent interface
+      ansible.builtin.assert:
+        that:
+          - fortigate_parent_interface != '__CONFIRM_PARENT_INTERFACE__'
+          - fortigate_parent_interface | length > 0
+        fail_msg: "Set fortigate_parent_interface to the discovered trunk parent before applying."
+
+    - name: Require FortiGate API token from environment
+      ansible.builtin.assert:
+        that:
+          - fortigate_access_token | length > 0
+        fail_msg: "Set FORTIOS_ACCESS_TOKEN via op run before apply."
+
+  tasks:
+    - name: Create or update FortiGate VLAN interfaces
+      fortinet.fortios.fortios_system_interface:
+        vdom: "{{ fortigate_vdom }}"
+        state: present
+        access_token: "{{ fortigate_access_token }}"
+        system_interface:
+          name: "{{ item.name }}"
+          type: vlan
+          interface: "{{ fortigate_parent_interface }}"
+          vlanid: "{{ item.vlanid }}"
+          ip: "{{ item.ip }}"
+          allowaccess: "{{ item.allowaccess }}"
+          alias: "{{ item.alias }}"
+          role: "{{ item.role }}"
+      loop: "{{ fortigate_vlan_interfaces }}"

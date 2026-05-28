@@ -35,13 +35,19 @@
       "area": "fortigate",
       "title": "Confirm FortiGate parent interface & create VLAN interfaces",
       "user_visible_behavior": "FortiGate has VLAN interfaces with .2 addresses on all VLANs",
-      "status": "not_started",
+      "status": "in_progress",
       "verification": [
+        "Ansible YAML files parse successfully",
+        "FortiGate VLAN plan template renders successfully",
         "show system interface shows all VLAN interfaces",
         "execute ping 10.10.10.1 from 10.10.10.2 succeeds"
       ],
-      "evidence": [],
-      "notes": "Parent interface __CONFIRM_PARENT_INTERFACE__ must be discovered first."
+      "evidence": [
+        "Added fortinet.fortios collection requirements, FortiGate inventory, group_vars intent, discovery playbook, render-plan playbook, and gated apply playbook",
+        "Static YAML validation passed for 5 Ansible YAML files",
+        "Jinja render validation passed for ansible/templates/fortigate/vlan-interface-plan.md.j2"
+      ],
+      "notes": "No live FortiGate changes applied. Parent interface __CONFIRM_PARENT_INTERFACE__ must be discovered first. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host."
     },
     {
       "id": "proxmox-001",
