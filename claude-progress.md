@@ -135,3 +135,25 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Cisco `write memory` still not run
 - Next best step: Convert nodeF esfp1 to trunk, then run full cross-platform validation (Cisco↔Proxmox↔FortiGate)
 
+### Session 005 - Current Network Diagram
+
+- Date: 2026-05-28
+- Goal: Visualize the current checked-in and live-synced network config.
+- Completed:
+  - Fixed `init.sh` so Bash can run it from this Windows/WSL workspace:
+    - normalized line endings to LF
+    - selected a Python executable that has `pip` instead of WSL `/usr/sbin/python`
+  - Fixed `data/network-plan.json` by adding the missing root closing brace.
+  - Created `docs/current-network-diagram.md` with a Mermaid topology diagram, VLAN/VNet map, and review notes.
+  - Added `docs-001` to `feature_list.json` with verification evidence.
+- Verification run:
+  - `bash ./init.sh`
+- Evidence captured:
+  - Dependency sync reached `Requirement already satisfied` state.
+  - Baseline JSON verification printed valid `data/network-plan.json`.
+  - Startup command reported as `python.exe app.py`.
+- Known risks or unresolved issues:
+  - The generated diagram highlights that the validated C9300-to-FortiGate trunk allows `10,11,100`, while FortiGate candidate VLAN interfaces include `10,20,30,40,50,60,99`.
+  - `configs/cisco-c9300-iosxe.cfg` and `session-handoff.md` show Proxmox-facing C9300 trunks allowing `3,10,11`; `data/network-plan.json` records the expanded target `3,10,11,30,40,50,60`.
+- Next best step:
+  - Review FortiGate parent interface and trunk allowed VLAN design before applying FortiGate VLAN gateways.

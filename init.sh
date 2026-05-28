@@ -6,14 +6,17 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
 # Replace these commands with the correct commands for your repository.
-PYTHON_BIN="python"
-if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  if command -v python.exe >/dev/null 2>&1; then
-    PYTHON_BIN="python.exe"
-  else
-    echo "Python is required but was not found in PATH." >&2
-    exit 1
+PYTHON_BIN=""
+for candidate in python python.exe python3; do
+  if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -m pip --version >/dev/null 2>&1; then
+    PYTHON_BIN="$candidate"
+    break
   fi
+done
+
+if [ -z "$PYTHON_BIN" ]; then
+  echo "Python with pip is required but was not found in PATH." >&2
+  exit 1
 fi
 
 INSTALL_CMD=("$PYTHON_BIN" -m pip install -r mcp/requirements.txt)

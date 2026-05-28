@@ -65,6 +65,23 @@
       ],
       "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide.",
       "remaining": null
+    },
+    {
+      "id": "docs-001",
+      "priority": 4,
+      "area": "documentation",
+      "title": "Visualize current homelab network configuration",
+      "user_visible_behavior": "Current repo and live-synced network state is represented as a Mermaid network diagram with VLAN, VNet, trunk, and known-risk notes",
+      "status": "passing",
+      "verification": [
+        "docs/current-network-diagram.md exists",
+        "./init.sh completes and validates data/network-plan.json"
+      ],
+      "evidence": [
+        "Created docs/current-network-diagram.md from data/network-plan.json, Cisco/FortiGate config snapshots, Proxmox SDN script, and session-handoff.md",
+        "Baseline ./init.sh passed after fixing init.sh Python selection and data/network-plan.json JSON syntax"
+      ],
+      "notes": "Diagram intentionally calls out the FortiGate trunk/VLAN gateway review item and the Cisco Proxmox trunk discrepancy between validated config snapshots and network-plan target."
     }
   ]
 }
