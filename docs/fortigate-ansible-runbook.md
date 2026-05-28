@@ -26,10 +26,16 @@ Use 1Password runtime injection. Do not write tokens to disk.
 Expected environment variable:
 
 ```bash
-export FORTIOS_ACCESS_TOKEN="op://d3HLPRV/fortigate-100f/access_token"
+export FORTIOS_ACCESS_TOKEN="op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential"
 ```
 
-If the item does not have `access_token`, create one in FortiGate for API automation and store it in the `fortigate-100f` item.
+The originally documented `fortigate-100f` item was not present during the
+2026-05-28 verification attempt. The discovered token item was
+`FORTIOS_ACCESS_TOKEN` with concealed field `credential`.
+
+If you prefer the stable item name `fortigate-100f`, create it and store the
+API token in an `access_token` field, then update this runbook and
+`ansible/group_vars/fortigates.yml` accordingly.
 
 ## Safe Workflow
 
@@ -55,7 +61,7 @@ ansible-playbook playbooks/fortigate/render-vlan-plan.yml
 
 ```bash
 cd ansible
-export FORTIOS_ACCESS_TOKEN="op://d3HLPRV/fortigate-100f/access_token"
+export FORTIOS_ACCESS_TOKEN="op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential"
 export CONFIRM_FORTIGATE_APPLY=yes
 op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 ```
@@ -65,3 +71,4 @@ op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 - The apply playbook refuses to run while `fortigate_parent_interface` is `__CONFIRM_PARENT_INTERFACE__`.
 - The apply playbook refuses to run unless `CONFIRM_FORTIGATE_APPLY=yes`.
 - FortiGate candidate VLAN interfaces currently include VLANs `10,20,30,40,50,60,99`; verify the C9300 trunk to FortiGate allows the required VLANs before expecting end-to-end reachability.
+- The 2026-05-28 API verification attempt found `10.10.10.2` reachable on TCP/22 and TCP/443, but TLS failed before certificate exchange on TCP/443. Fix FortiGate HTTPS/API reachability before expecting Ansible `httpapi` to work.

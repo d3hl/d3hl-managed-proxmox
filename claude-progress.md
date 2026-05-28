@@ -190,3 +190,29 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Windows Ansible CLI fails during startup with `OSError: [WinError 87] The parameter is incorrect`; `ansible-galaxy`, `ansible-playbook`, and `ansible-inventory` should be run from WSL/Linux or another supported control host.
 - Next best step:
   - From a working Ansible control node, install the collection, run FortiGate interface discovery through `op run`, confirm the parent interface, render the VLAN plan, then apply with `CONFIRM_FORTIGATE_APPLY=yes`.
+
+### Session 007 - FortiGate Read-Only Verification Attempt
+
+- Date: 2026-05-28
+- Goal: Verify current FortiGate configuration without changing it.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Confirmed 1Password CLI is available and signed in.
+  - Added `configs/fortigate-api-verify.py`, a read-only API verifier for FortiGate interfaces.
+  - Checked 1Password vault `d3HLPRV` for FortiGate credentials:
+    - `fortigate-100f` item was not found.
+    - `FORTIOS_ACCESS_TOKEN` item exists with concealed `credential` field.
+  - Verified reachability:
+    - `10.99.99.2` responds to ICMP but TCP/22 and TCP/443 are closed or filtered.
+    - `10.10.10.2` responds to ICMP and has TCP/22 and TCP/443 open.
+  - Confirmed `10.10.10.2:443` closes TLS before presenting a certificate.
+  - Confirmed `10.10.10.2:22` returns an SSH banner.
+  - Recorded evidence in `docs/fortigate-verification-2026-05-28.md`.
+- Verification result:
+  - Blocked. FortiGate is reachable, but REST API verification cannot complete because HTTPS/TLS is not usable from this workstation.
+- Known risks or unresolved issues:
+  - The Ansible `httpapi` path will not work until FortiGate HTTPS/API TLS works on a reachable management interface.
+  - No SSH username/password item for FortiGate was found under the expected `fortigate-100f` name.
+  - No live FortiGate config changes were made.
+- Next best step:
+  - From console or an existing admin session, verify FortiGate HTTPS/API admin settings, trusted hosts/local-in policy, and create/document a stable 1Password item for FortiGate credentials.

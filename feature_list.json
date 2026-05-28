@@ -45,9 +45,10 @@
       "evidence": [
         "Added fortinet.fortios collection requirements, FortiGate inventory, group_vars intent, discovery playbook, render-plan playbook, and gated apply playbook",
         "Static YAML validation passed for 5 Ansible YAML files",
-        "Jinja render validation passed for ansible/templates/fortigate/vlan-interface-plan.md.j2"
+        "Jinja render validation passed for ansible/templates/fortigate/vlan-interface-plan.md.j2",
+        "2026-05-28 read-only verification: 10.99.99.2 ICMP reachable but TCP/22 and TCP/443 closed or filtered; 10.10.10.2 ICMP reachable with TCP/22 and TCP/443 open; TCP/443 closes TLS before certificate exchange"
       ],
-      "notes": "No live FortiGate changes applied. Parent interface __CONFIRM_PARENT_INTERFACE__ must be discovered first. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host."
+      "notes": "No live FortiGate changes applied. Parent interface __CONFIRM_PARENT_INTERFACE__ must be discovered first. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. REST API verification is currently blocked by FortiGate HTTPS/TLS failure from this workstation."
     },
     {
       "id": "proxmox-001",
