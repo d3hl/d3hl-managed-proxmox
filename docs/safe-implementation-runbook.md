@@ -164,10 +164,10 @@ Remove only interfaces that were newly created during this change:
 
 ```text
 config system interface
-    delete VLAN30_VM_SERVICES
-    delete VLAN40_CONTAINERS_APPS
-    delete VLAN50_LAB_TEST
-    delete VLAN60_DMZ
+    delete vsvc
+    delete vapps
+    delete vlab
+    delete vdmz
 end
 ```
 

@@ -19,6 +19,10 @@ Run Ansible from WSL, Linux, or another supported Ansible control host. The
 Windows Python Ansible CLI in this workstation currently fails during CLI
 startup with `OSError: [WinError 87] The parameter is incorrect`.
 
+On this workstation, use `configs/fortigate-api-apply-vlans.py` as the gated
+fallback. It reads the same `ansible/group_vars/fortigates.yml` intent and uses
+the FortiGate REST API token from 1Password.
+
 FortiGate API endpoint verified from this workstation:
 
 ```text
@@ -75,6 +79,16 @@ export CONFIRM_FORTIGATE_TRUNK_REVIEW=yes
 op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 ```
 
+Fallback from this Windows workstation:
+
+```powershell
+$env:FORTIGATE_HOST='https://10.99.99.2:7443'
+$env:FORTIOS_ACCESS_TOKEN='op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential'
+$env:CONFIRM_FORTIGATE_APPLY='yes'
+$env:CONFIRM_FORTIGATE_TRUNK_REVIEW='yes'
+op run -- python configs\fortigate-api-apply-vlans.py
+```
+
 ## Safety Notes
 
 - The apply playbook refuses to run while `fortigate_parent_interface` is `__CONFIRM_PARENT_INTERFACE__`.
@@ -86,4 +100,4 @@ op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
   - VLAN 10 is tracked as existing interface `hlvl` on parent `x2` with `10.10.10.2/24`.
   - VLAN 99 stays on existing `mgt` hard-switch with `10.99.99.2/24`.
   - VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
-  - VLANs 30, 40, 50, and 60 are the only missing FortiGate gateway candidates.
+  - VLANs 30, 40, 50, and 60 use short FortiOS-safe interface names: `vsvc`, `vapps`, `vlab`, and `vdmz`.

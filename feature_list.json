@@ -52,9 +52,10 @@
         "2026-05-28 read-only verification: API reachable at https://10.99.99.2:7443; 41 interfaces seen; x2 is VLAN parent; hlvl VLAN10 exists with 10.10.10.2/24; VLANs 20,30,40,50,60 are missing; VLAN99 target conflicts with mgt hard-switch 10.99.99.2/24",
         "2026-05-29 repo/live comparison recorded in docs/fortigate-repo-live-comparison-2026-05-29.md",
         "2026-05-29 adopted live FortiGate names: hlvl tracks VLAN10, mgt tracks VLAN99, VLAN20 excluded from FortiGate routing, and only VLANs 30,40,50,60 remain as FortiGate candidates",
-        "2026-05-29 read-only verification after intent update: hlvl and mgt matched; VLANs 30,40,50,60 are the only missing FortiGate targets"
+        "2026-05-29 read-only verification after intent update: hlvl and mgt matched; VLANs 30,40,50,60 are the only missing FortiGate targets",
+        "2026-05-29 FortiGate apply created vsvc VLAN30, vapps VLAN40, vlab VLAN50, and vdmz VLAN60 on parent x2; post-apply API verification showed 6/6 target matches"
       ],
-      "notes": "No live FortiGate changes applied. Parent interface verified as x2. C9300-to-FortiGate trunk now carries 10,11,30,40,50,60,100 in running-config. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
+      "notes": "Live FortiGate VLAN interfaces 30,40,50,60 are now present with short FortiOS-safe names. Parent interface verified as x2. C9300-to-FortiGate trunk now carries 10,11,30,40,50,60,100 in running-config. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or use configs/fortigate-api-apply-vlans.py from this workstation. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
     },
     {
       "id": "proxmox-001",

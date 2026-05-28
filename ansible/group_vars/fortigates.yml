@@ -38,28 +38,28 @@ fortigate_existing_interfaces:
     note: Existing live management hard-switch; do not create VLAN 99 interface.
 
 fortigate_vlan_interfaces:
-  - name: VLAN30_VM_SERVICES
+  - name: vsvc
     vlanid: 30
     ip: 10.10.30.2/24
     allowaccess:
       - ping
     alias: VM services
     role: lan
-  - name: VLAN40_CONTAINERS_APPS
+  - name: vapps
     vlanid: 40
     ip: 10.10.40.2/24
     allowaccess:
       - ping
     alias: Containers / apps
     role: lan
-  - name: VLAN50_LAB_TEST
+  - name: vlab
     vlanid: 50
     ip: 10.10.50.2/24
     allowaccess:
       - ping
     alias: Lab / test
     role: lan
-  - name: VLAN60_DMZ
+  - name: vdmz
     vlanid: 60
     ip: 10.10.60.2/24
     allowaccess:

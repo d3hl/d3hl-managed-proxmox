@@ -84,7 +84,7 @@ flowchart LR
 - FortiGate tracks VLAN 10 by live name `hlvl` and does not create `VLAN10_PROXMOX_MGMT`.
 - VLAN 99 stays on existing `mgt` hard-switch using `10.99.99.2/24`; do not create a VLAN 99 interface.
 - VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
-- FortiGate candidate VLAN interface names not present yet: `VLAN30_VM_SERVICES`, `VLAN40_CONTAINERS_APPS`, `VLAN50_LAB_TEST`, and `VLAN60_DMZ`.
+- FortiGate candidate VLAN interface names use short FortiOS-safe names: `vsvc`, `vapps`, `vlab`, and `vdmz`.
 - The C9300 FortiGate trunk target preserves VLANs `10,11,100` and adds routed VLANs `30,40,50,60` for FortiGate gateway reachability.
 - `configs/cisco-c9300-iosxe.cfg` and `session-handoff.md` show Proxmox-facing C9300 trunks allowing `3,10,11`; `data/network-plan.json` now records the expanded target `3,10,11,30,40,50,60`.
 - Proxmox SDN is represented as applied cluster-wide in `session-handoff.md`: zone `ztrunk` plus VNets `vmgmt`, `vstore`, `vsvc`, `vapps`, `vlab`, and `vdmz`.

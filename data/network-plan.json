@@ -52,7 +52,7 @@
       "subnet": "10.10.30.0/24",
       "gateway": "10.10.30.2",
       "gateway_device": "fortigate",
-      "fortigate_interface": "VLAN30_VM_SERVICES",
+      "fortigate_interface": "vsvc",
       "vnet": "vsvc"
     },
     {
@@ -62,7 +62,7 @@
       "subnet": "10.10.40.0/24",
       "gateway": "10.10.40.2",
       "gateway_device": "fortigate",
-      "fortigate_interface": "VLAN40_CONTAINERS_APPS",
+      "fortigate_interface": "vapps",
       "vnet": "vapps"
     },
     {
@@ -72,7 +72,7 @@
       "subnet": "10.10.50.0/24",
       "gateway": "10.10.50.2",
       "gateway_device": "fortigate",
-      "fortigate_interface": "VLAN50_LAB_TEST",
+      "fortigate_interface": "vlab",
       "vnet": "vlab"
     },
     {
@@ -82,7 +82,7 @@
       "subnet": "10.10.60.0/24",
       "gateway": "10.10.60.2",
       "gateway_device": "fortigate",
-      "fortigate_interface": "VLAN60_DMZ",
+      "fortigate_interface": "vdmz",
       "vnet": "vdmz"
     },
     {

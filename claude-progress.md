@@ -321,3 +321,35 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - FortiGate VLAN interfaces 30,40,50,60 are still not created.
 - Next best step:
   - Render and apply the FortiGate VLAN interface plan from a supported Ansible control host, then validate gateway reachability.
+
+### Session 012 - FortiGate VLAN Interface Apply
+
+- Date: 2026-05-29
+- Goal: Render and apply the FortiGate VLAN interface plan for routed VLANs 30,40,50,60.
+- Completed:
+  - Rendered `ansible/artifacts/fortigate-vlan-interface-plan.md` from `ansible/group_vars/fortigates.yml`.
+  - Confirmed local `ansible-playbook` still fails at startup with Windows `WinError 87`.
+  - Added `configs/fortigate-api-apply-vlans.py` as a gated fallback that uses the same Ansible intent data.
+  - Read live FortiGate interfaces before mutation.
+  - Initial apply attempt with long names failed cleanly; FortiOS rejected names longer than its interface-name limit and no targets were created.
+  - Updated FortiGate candidate interface names to short FortiOS-safe names:
+    - `vsvc` for VLAN 30 / `10.10.30.2/24`
+    - `vapps` for VLAN 40 / `10.10.40.2/24`
+    - `vlab` for VLAN 50 / `10.10.50.2/24`
+    - `vdmz` for VLAN 60 / `10.10.60.2/24`
+  - Applied corrected plan through FortiGate API using `CONFIRM_FORTIGATE_APPLY=yes` and `CONFIRM_FORTIGATE_TRUNK_REVIEW=yes`.
+- Verification run:
+  - Pre-apply FortiGate API check: `hlvl` and `mgt` matched; `vsvc`, `vapps`, `vlab`, and `vdmz` were missing.
+  - C9300 trunk pre-check: `TwentyFiveGigE2/1/2` allowed VLANs `10,11,30,40,50,60,100`; VLAN10 ping to FortiGate was OK.
+  - Apply result: `POST vsvc`, `POST vapps`, `POST vlab`, and `POST vdmz` all returned OK.
+  - Post-apply FortiGate API check: 45 interfaces seen; 6/6 targets matched; missing count 0; mismatches 0.
+- Evidence captured:
+  - `ansible/artifacts/fortigate-vlan-interface-plan.md`
+  - `ansible/artifacts/fortigate-vlan-apply.json`
+  - `ansible/artifacts/fortigate-verification.json`
+- Known risks or unresolved issues:
+  - Live C9300 running-config was changed in Session 011 but not saved with `write memory`.
+  - FortiGate firewall policies for these VLANs are not created by this interface plan.
+  - End-to-end client/VM reachability on VLANs 30,40,50,60 still needs validation.
+- Next best step:
+  - Validate Proxmox/VM reachability through the new FortiGate gateways, then decide whether to save C9300 persistent config.
