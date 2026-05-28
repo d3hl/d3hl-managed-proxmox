@@ -1,4 +1,4 @@
-# FortiGate Verification Attempt - 2026-05-28
+# FortiGate Verification - 2026-05-28
 
 Scope: read-only verification of current FortiGate interface configuration.
 
@@ -32,7 +32,7 @@ SSH banner probe on `10.10.10.2:22` returned:
 SSH-2.0-eD_Z8
 ```
 
-## API Verification Result
+## API Verification Result - Initial Attempt
 
 Read-only FortiGate API verification was attempted with:
 
@@ -50,11 +50,57 @@ Results:
 
 ## Current Verification Status
 
-Blocked. The FortiGate is reachable by ICMP, and SSH is reachable on `10.10.10.2`, but REST API verification cannot proceed until one of these is fixed:
+Initial attempt was blocked. The FortiGate was reachable by ICMP, and SSH was reachable on `10.10.10.2`, but REST API verification could not proceed on the default HTTPS ports.
 
-- FortiGate HTTPS/API admin service is enabled and completes TLS on a reachable interface.
-- The correct management IP/port for FortiGate API is documented.
-- A usable SSH credential item is added to 1Password so verification can be performed by CLI.
+## API Verification Result - Corrected Port
+
+The FortiGate API was successfully reached at:
+
+```text
+https://10.99.99.2:7443
+```
+
+Read-only interface verification returned:
+
+| Check | Result |
+|---|---:|
+| Interfaces seen | 41 |
+| Target interfaces | 7 |
+| Exact matches | 0 |
+| Present with different name | 1 |
+| IP conflicts / different type | 1 |
+| Missing | 5 |
+| Mismatches | 0 |
+
+Existing VLAN interfaces:
+
+| Interface | VLAN | Parent | IP | Access | Status |
+|---|---:|---|---|---|---|
+| `hlvl` | 10 | `x2` | `10.10.10.2/24` | `ping https ssh snmp fgfm fabric` | up |
+| `k8s` | 11 | `x2` | `10.11.11.2/24` | `ping` | up |
+| `Wifi` | 100 | `x2` | `10.100.100.2/24` | `ping` | up |
+
+Target comparison:
+
+| Target | Status | Live object |
+|---|---|---|
+| `VLAN10_PROXMOX_MGMT` | Present with different name | `hlvl`, VLAN 10, parent `x2`, `10.10.10.2/24` |
+| `VLAN20_STORAGE_CEPH` | Missing | none |
+| `VLAN30_VM_SERVICES` | Missing | none |
+| `VLAN40_CONTAINERS_APPS` | Missing | none |
+| `VLAN50_LAB_TEST` | Missing | none |
+| `VLAN60_DMZ` | Missing | none |
+| `VLAN99_INFRA_MGMT` | IP conflict / different type | `mgt` hard-switch, `10.99.99.2/24` |
+
+Verified parent trunk interface for VLAN gateways: `x2`.
+
+## Current Verification Status
+
+Current FortiGate config was verified read-only. It does not yet match the repo target:
+
+- VLAN 10 exists, but under live name `hlvl` instead of target name `VLAN10_PROXMOX_MGMT`.
+- VLANs 20, 30, 40, 50, and 60 are missing.
+- VLAN 99 should not be blindly created because `10.99.99.2/24` is already assigned to `mgt` hard-switch.
 
 ## Next Safe Commands
 

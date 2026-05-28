@@ -19,6 +19,12 @@ Run Ansible from WSL, Linux, or another supported Ansible control host. The
 Windows Python Ansible CLI in this workstation currently fails during CLI
 startup with `OSError: [WinError 87] The parameter is incorrect`.
 
+FortiGate API endpoint verified from this workstation:
+
+```text
+https://10.99.99.2:7443
+```
+
 ## Credentials
 
 Use 1Password runtime injection. Do not write tokens to disk.
@@ -57,6 +63,8 @@ ansible-playbook playbooks/fortigate/render-vlan-plan.yml
 
 4. Replace `fortigate_parent_interface` in `ansible/group_vars/fortigates.yml` with the discovered trunk parent interface.
 
+   Current verified parent interface: `x2`.
+
 5. Apply only after review:
 
 ```bash
@@ -71,4 +79,8 @@ op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 - The apply playbook refuses to run while `fortigate_parent_interface` is `__CONFIRM_PARENT_INTERFACE__`.
 - The apply playbook refuses to run unless `CONFIRM_FORTIGATE_APPLY=yes`.
 - FortiGate candidate VLAN interfaces currently include VLANs `10,20,30,40,50,60,99`; verify the C9300 trunk to FortiGate allows the required VLANs before expecting end-to-end reachability.
-- The 2026-05-28 API verification attempt found `10.10.10.2` reachable on TCP/22 and TCP/443, but TLS failed before certificate exchange on TCP/443. Fix FortiGate HTTPS/API reachability before expecting Ansible `httpapi` to work.
+- The 2026-05-28 retry verified the FortiGate API at `https://10.99.99.2:7443`.
+- Do not apply the current VLAN list as-is without reconciling live state:
+  - VLAN 10 already exists as `hlvl` on parent `x2` with `10.10.10.2/24`.
+  - VLAN 99 IP `10.99.99.2/24` is already used by `mgt` hard-switch.
+  - VLANs 20, 30, 40, 50, and 60 are missing.

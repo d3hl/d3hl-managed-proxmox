@@ -99,6 +99,20 @@ def normalize_ip(value: str | None) -> str | None:
         return first
 
 
+def interface_summary(item: dict) -> dict:
+    return {
+        "name": item.get("name"),
+        "type": item.get("type"),
+        "interface": item.get("interface"),
+        "vlanid": item.get("vlanid"),
+        "ip": item.get("ip"),
+        "allowaccess": item.get("allowaccess"),
+        "alias": item.get("alias"),
+        "role": item.get("role"),
+        "status": item.get("status"),
+    }
+
+
 def run() -> int:
     host = os.environ.get("FORTIGATE_HOST", "")
     token = os.environ.get("FORTIOS_ACCESS_TOKEN", "")
@@ -124,12 +138,65 @@ def run() -> int:
     interfaces = response.get("results", [])
     by_name = {item.get("name"): item for item in interfaces}
     targets = target_interfaces()
+    actual_interface_summary = [
+        interface_summary(item)
+        for item in interfaces
+        if item.get("type") == "vlan"
+        or item.get("vlanid")
+        or item.get("interface")
+        or normalize_ip(item.get("ip")) not in (None, "0.0.0.0")
+    ]
+    vlan_interfaces = [
+        item
+        for item in interfaces
+        if item.get("type") == "vlan" and item.get("vlanid") not in (None, "", 0)
+    ]
 
     checks = []
     parent_interfaces = set()
     for target in targets:
         actual = by_name.get(target["name"])
         if not actual:
+            equivalent = next(
+                (
+                    item
+                    for item in vlan_interfaces
+                    if int(item.get("vlanid", -1)) == int(target["vlanid"])
+                    and normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
+                ),
+                None,
+            )
+            ip_conflict = next(
+                (
+                    item
+                    for item in interfaces
+                    if normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
+                ),
+                None,
+            )
+            if equivalent:
+                parent = equivalent.get("interface")
+                if parent:
+                    parent_interfaces.add(parent)
+                checks.append(
+                    {
+                        "name": target["name"],
+                        "status": "name_mismatch",
+                        "expected": target,
+                        "actual": interface_summary(equivalent),
+                    }
+                )
+                continue
+            if ip_conflict:
+                checks.append(
+                    {
+                        "name": target["name"],
+                        "status": "ip_conflict",
+                        "expected": target,
+                        "actual": interface_summary(ip_conflict),
+                    }
+                )
+                continue
             checks.append(
                 {
                     "name": target["name"],
@@ -161,15 +228,7 @@ def run() -> int:
                 "mismatches": mismatches,
                 "expected": target,
                 "actual": {
-                    "name": actual.get("name"),
-                    "type": actual.get("type"),
-                    "interface": parent,
-                    "vlanid": actual.get("vlanid"),
-                    "ip": actual.get("ip"),
-                    "allowaccess": actual.get("allowaccess"),
-                    "alias": actual.get("alias"),
-                    "role": actual.get("role"),
-                    "status": actual.get("status"),
+                    **interface_summary(actual),
                 },
             }
         )
@@ -181,9 +240,12 @@ def run() -> int:
         "total_interfaces_seen": len(interfaces),
         "target_count": len(targets),
         "match_count": sum(1 for item in checks if item["status"] == "match"),
+        "name_mismatch_count": sum(1 for item in checks if item["status"] == "name_mismatch"),
+        "ip_conflict_count": sum(1 for item in checks if item["status"] == "ip_conflict"),
         "missing_count": sum(1 for item in checks if item["status"] == "missing"),
         "mismatch_count": sum(1 for item in checks if item["status"] == "mismatch"),
         "candidate_parent_interfaces": sorted(parent_interfaces),
+        "actual_interfaces": actual_interface_summary,
         "checks": checks,
     }
 
@@ -196,17 +258,49 @@ def run() -> int:
     print(f"Interfaces seen: {summary['total_interfaces_seen']}")
     print(f"Targets: {summary['target_count']}")
     print(f"Matches: {summary['match_count']}")
+    print(f"Present with different name: {summary['name_mismatch_count']}")
+    print(f"IP conflicts/different type: {summary['ip_conflict_count']}")
     print(f"Missing: {summary['missing_count']}")
     print(f"Mismatches: {summary['mismatch_count']}")
     print(f"Candidate parent interfaces: {', '.join(summary['candidate_parent_interfaces']) or 'none'}")
     print(f"Evidence: {OUT_FILE.relative_to(ROOT)}")
+    print("Existing VLAN interfaces:")
+    for item in actual_interface_summary:
+        if item.get("type") == "vlan":
+            print(
+                "  "
+                f"{item.get('name')} vlanid={item.get('vlanid')} "
+                f"parent={item.get('interface')} ip={item.get('ip')} "
+                f"access={item.get('allowaccess') or ''} status={item.get('status') or ''}"
+            )
     for check in checks:
-        marker = {"match": "OK", "missing": "MISSING", "mismatch": "MISMATCH"}[check["status"]]
+        marker = {
+            "match": "OK",
+            "name_mismatch": "NAME_MISMATCH",
+            "ip_conflict": "IP_CONFLICT",
+            "missing": "MISSING",
+            "mismatch": "MISMATCH",
+        }[check["status"]]
         print(f"{marker}: {check['name']}")
+        if check["status"] in ("name_mismatch", "ip_conflict"):
+            actual = check["actual"]
+            print(
+                "  actual: "
+                f"{actual.get('name')} type={actual.get('type')} "
+                f"parent={actual.get('interface')} vlanid={actual.get('vlanid')} "
+                f"ip={actual.get('ip')}"
+            )
         if check["status"] == "mismatch":
             print(f"  fields: {', '.join(check['mismatches'])}")
 
-    return 0 if summary["missing_count"] == 0 and summary["mismatch_count"] == 0 else 2
+    return (
+        0
+        if summary["missing_count"] == 0
+        and summary["mismatch_count"] == 0
+        and summary["name_mismatch_count"] == 0
+        and summary["ip_conflict_count"] == 0
+        else 2
+    )
 
 
 if __name__ == "__main__":

@@ -216,3 +216,30 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - No live FortiGate config changes were made.
 - Next best step:
   - From console or an existing admin session, verify FortiGate HTTPS/API admin settings, trusted hosts/local-in policy, and create/document a stable 1Password item for FortiGate credentials.
+
+### Session 008 - FortiGate Verification Retry on API Port 7443
+
+- Date: 2026-05-28
+- Goal: Retry FortiGate read-only verification using the correct API URL.
+- Completed:
+  - Verified TCP reachability to `10.99.99.2:7443`.
+  - Ran `configs/fortigate-api-verify.py` with `FORTIGATE_HOST=https://10.99.99.2:7443` via `op run`.
+  - API authentication succeeded using `op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential`.
+  - Discovered 41 FortiGate interfaces.
+  - Enhanced the verifier to distinguish exact matches, live objects with different names, IP conflicts, and missing target interfaces.
+  - Updated Ansible `ansible_httpapi_port` to `7443`.
+  - Updated verified parent interface to `x2`.
+- Evidence captured:
+  - Existing VLAN interfaces:
+    - `hlvl`: VLAN 10, parent `x2`, `10.10.10.2/24`, up.
+    - `k8s`: VLAN 11, parent `x2`, `10.11.11.2/24`, up.
+    - `Wifi`: VLAN 100, parent `x2`, `10.100.100.2/24`, up.
+  - Target comparison:
+    - `VLAN10_PROXMOX_MGMT` is present functionally as `hlvl`, but name differs.
+    - `VLAN20_STORAGE_CEPH`, `VLAN30_VM_SERVICES`, `VLAN40_CONTAINERS_APPS`, `VLAN50_LAB_TEST`, and `VLAN60_DMZ` are missing.
+    - `VLAN99_INFRA_MGMT` conflicts with existing `mgt` hard-switch at `10.99.99.2/24`.
+- Known risks or unresolved issues:
+  - Do not apply current Ansible VLAN list as-is without reconciling VLAN 10 naming and VLAN 99 management design.
+  - Cisco FortiGate trunk still allows only `10,11,100`; VLANs 20,30,40,50,60 must be reviewed on the trunk path before end-to-end gateway tests.
+- Next best step:
+  - Decide whether Ansible should adopt live FortiGate names (`hlvl`) or migrate to repo target names, and exclude or explicitly migrate VLAN 99 before applying any changes.

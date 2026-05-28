@@ -3,11 +3,11 @@ ansible_connection: httpapi
 ansible_network_os: fortinet.fortios.fortios
 ansible_httpapi_use_ssl: true
 ansible_httpapi_validate_certs: false
-ansible_httpapi_port: 443
+ansible_httpapi_port: 7443
 
 fortigate_vdom: root
 fortigate_access_token: "{{ lookup('env', 'FORTIOS_ACCESS_TOKEN') }}"
-fortigate_parent_interface: "__CONFIRM_PARENT_INTERFACE__"
+fortigate_parent_interface: "x2"
 fortigate_apply_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_APPLY') }}"
 
 fortigate_vlan_interfaces:

@@ -14,7 +14,7 @@ Primary sources:
 
 ```mermaid
 flowchart LR
-  fg["FortiGate 100F<br/>Gateway and firewall<br/>Mgmt: 10.99.99.2/24 on VLAN 99<br/>VLAN gateways: .2 per subnet<br/>Parent interface: TBD"]
+  fg["FortiGate 100F<br/>Gateway and firewall<br/>Mgmt: 10.99.99.2/24 on mgt hard-switch<br/>API: https://10.99.99.2:7443<br/>Verified trunk parent: x2"]
 
   c9300["Cisco Catalyst C9300<br/>Core switch<br/>Vlan10: 10.10.10.1/24<br/>Default gateway: 10.10.10.2"]
 
@@ -55,7 +55,7 @@ flowchart LR
   c9300 ==>|Te2/0/46<br/>Repo/live validated allowed VLANs: 3,10,11<br/>network-plan target adds: 30,40,50,60| nodeD
   c9300 -.->|No C9300 port mapping captured<br/>nodeF uses Proxmox port sfp1| nodeF
 
-  fg -.->|Candidate VLAN interfaces<br/>10,20,30,40,50,60,99<br/>parent interface must be confirmed| vmgmt
+  fg -.->|Live: hlvl VLAN 10 on x2<br/>Candidate names still need reconciliation| vmgmt
   fg -.->|Gateway .2| vstore
   fg -.->|Gateway .2| vsvc
   fg -.->|Gateway .2| vapps
@@ -78,6 +78,12 @@ flowchart LR
 ## Current Review Notes
 
 - FortiGate VLAN interfaces are still candidate config. The parent trunk interface is `__CONFIRM_PARENT_INTERFACE__` and must be discovered before apply.
+- FortiGate API was verified at `https://10.99.99.2:7443`.
+- FortiGate parent trunk interface was verified as `x2`.
+- Live FortiGate VLAN interfaces on `x2`: `hlvl` VLAN 10 (`10.10.10.2/24`), `k8s` VLAN 11 (`10.11.11.2/24`), and `Wifi` VLAN 100 (`10.100.100.2/24`).
+- Repo target VLAN interface names are not present yet: `VLAN20_STORAGE_CEPH`, `VLAN30_VM_SERVICES`, `VLAN40_CONTAINERS_APPS`, `VLAN50_LAB_TEST`, and `VLAN60_DMZ` are missing.
+- VLAN 99 target conflicts with existing `mgt` hard-switch using `10.99.99.2/24`; do not create a VLAN 99 interface without a reviewed migration plan.
+- FortiGate VLAN interfaces are still candidate config. The parent trunk interface is now known, but live naming/IP conflicts must be reconciled before apply.
 - The validated C9300 FortiGate trunk currently allows VLANs `10,11,100`, while the FortiGate candidate gateway config includes VLANs `10,20,30,40,50,60,99`. Review trunk allowance before expecting those gateways to pass on that link.
 - `configs/cisco-c9300-iosxe.cfg` and `session-handoff.md` show Proxmox-facing C9300 trunks allowing `3,10,11`; `data/network-plan.json` now records the expanded target `3,10,11,30,40,50,60`.
 - Proxmox SDN is represented as applied cluster-wide in `session-handoff.md`: zone `ztrunk` plus VNets `vmgmt`, `vstore`, `vsvc`, `vapps`, `vlab`, and `vdmz`.
