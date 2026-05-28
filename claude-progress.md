@@ -243,3 +243,27 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Cisco FortiGate trunk still allows only `10,11,100`; VLANs 20,30,40,50,60 must be reviewed on the trunk path before end-to-end gateway tests.
 - Next best step:
   - Decide whether Ansible should adopt live FortiGate names (`hlvl`) or migrate to repo target names, and exclude or explicitly migrate VLAN 99 before applying any changes.
+
+### Session 009 - FortiGate Repo vs Live Comparison
+
+- Date: 2026-05-29
+- Goal: Compare checked-in FortiGate intent against fresh live FortiGate API state.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Ran fresh read-only FortiGate API comparison via `configs/fortigate-api-verify.py`.
+  - Confirmed API endpoint remains `https://10.99.99.2:7443`.
+  - Compared repo intent from `ansible/group_vars/fortigates.yml`, `configs/fortigate-100f-vlan-cli.conf`, and `data/network-plan.json` against live interfaces.
+  - Added `docs/fortigate-repo-live-comparison-2026-05-29.md`.
+- Evidence captured:
+  - Live FortiGate has 41 interfaces.
+  - Live VLAN parent is `x2`.
+  - Live VLAN interfaces on `x2`: `hlvl` VLAN 10, `k8s` VLAN 11, `Wifi` VLAN 100.
+  - Repo target VLANs 20, 30, 40, 50, and 60 are missing from live FortiGate.
+  - Repo target VLAN 10 exists functionally as `hlvl`, but name differs from `VLAN10_PROXMOX_MGMT`.
+  - Repo target VLAN 99 conflicts with existing `mgt` hard-switch at `10.99.99.2/24`.
+- Known risks or unresolved issues:
+  - Applying current Ansible intent as-is would try to create duplicate/conflicting VLAN 10 and VLAN 99 interfaces.
+  - CLI candidate config still has parent placeholder while Ansible/live use `x2`.
+  - Cisco-to-FortiGate trunk currently allows `10,11,100`, not missing target VLANs 20,30,40,50,60.
+- Next best step:
+  - Decide whether to adopt live FortiGate names or migrate to repo target names before generating an apply plan.
