@@ -77,19 +77,21 @@ The goal is to maintain a practical VLAN-based homelab network using:
 
 ### Routing model
 
-FortiGate owns the gateway IP for all VLANs.
+FortiGate owns the gateway IP for VLAN 10 and the approved routed VLANs 30, 40, 50, and 60.
+VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
+VLAN 99 remains on the FortiGate `mgt` hard-switch and must not be recreated as a VLAN interface.
 
-Use `.2` for FortiGate interfaces:
+Use `.2` for FortiGate routed interfaces:
 
 | VLAN | Purpose | Subnet | Gateway |
 |---:|---|---|---|
 | 10 | Proxmox management | 10.10.10.0/24 | 10.10.10.2 |
-| 20 | Storage / Ceph | 10.20.20.0/24 | 10.20.20.2 |
+| 20 | Storage / Ceph | 10.20.20.0/24 | none on FortiGate |
 | 30 | VM services | 10.10.30.0/24 | 10.10.30.2 |
 | 40 | Containers / apps | 10.10.40.0/24 | 10.10.40.2 |
 | 50 | Lab / test | 10.10.50.0/24 | 10.10.50.2 |
 | 60 | DMZ / public-facing | 10.10.60.0/24 | 10.10.60.2 |
-| 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 |
+| 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 on `mgt` hard-switch |
 
 Cisco C9300 is reached for management at `10.10.10.1` on VLAN 10. Do not remove or change existing SVIs without a reviewed migration plan.
 
@@ -107,7 +109,7 @@ VNets:
 | VNet | VLAN | Subnet | Gateway |
 |---|---:|---|---|
 | vmgmt | 10 | 10.10.10.0/24 | 10.10.10.2 |
-| vstore | 20 | 10.20.20.0/24 | 10.20.20.2 |
+| vstore | 20 | 10.20.20.0/24 | none on FortiGate |
 | vsvc | 30 | 10.10.30.0/24 | 10.10.30.2 |
 | vapps | 40 | 10.10.40.0/24 | 10.10.40.2 |
 | vlab | 50 | 10.10.50.0/24 | 10.10.50.2 |
@@ -131,15 +133,16 @@ Do not allow VLAN 99 to Proxmox trunks unless explicitly requested.
 
 ## FortiGate target
 
-Parent interface is currently a placeholder: `internal`.
+Parent interface is verified as `x2`.
 
-Before applying, confirm whether the actual FortiGate uplink is:
+Adopt the live FortiGate interface names:
 
-- a physical port, such as `port1`
-- an aggregate, such as `agg-core`
-- a hardware/software switch interface, such as `internal`
+- VLAN 10 gateway is existing interface `hlvl` on `x2`.
+- VLAN 99 management is existing hard-switch `mgt`.
+- VLAN 20 is not a FortiGate routed interface.
+- Add only missing VLAN interfaces `30`, `40`, `50`, and `60` after reviewing the C9300-to-FortiGate trunk.
 
-All VLAN interfaces should be created under that parent interface.
+New VLAN interfaces should be created under parent interface `x2`.
 
 ## Automation guidance
 

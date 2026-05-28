@@ -137,7 +137,7 @@ if ($Plan) {
     Write-Host "Zone: ztrunk (VLAN, bridge=vmbr0, nodes=nodeA,nodeB,nodeD,nodeF)"
     $targets = @(
         @{VNet="vmgmt"; VLAN=10; Subnet="10.10.10.0/24"; Gateway="10.10.10.2"},
-        @{VNet="vstore"; VLAN=20; Subnet="10.20.20.0/24"; Gateway="10.20.20.2"},
+        @{VNet="vstore"; VLAN=20; Subnet="10.20.20.0/24"; Gateway=$null},
         @{VNet="vsvc"; VLAN=30; Subnet="10.10.30.0/24"; Gateway="10.10.30.2"},
         @{VNet="vapps"; VLAN=40; Subnet="10.10.40.0/24"; Gateway="10.10.40.2"},
         @{VNet="vlab"; VLAN=50; Subnet="10.10.50.0/24"; Gateway="10.10.50.2"},

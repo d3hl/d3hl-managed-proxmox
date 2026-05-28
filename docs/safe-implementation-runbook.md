@@ -6,12 +6,12 @@ Use 1Password vault `d3HLPRV` for credentials. Follow `docs/1password-secrets.md
 
 ## Target Summary
 
-FortiGate owns the `.2` gateway on every VLAN. The Cisco C9300 is reached for management at `10.10.10.1` on VLAN 10. Proxmox uses VLAN SDN zone `ztrunk` on `vmbr0` and does not create `vinfra` / VLAN 99.
+FortiGate owns the `.2` gateway on VLAN 10 and the approved routed VLANs 30, 40, 50, and 60. VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate. The Cisco C9300 is reached for management at `10.10.10.1` on VLAN 10. Proxmox uses VLAN SDN zone `ztrunk` on `vmbr0` and does not create `vinfra` / VLAN 99.
 
 | VLAN | Purpose | Subnet | Gateway | Proxmox VNet |
 |---:|---|---|---|---|
 | 10 | Proxmox management | 10.10.10.0/24 | 10.10.10.2 | vmgmt |
-| 20 | Storage / Ceph | 10.20.20.0/24 | 10.20.20.2 | vstore |
+| 20 | Storage / Ceph | 10.20.20.0/24 | none on FortiGate | vstore |
 | 30 | VM services | 10.10.30.0/24 | 10.10.30.2 | vsvc |
 | 40 | Containers / apps | 10.10.40.0/24 | 10.10.40.2 | vapps |
 | 50 | Lab / test | 10.10.50.0/24 | 10.10.50.2 | vlab |
@@ -77,7 +77,7 @@ show system zone
 get router info routing-table all
 ```
 
-Confirm the FortiGate parent trunk interface before using `configs/fortigate-100f-vlan-cli.conf`. The file intentionally contains `__CONFIRM_PARENT_INTERFACE__` and must not be pasted unchanged.
+Confirm the C9300-to-FortiGate trunk carries the required routed VLANs before using `configs/fortigate-100f-vlan-cli.conf`. The file uses the verified parent interface `x2` and intentionally excludes VLAN 20 and VLAN 99.
 
 ## Diff Rules
 
@@ -97,8 +97,10 @@ Confirm the FortiGate parent trunk interface before using `configs/fortigate-100
    - Confirm `ip routing` is not enabled for this L3 design.
    - Do not save yet.
 3. FortiGate:
-   - Replace `__CONFIRM_PARENT_INTERFACE__` with the confirmed parent interface.
-   - Apply `configs/fortigate-100f-vlan-cli.conf`.
+   - Confirm VLAN 10 is already tracked as `hlvl`.
+   - Confirm VLAN 99 remains on `mgt` hard-switch.
+   - Confirm VLAN 20 is not routed to the FortiGate.
+   - Apply `configs/fortigate-100f-vlan-cli.conf` only for VLANs 30, 40, 50, and 60 after trunk review.
    - Create firewall policies separately.
 4. Proxmox:
    - Confirm `vmbr0` exists and is VLAN-aware on all nodes.
@@ -162,17 +164,14 @@ Remove only interfaces that were newly created during this change:
 
 ```text
 config system interface
-    delete VLAN10_PROXMOX_MGMT
-    delete VLAN20_STORAGE_CEPH
     delete VLAN30_VM_SERVICES
     delete VLAN40_CONTAINERS_APPS
     delete VLAN50_LAB_TEST
     delete VLAN60_DMZ
-    delete VLAN99_INFRA_MGMT
 end
 ```
 
-If an interface existed before the change, restore its prior settings from backup instead of deleting it.
+Do not delete `hlvl`, `mgt`, VLAN 20 objects, `k8s`, or `Wifi` as part of this FortiGate rollback. If an interface existed before the change, restore its prior settings from backup instead of deleting it.
 
 ### Proxmox
 

@@ -71,6 +71,7 @@ ansible-playbook playbooks/fortigate/render-vlan-plan.yml
 cd ansible
 export FORTIOS_ACCESS_TOKEN="op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential"
 export CONFIRM_FORTIGATE_APPLY=yes
+export CONFIRM_FORTIGATE_TRUNK_REVIEW=yes
 op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 ```
 
@@ -78,9 +79,11 @@ op run -- ansible-playbook playbooks/fortigate/apply-vlan-interfaces.yml --diff
 
 - The apply playbook refuses to run while `fortigate_parent_interface` is `__CONFIRM_PARENT_INTERFACE__`.
 - The apply playbook refuses to run unless `CONFIRM_FORTIGATE_APPLY=yes`.
-- FortiGate candidate VLAN interfaces currently include VLANs `10,20,30,40,50,60,99`; verify the C9300 trunk to FortiGate allows the required VLANs before expecting end-to-end reachability.
+- The apply playbook also refuses to run unless `CONFIRM_FORTIGATE_TRUNK_REVIEW=yes`.
+- FortiGate candidate VLAN interfaces currently include only VLANs `30,40,50,60`; verify the C9300 trunk to FortiGate carries those VLANs before expecting end-to-end reachability.
 - The 2026-05-28 retry verified the FortiGate API at `https://10.99.99.2:7443`.
-- Do not apply the current VLAN list as-is without reconciling live state:
-  - VLAN 10 already exists as `hlvl` on parent `x2` with `10.10.10.2/24`.
-  - VLAN 99 IP `10.99.99.2/24` is already used by `mgt` hard-switch.
-  - VLANs 20, 30, 40, 50, and 60 are missing.
+- Current adopted live model:
+  - VLAN 10 is tracked as existing interface `hlvl` on parent `x2` with `10.10.10.2/24`.
+  - VLAN 99 stays on existing `mgt` hard-switch with `10.99.99.2/24`.
+  - VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
+  - VLANs 30, 40, 50, and 60 are the only missing FortiGate gateway candidates.

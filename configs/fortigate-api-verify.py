@@ -18,9 +18,11 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
-NETWORK_PLAN = ROOT / "data" / "network-plan.json"
+FORTIGATE_VARS = ROOT / "ansible" / "group_vars" / "fortigates.yml"
 OUT_DIR = ROOT / "ansible" / "artifacts"
 OUT_FILE = OUT_DIR / "fortigate-verification.json"
 
@@ -60,33 +62,47 @@ def api_get(base_url: str, token: str, path: str) -> dict:
 
 
 def target_interfaces() -> list[dict]:
-    plan = json.loads(NETWORK_PLAN.read_text(encoding="utf-8"))
+    data = yaml.safe_load(FORTIGATE_VARS.read_text(encoding="utf-8"))
     targets = []
-    for item in plan["vlans"]:
-        vlan = item["vlan"]
-        if vlan == 99:
-            role = "lan"
-            allowaccess = ["ping", "https", "ssh"]
-        elif vlan == 60:
-            role = "dmz"
-            allowaccess = ["ping"]
-        elif vlan == 10:
-            role = "lan"
-            allowaccess = ["ping", "https", "ssh"]
-        else:
-            role = "lan"
-            allowaccess = ["ping"]
-        targets.append(
-            {
-                "name": f"VLAN{vlan}_{item['name']}",
-                "vlanid": vlan,
-                "ip": item["gateway"],
-                "alias": item["purpose"],
-                "role": role,
-                "allowaccess": allowaccess,
+    for source_key in ("fortigate_existing_interfaces", "fortigate_vlan_interfaces"):
+        for item in data.get(source_key, []):
+            target = {
+                "name": item["name"],
+                "type": item.get("type", "vlan"),
+                "ip": item["ip"],
+                "alias": item.get("alias"),
+                "role": item.get("role"),
+                "allowaccess": item.get("allowaccess", []),
+                "source": source_key,
             }
-        )
+            if "vlanid" in item:
+                target["vlanid"] = item["vlanid"]
+            targets.append(target)
     return targets
+
+
+def expected_vlanid(target: dict) -> int | None:
+    if "vlanid" not in target:
+        return None
+    try:
+        return int(target["vlanid"])
+    except (TypeError, ValueError):
+        return None
+
+
+def equivalent_vlan(target: dict, vlan_interfaces: list[dict]) -> dict | None:
+    vlanid = expected_vlanid(target)
+    if target.get("type") != "vlan" or vlanid is None:
+        return None
+    return next(
+        (
+            item
+            for item in vlan_interfaces
+            if int(item.get("vlanid", -1)) == vlanid
+            and normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
+        ),
+        None,
+    )
 
 
 def normalize_ip(value: str | None) -> str | None:
@@ -157,15 +173,7 @@ def run() -> int:
     for target in targets:
         actual = by_name.get(target["name"])
         if not actual:
-            equivalent = next(
-                (
-                    item
-                    for item in vlan_interfaces
-                    if int(item.get("vlanid", -1)) == int(target["vlanid"])
-                    and normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
-                ),
-                None,
-            )
+            equivalent = equivalent_vlan(target, vlan_interfaces)
             ip_conflict = next(
                 (
                     item
@@ -210,15 +218,16 @@ def run() -> int:
         actual_ip = normalize_ip(actual.get("ip"))
         expected_ip = normalize_ip(target["ip"])
         parent = actual.get("interface")
-        if parent:
+        if target.get("type") == "vlan" and parent:
             parent_interfaces.add(parent)
 
         mismatches = []
-        if int(actual.get("vlanid", -1)) != int(target["vlanid"]):
+        vlanid = expected_vlanid(target)
+        if vlanid is not None and int(actual.get("vlanid", -1)) != vlanid:
             mismatches.append("vlanid")
         if actual_ip != expected_ip:
             mismatches.append("ip")
-        if actual.get("type") not in ("vlan", "vdom-link"):
+        if target.get("type") and actual.get("type") != target["type"]:
             mismatches.append("type")
 
         checks.append(

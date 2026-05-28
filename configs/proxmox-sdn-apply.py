@@ -62,7 +62,7 @@ BRIDGE = "vmbr0"
 
 VNets = [
     ("vmgmt", 10, "10.10.10.0/24", "10.10.10.2"),
-    ("vstore", 20, "10.20.20.0/24", "10.20.20.2"),
+    ("vstore", 20, "10.20.20.0/24", None),
     ("vsvc", 30, "10.10.30.0/24", "10.10.30.2"),
     ("vapps", 40, "10.10.40.0/24", "10.10.40.2"),
     ("vlab", 50, "10.10.50.0/24", "10.10.50.2"),
@@ -158,7 +158,10 @@ def plan():
             print(f"  VNet '{vnet_name}' already exists - skipping")
         else:
             print(f"  CREATE VNet '{vnet_name}' tag={tag}")
-            print(f"    Subnet: {subnet} gateway={gw}")
+            if gw:
+                print(f"    Subnet: {subnet} gateway={gw}")
+            else:
+                print(f"    Subnet: {subnet} gateway=none")
 
     print("\n--- Phase 4: SDN Apply ---")
     print(f"  RUN: pvesh set /cluster/sdn")
@@ -257,13 +260,15 @@ def apply():
 
         # Create subnet
         subnet_path = f"/cluster/sdn/vnets/{vnet_name}/subnets"
-        result = api_post(subnet_path, {
+        subnet_data = {
             "subnet": subnet,
-            "gateway": gw,
             "type": "subnet",
-        })
+        }
+        if gw:
+            subnet_data["gateway"] = gw
+        result = api_post(subnet_path, subnet_data)
         if result and "data" in result:
-            print(f"    OK: Subnet {subnet} gateway={gw}")
+            print(f"    OK: Subnet {subnet} gateway={gw or 'none'}")
         else:
             print(f"    Subnet may already exist or creation failed")
 

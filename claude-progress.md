@@ -267,3 +267,31 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Cisco-to-FortiGate trunk currently allows `10,11,100`, not missing target VLANs 20,30,40,50,60.
 - Next best step:
   - Decide whether to adopt live FortiGate names or migrate to repo target names before generating an apply plan.
+
+### Session 010 - Adopt Live FortiGate Names
+
+- Date: 2026-05-29
+- Goal: Update repo intent to adopt live FortiGate interface names and keep VLAN 20 off the firewall.
+- Completed:
+  - Updated FortiGate Ansible intent to track existing `hlvl` VLAN 10 and `mgt` hard-switch VLAN 99.
+  - Removed VLAN 20 and VLAN 99 from FortiGate candidate VLAN interface creation.
+  - Limited FortiGate candidate interfaces to VLANs 30, 40, 50, and 60 on parent `x2`.
+  - Added `CONFIRM_FORTIGATE_TRUNK_REVIEW=yes` as an apply gate before FortiGate VLAN creation.
+  - Updated repo docs, diagrams, CLI candidate config, Proxmox SDN helpers, and network plan to show VLAN 20 as C9300/storage-side only with no FortiGate gateway.
+  - Updated the read-only FortiGate verifier to compare against `ansible/group_vars/fortigates.yml` rather than deriving stale targets from `data/network-plan.json`.
+- Verification run:
+  - `bash ./init.sh` passed before edits.
+  - Static JSON validation passed for `data/network-plan.json` and `feature_list.json`.
+  - Python compile passed for `configs/fortigate-api-verify.py` and `configs/proxmox-sdn-apply.py`.
+  - Ansible YAML parse passed for 5 YAML files.
+  - FortiGate VLAN plan template rendered and confirmed `hlvl` is tracked while `VLAN20_STORAGE_CEPH` is absent.
+  - Read-only FortiGate API verification against `https://10.99.99.2:7443` succeeded; exit was non-zero only because VLANs 30,40,50,60 are intentionally still missing.
+- Evidence captured:
+  - Live matches after intent update: `hlvl` and `mgt`.
+  - Remaining FortiGate targets to create after trunk review: `VLAN30_VM_SERVICES`, `VLAN40_CONTAINERS_APPS`, `VLAN50_LAB_TEST`, `VLAN60_DMZ`.
+  - VLAN 20 is no longer a FortiGate target.
+- Known risks or unresolved issues:
+  - C9300-to-FortiGate trunk currently allows `10,11,100`; VLANs 30,40,50,60 must be reviewed before FortiGate gateway apply.
+  - Existing live Proxmox `vstore` subnet may still have the old gateway value from prior state; review before any Proxmox mutation.
+- Next best step:
+  - Review/update the C9300-to-FortiGate trunk allowance for VLANs 30,40,50,60, then render and apply the FortiGate plan from a supported Ansible control host.

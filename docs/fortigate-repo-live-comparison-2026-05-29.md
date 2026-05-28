@@ -78,3 +78,12 @@ Choose one FortiGate intent model before applying changes:
    - Update firewall policies, DHCP, routes, and references before changing names.
 
 Recommended: adopt live names for existing production interfaces, and only add missing VLAN gateways after Cisco trunk allowance is reviewed.
+
+## Decision Recorded
+
+Adopt live names and adjust repo intent:
+
+- Track VLAN 10 as existing FortiGate interface `hlvl`.
+- Keep VLAN 99 on existing FortiGate `mgt` hard-switch.
+- Do not create a FortiGate VLAN 20 interface; VLAN 20 remains on the C9300/storage side.
+- Add only missing FortiGate VLAN gateways 30, 40, 50, and 60 after C9300-to-FortiGate trunk review.

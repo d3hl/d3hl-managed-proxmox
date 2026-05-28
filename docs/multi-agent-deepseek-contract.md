@@ -200,7 +200,8 @@ Next owner:
 The multi-agent task is complete only when:
 
 - Cisco carries the required VLANs without pruning unrelated trunk VLANs.
-- FortiGate owns all `.2` VLAN gateway interfaces on the confirmed parent trunk.
+- FortiGate owns VLAN 10 as live interface `hlvl` and candidate gateway interfaces for VLANs 30,40,50,60 on confirmed parent trunk `x2`.
+- VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
 - Proxmox SDN zone `ztrunk` and VNets `vmgmt`, `vstore`, `vsvc`, `vapps`, `vlab`, and `vdmz` exist.
 - VLAN 99 is not created as a Proxmox VNet.
 - Validation succeeds across all three platforms.

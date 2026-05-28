@@ -39,7 +39,7 @@ Use these files first:
 - `docs/validation-checklist.md`
 - `docs/1password-secrets.md`
 
-`data/network-plan.json` now includes VLAN names and Cisco trunk descriptions.
+`data/network-plan.json` now includes VLAN names, gateway ownership, and Cisco trunk descriptions.
 
 ## DeepSeek Next Task: Proxmox
 
@@ -68,7 +68,7 @@ Target Proxmox SDN:
 - Bridge: `vmbr0`
 - VNets:
   - `vmgmt`, VLAN 10, subnet `10.10.10.0/24`, gateway `10.10.10.2`
-  - `vstore`, VLAN 20, subnet `10.20.20.0/24`, gateway `10.20.20.2`
+  - `vstore`, VLAN 20, subnet `10.20.20.0/24`, no FortiGate gateway
   - `vsvc`, VLAN 30, subnet `10.10.30.0/24`, gateway `10.10.30.2`
   - `vapps`, VLAN 40, subnet `10.10.40.0/24`, gateway `10.10.40.2`
   - `vlab`, VLAN 50, subnet `10.10.50.0/24`, gateway `10.10.50.2`
@@ -96,7 +96,7 @@ Follow `docs/1password-secrets.md`.
 ### SDN
 - Zone: `ztrunk` (vlan, bridge=vmbr0) ✅
 - VNets: `vmgmt`(10), `vstore`(20), `vsvc`(30), `vapps`(40), `vlab`(50), `vdmz`(60) ✅
-- Subnets: All with FortiGate .2 gateways ✅
+- Subnets: VLAN 10 and VLANs 30,40,50,60 use FortiGate .2 gateways; VLAN 20 is storage-side only ✅
 - SDN applied cluster-wide ✅
 
 ### OVS Trunks (synced from live)
@@ -125,6 +125,5 @@ Follow `docs/1password-secrets.md`.
 ### Next Actions
 1. Full cross-platform validation: Cisco↔Proxmox↔FortiGate
 2. Cisco `write memory` after validation
-3. FortiGate VLAN interface creation
+3. FortiGate VLAN interface creation for VLANs 30,40,50,60 after C9300 trunk review
 4. Test VM attachment to VNets
-

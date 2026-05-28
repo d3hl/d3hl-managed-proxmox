@@ -4,7 +4,7 @@
     "fortigate_100f": {
       "role": "main firewall and VLAN gateway",
       "management_ip": "10.99.99.2/24",
-      "gateway_convention": ".2 on every VLAN"
+      "gateway_convention": ".2 on firewall-routed VLANs; VLAN 20 is not routed to the firewall"
     },
     "cisco_c9300": {
       "role": "core L3 switch",
@@ -30,6 +30,8 @@
       "vlan": 10,
       "subnet": "10.10.10.0/24",
       "gateway": "10.10.10.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "hlvl",
       "vnet": "vmgmt"
     },
     {
@@ -37,7 +39,10 @@
       "name": "STORAGE_CEPH",
       "vlan": 20,
       "subnet": "10.20.20.0/24",
-      "gateway": "10.20.20.2",
+      "gateway": null,
+      "gateway_device": "c9300",
+      "fortigate_interface": null,
+      "note": "Storage VLAN remains on C9300/storage side and is not routed to the FortiGate.",
       "vnet": "vstore"
     },
     {
@@ -46,6 +51,8 @@
       "vlan": 30,
       "subnet": "10.10.30.0/24",
       "gateway": "10.10.30.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "VLAN30_VM_SERVICES",
       "vnet": "vsvc"
     },
     {
@@ -54,6 +61,8 @@
       "vlan": 40,
       "subnet": "10.10.40.0/24",
       "gateway": "10.10.40.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "VLAN40_CONTAINERS_APPS",
       "vnet": "vapps"
     },
     {
@@ -62,6 +71,8 @@
       "vlan": 50,
       "subnet": "10.10.50.0/24",
       "gateway": "10.10.50.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "VLAN50_LAB_TEST",
       "vnet": "vlab"
     },
     {
@@ -70,6 +81,8 @@
       "vlan": 60,
       "subnet": "10.10.60.0/24",
       "gateway": "10.10.60.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "VLAN60_DMZ",
       "vnet": "vdmz"
     },
     {
@@ -78,6 +91,8 @@
       "vlan": 99,
       "subnet": "10.99.99.0/24",
       "gateway": "10.99.99.2",
+      "gateway_device": "fortigate_mgt_hard_switch",
+      "fortigate_interface": "mgt",
       "vnet": null
     }
   ],

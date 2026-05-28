@@ -9,24 +9,35 @@ fortigate_vdom: root
 fortigate_access_token: "{{ lookup('env', 'FORTIOS_ACCESS_TOKEN') }}"
 fortigate_parent_interface: "x2"
 fortigate_apply_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_APPLY') }}"
+fortigate_trunk_review_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_TRUNK_REVIEW') }}"
 
-fortigate_vlan_interfaces:
-  - name: VLAN10_PROXMOX_MGMT
+fortigate_existing_interfaces:
+  - name: hlvl
+    type: vlan
     vlanid: 10
     ip: 10.10.10.2/24
     allowaccess:
       - ping
       - https
       - ssh
+      - snmp
+      - fgfm
+      - fabric
     alias: Proxmox management
     role: lan
-  - name: VLAN20_STORAGE_CEPH
-    vlanid: 20
-    ip: 10.20.20.2/24
+    note: Existing live VLAN 10 gateway; track by live name and do not recreate.
+  - name: mgt
+    type: hard-switch
+    ip: 10.99.99.2/24
     allowaccess:
       - ping
-    alias: Storage / Ceph
+      - https
+      - ssh
+    alias: Infrastructure management
     role: lan
+    note: Existing live management hard-switch; do not create VLAN 99 interface.
+
+fortigate_vlan_interfaces:
   - name: VLAN30_VM_SERVICES
     vlanid: 30
     ip: 10.10.30.2/24
@@ -55,12 +66,3 @@ fortigate_vlan_interfaces:
       - ping
     alias: DMZ / public-facing
     role: dmz
-  - name: VLAN99_INFRA_MGMT
-    vlanid: 99
-    ip: 10.99.99.2/24
-    allowaccess:
-      - ping
-      - https
-      - ssh
-    alias: Infrastructure management
-    role: lan

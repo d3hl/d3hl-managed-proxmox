@@ -1,6 +1,6 @@
 {
   "project": "Homelab Proxmox SDN Design",
-  "last_updated": "2026-05-28",
+  "last_updated": "2026-05-29",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -34,12 +34,12 @@
       "priority": 2,
       "area": "fortigate",
       "title": "Confirm FortiGate parent interface & create VLAN interfaces",
-      "user_visible_behavior": "FortiGate has VLAN interfaces with .2 addresses on all VLANs",
+      "user_visible_behavior": "FortiGate tracks live VLAN 10 as hlvl, keeps VLAN 99 on mgt, and adds only routed VLAN gateways 30,40,50,60 after trunk review",
       "status": "in_progress",
       "verification": [
         "Ansible YAML files parse successfully",
         "FortiGate VLAN plan template renders successfully",
-        "show system interface shows all VLAN interfaces",
+        "show system interface shows hlvl, mgt, and routed VLAN interfaces 30,40,50,60",
         "execute ping 10.10.10.1 from 10.10.10.2 succeeds"
       ],
       "evidence": [
@@ -47,9 +47,11 @@
         "Static YAML validation passed for 5 Ansible YAML files",
         "Jinja render validation passed for ansible/templates/fortigate/vlan-interface-plan.md.j2",
         "2026-05-28 read-only verification: API reachable at https://10.99.99.2:7443; 41 interfaces seen; x2 is VLAN parent; hlvl VLAN10 exists with 10.10.10.2/24; VLANs 20,30,40,50,60 are missing; VLAN99 target conflicts with mgt hard-switch 10.99.99.2/24",
-        "2026-05-29 repo/live comparison recorded in docs/fortigate-repo-live-comparison-2026-05-29.md"
+        "2026-05-29 repo/live comparison recorded in docs/fortigate-repo-live-comparison-2026-05-29.md",
+        "2026-05-29 adopted live FortiGate names: hlvl tracks VLAN10, mgt tracks VLAN99, VLAN20 excluded from FortiGate routing, and only VLANs 30,40,50,60 remain as FortiGate candidates",
+        "2026-05-29 read-only verification after intent update: hlvl and mgt matched; VLANs 30,40,50,60 are the only missing FortiGate targets"
       ],
-      "notes": "No live FortiGate changes applied. Parent interface verified as x2. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. Reconcile live VLAN10 name and VLAN99 mgt hard-switch conflict before applying Ansible changes."
+      "notes": "No live FortiGate changes applied. Parent interface verified as x2. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or another supported control host. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
     },
     {
       "id": "proxmox-001",
@@ -71,7 +73,7 @@
         "OVS trunks synced from live: nodeA=en10basep2, nodeB=ennic1s1, nodeD=eno1, nodeF=sfp1",
         "nodeA/B/D trunk: 3,10,11,30,40,50,60 | nodeF trunk: 10,11,30,40,50,60 (VLAN 3 via dedicated vmbr3)"
       ],
-      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide.",
+      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide. Repo intent now treats vstore/VLAN20 as storage-side only with no FortiGate gateway; review live Proxmox subnet gateway before any Proxmox mutation.",
       "remaining": null
     },
     {

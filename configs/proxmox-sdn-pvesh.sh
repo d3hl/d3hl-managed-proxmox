@@ -21,7 +21,7 @@ NODES="nodeA,nodeB,nodeD,nodeF"
 
 VNETS=(
   "vmgmt:10:10.10.10.0/24:10.10.10.2"
-  "vstore:20:10.20.20.0/24:10.20.20.2"
+  "vstore:20:10.20.20.0/24:"
   "vsvc:30:10.10.30.0/24:10.10.30.2"
   "vapps:40:10.10.40.0/24:10.10.40.2"
   "vlab:50:10.10.50.0/24:10.10.50.2"
@@ -83,7 +83,11 @@ plan() {
   for item in "${VNETS[@]}"; do
     IFS=":" read -r vnet tag subnet gateway <<<"$item"
     print_cmd pvesh create /cluster/sdn/vnets --vnet "$vnet" --zone "$ZONE" --tag "$tag"
-    print_cmd pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet" --gateway "$gateway"
+    if [[ -n "$gateway" ]]; then
+      print_cmd pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet" --gateway "$gateway"
+    else
+      print_cmd pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet"
+    fi
   done
 
   echo
@@ -132,7 +136,11 @@ apply() {
     if subnet_exists "$vnet" "$subnet"; then
       echo "Subnet ${subnet} for ${vnet} already exists; leaving it unchanged."
     else
-      pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet" --gateway "$gateway"
+      if [[ -n "$gateway" ]]; then
+        pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet" --gateway "$gateway"
+      else
+        pvesh create "/cluster/sdn/vnets/${vnet}/subnets" --subnet "$subnet"
+      fi
     fi
   done
 

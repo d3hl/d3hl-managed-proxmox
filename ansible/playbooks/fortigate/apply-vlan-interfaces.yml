@@ -12,6 +12,12 @@
           - fortigate_apply_confirm == 'yes'
         fail_msg: "Refusing to apply: set CONFIRM_FORTIGATE_APPLY=yes after discovery and plan review."
 
+    - name: Require C9300 to FortiGate trunk review confirmation
+      ansible.builtin.assert:
+        that:
+          - fortigate_trunk_review_confirm == 'yes'
+        fail_msg: "Refusing to apply: set CONFIRM_FORTIGATE_TRUNK_REVIEW=yes after confirming the C9300 FortiGate trunk carries VLANs 30,40,50,60."
+
     - name: Require confirmed FortiGate parent interface
       ansible.builtin.assert:
         that:

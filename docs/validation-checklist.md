@@ -5,8 +5,9 @@
 - [ ] Run the read-only discovery commands in `docs/safe-implementation-runbook.md`.
 - [ ] Review candidate diff and mark conflicts before mutation.
 - [ ] Confirm 1Password CLI access and vault `d3HLPRV` availability for any required credentials.
-- [ ] Confirm FortiGate parent trunk interface name.
+- [ ] Confirm FortiGate parent trunk interface `x2`.
 - [ ] Confirm C9300 FortiGate uplink port.
+- [ ] Confirm C9300 FortiGate trunk carries VLANs 30,40,50,60 before FortiGate apply.
 - [ ] Confirm C9300 Proxmox node ports.
 - [ ] Confirm Proxmox node names.
 - [ ] Confirm `vmbr0` exists and is VLAN-aware on all Proxmox nodes.
@@ -26,7 +27,7 @@ ping 10.10.10.2 source vlan10
 
 Expected:
 - VLANs 10,20,30,40,50,60,99 exist.
-- FortiGate trunk allows VLANs 10,11,100.
+- FortiGate trunk allows current live VLANs 10,11,100 and reviewed routed VLANs 30,40,50,60 before FortiGate gateway apply.
 - Node trunks allow VLANs 3,10,11.
 - VLAN10 SVI is up/up.
 - C9300 can ping FortiGate 10.10.10.2 from VLAN10.
@@ -41,7 +42,10 @@ execute ping 10.10.10.1
 ```
 
 Expected:
-- VLAN interfaces exist with `.2` addresses.
+- Existing `hlvl` VLAN 10 interface remains present with `10.10.10.2/24`.
+- Existing `mgt` hard-switch remains present with `10.99.99.2/24`.
+- VLAN 20 is not created as a FortiGate routed interface.
+- Candidate VLAN interfaces 30,40,50,60 exist with `.2` addresses after apply.
 - FortiGate can ping C9300 management IP 10.10.10.1.
 - Firewall policies are created separately according to security requirements.
 
