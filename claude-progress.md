@@ -4,9 +4,9 @@
 
 - Repository root: `C:\Users\phong.dinh\Github\d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
-- Standard verification path: Cisco validated; Proxmox API discovery completed; vmbr0 VLAN-aware blocker identified.
-- Current highest-priority unfinished feature: `proxmox-001` (blocked — vmbr0 not VLAN-aware)
-- Current blocker: `vmbr0` is NOT VLAN-aware on any Proxmox node. Must edit `/etc/network/interfaces` on all 4 nodes.
+- Standard verification path: Cisco validated; Proxmox SDN/API validation completed; FortiGate VLAN gateways 30,40,50,60 created.
+- Current highest-priority unfinished feature: `fortigate-001` (in progress — firewall policies and guest/client reachability still need validation once clients exist)
+- Current blocker: no VM/CT was found directly attached to routed Proxmox VNets `vsvc`, `vapps`, `vlab`, or `vdmz`, so guest-side gateway ping could not be completed.
 
 ## Quick Report - 2026-05-28
 
@@ -353,3 +353,38 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - End-to-end client/VM reachability on VLANs 30,40,50,60 still needs validation.
 - Next best step:
   - Validate Proxmox/VM reachability through the new FortiGate gateways, then decide whether to save C9300 persistent config.
+
+### Session 013 - Proxmox/FortiGate Gateway Validation
+
+- Date: 2026-05-29
+- Goal: Validate Proxmox/VM reachability through the new FortiGate VLAN gateways.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Added `configs/proxmox-fortigate-gateway-validate.py`, a read-only Proxmox API validator for routed VNet gateways and OVS trunk VLANs.
+  - Authenticated to Proxmox API at `https://10.10.10.10:8006` using 1Password-scoped token id + credential refs from `Proxmox API for AI`.
+  - Validated Proxmox version `9.2.2`.
+  - Validated SDN routed VNet gateway definitions:
+    - `vsvc` VLAN 30 gateway `10.10.30.2`
+    - `vapps` VLAN 40 gateway `10.10.40.2`
+    - `vlab` VLAN 50 gateway `10.10.50.2`
+    - `vdmz` VLAN 60 gateway `10.10.60.2`
+  - Validated OVS trunk VLAN allowance on all Proxmox nodes:
+    - `nodeA/en10basep2`
+    - `nodeB/ennic1s1`
+    - `nodeD/eno1`
+    - `nodeF/sfp1`
+- Verification run:
+  - `python -m py_compile configs\proxmox-fortigate-gateway-validate.py` passed.
+  - `op run -- python configs\proxmox-fortigate-gateway-validate.py` passed for SDN gateway and OVS trunk checks.
+  - Evidence written to ignored artifact `ansible/artifacts/proxmox-fortigate-gateway-validation.json`.
+- Evidence captured:
+  - SDN gateway checks: OK for `vsvc`, `vapps`, `vlab`, and `vdmz`.
+  - OVS trunk checks: OK for `nodeA`, `nodeB`, `nodeD`, and `nodeF`.
+  - VMs attached directly to routed VNets: `0`.
+- Known risks or unresolved issues:
+  - Guest-side VM ping was not completed because no VM/CT was found directly attached to the routed VNets during the successful validation pass.
+  - A broadened rerun to also catch `vmbr0` plus VLAN-tagged NICs was prepared in the helper, but the rerun was blocked by a 1Password authorization timeout.
+  - Live C9300 running-config is still not saved with `write memory`.
+  - FortiGate firewall policies for these VLANs are still separate from interface/gateway validation.
+- Next best step:
+  - Attach or identify a test VM/CT on `vsvc`, `vapps`, `vlab`, or `vdmz`, rerun `configs/proxmox-fortigate-gateway-validate.py`, then save the C9300 config after end-to-end validation succeeds.

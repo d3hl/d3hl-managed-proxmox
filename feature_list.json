@@ -75,9 +75,10 @@
         "SDN zone ztrunk created on vmbr0",
         "6 VNets: vmgmt(10), vstore(20), vsvc(30), vapps(40), vlab(50), vdmz(60)",
         "OVS trunks synced from live: nodeA=en10basep2, nodeB=ennic1s1, nodeD=eno1, nodeF=sfp1",
-        "nodeA/B/D trunk: 3,10,11,30,40,50,60 | nodeF trunk: 10,11,30,40,50,60 (VLAN 3 via dedicated vmbr3)"
+        "nodeA/B/D trunk: 3,10,11,30,40,50,60 | nodeF trunk: 10,11,30,40,50,60 (VLAN 3 via dedicated vmbr3)",
+        "2026-05-29 Proxmox/FortiGate gateway validation: SDN gateway checks OK for vsvc/vapps/vlab/vdmz and OVS trunk checks OK for nodeA/nodeB/nodeD/nodeF"
       ],
-      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide. Repo intent now treats vstore/VLAN20 as storage-side only with no FortiGate gateway; review live Proxmox subnet gateway before any Proxmox mutation.",
+      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide. Repo intent now treats vstore/VLAN20 as storage-side only with no FortiGate gateway. 2026-05-29 validation found zero VMs/CTs directly attached to routed VNets vsvc/vapps/vlab/vdmz, so guest-side gateway ping still requires an attached test workload.",
       "remaining": null
     },
     {
