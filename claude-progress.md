@@ -388,3 +388,42 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - FortiGate firewall policies for these VLANs are still separate from interface/gateway validation.
 - Next best step:
   - Attach or identify a test VM/CT on `vsvc`, `vapps`, `vlab`, or `vdmz`, rerun `configs/proxmox-fortigate-gateway-validate.py`, then save the C9300 config after end-to-end validation succeeds.
+
+### Session 014 - Attach VM 444 to vlab
+
+- Date: 2026-05-29
+- Goal: Attach VM ID `444` to `vlab` and verify connectivity.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Discovered VM `444`:
+    - Name: `sg-hl-vm01`
+    - Node: `nodeF`
+    - Type: `qemu`
+    - Initial status: `stopped`
+    - Existing NIC: `net0` on `vmbr0`, VLAN tag `10`
+  - Added an additive second NIC, leaving `net0` untouched:
+    - `net1`: `virtio=BC:24:11:DF:0A:C4,bridge=vlab,firewall=1`
+  - Verified VM config shows both `net0` and `net1`.
+  - Started VM `444` for guest-side connectivity validation.
+  - Reran `configs/proxmox-fortigate-gateway-validate.py`.
+- Verification run:
+  - Proxmox SDN gateway checks: OK for `vsvc`, `vapps`, `vlab`, and `vdmz`.
+  - OVS trunk checks: OK for `nodeA`, `nodeB`, `nodeD`, and `nodeF`.
+  - Validator discovered 20 VMs/CTs and 1 VM attached to routed VNets: VM `444` on `vlab`.
+  - VM `444` status during validation: `running`.
+  - Guest-agent ping could not run because Proxmox returned HTTP 501 for `GET /nodes/nodeF/qemu/444/agent/ping`.
+- Evidence captured:
+  - Ignored artifact updated: `ansible/artifacts/proxmox-fortigate-gateway-validation.json`
+  - Attached VM evidence in artifact:
+    - `vmid`: `444`
+    - `name`: `sg-hl-vm01`
+    - `target_vnet`: `vlab`
+    - `gateway`: `10.10.50.2`
+    - `reachability.status`: `agent_unavailable`
+- Known risks or unresolved issues:
+  - VM `444` is now running; it was stopped before this validation attempt.
+  - Guest-side connectivity to `10.10.50.2` is not proven because the QEMU guest agent endpoint is unavailable.
+  - VM `444` does not show cloud-init `ipconfig1`; `vlab` has no DHCP range in the Proxmox SDN subnet artifact, so a guest IP configuration may still be needed.
+  - FortiGate firewall policies for routed VLANs are still separate from interface/gateway validation.
+- Next best step:
+  - Enable/repair QEMU guest agent inside VM `444` or configure an IP on `net1`, then rerun `configs/proxmox-fortigate-gateway-validate.py` to prove guest-side ping to `10.10.50.2`.
