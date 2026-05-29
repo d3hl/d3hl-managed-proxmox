@@ -2,11 +2,11 @@
 
 ## Current Verified State
 
-- Repository root: `C:\Users\phong.dinh\Github\d3hl-managed-proxmox`
+- Repository root: `/home/d3/Github/d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
 - Standard verification path: Cisco validated; Proxmox SDN/API validation completed; FortiGate VLAN gateways 30,40,50,60 created.
 - Current highest-priority unfinished feature: `fortigate-001` (in progress — firewall policies and guest/client reachability still need validation once clients exist)
-- Current blocker: no VM/CT was found directly attached to routed Proxmox VNets `vsvc`, `vapps`, `vlab`, or `vdmz`, so guest-side gateway ping could not be completed.
+- Current blocker: VM `444` / `sg-hl-vm01` is attached to `vlab` as `net1`, but guest-side gateway ping to `10.10.50.2` is not proven because the QEMU guest agent endpoint is unavailable and `net1` may still need guest IP configuration.
 
 ## Quick Report - 2026-05-28
 
@@ -427,3 +427,30 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - FortiGate firewall policies for routed VLANs are still separate from interface/gateway validation.
 - Next best step:
   - Enable/repair QEMU guest agent inside VM `444` or configure an IP on `net1`, then rerun `configs/proxmox-fortigate-gateway-validate.py` to prove guest-side ping to `10.10.50.2`.
+
+### Session 015 - Assign Composer FortiGate Role
+
+- Date: 2026-05-30
+- Goal: Reassign FortiGate implementation ownership to Composer with strict boundaries.
+- Completed:
+  - Updated `docs/multi-agent-deepseek-contract.md` from a Codex + DeepSeek contract to a Codex + DeepSeek + Composer contract.
+  - Assigned Composer as the strict FortiGate 100F implementation agent.
+  - Removed FortiGate implementation ownership from Codex; Codex remains architecture, Cisco, safety-gate, and final-review owner.
+  - Kept DeepSeek as Proxmox implementation and end-to-end validation owner.
+  - Added Composer guardrails:
+    - no Cisco or Proxmox mutation
+    - no FortiGate VLAN 20 interface
+    - no VLAN 99 recreation outside existing `mgt`
+    - no rename/replacement of existing `hlvl`, `mgt`, `k8s`, or `Wifi` without reviewed migration
+    - no parent trunk change away from `x2` without fresh discovery and Codex review
+    - no FortiGate persistent save before validation and Codex approval
+  - Fixed `init.sh` startup fallback so a repo-local `.venv` Python can satisfy the required pip check in this environment.
+  - Added `.venv/` to `.gitignore`.
+- Verification run:
+  - Startup pre-check found baseline initially blocked because system Python had no `pip`.
+  - `python3 -m venv .venv` successfully created a repo-local Python with pip.
+  - `bash ./init.sh` passed after dependency sync through `.venv/bin/python`.
+- Known risks or unresolved issues:
+  - Composer still needs to create a separate FortiGate firewall policy plan before any policy mutation.
+- Next best step:
+  - Continue FortiGate policy planning under Composer ownership, then validate guest/client reachability before Cisco `write memory`.

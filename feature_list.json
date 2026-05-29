@@ -1,6 +1,6 @@
 {
   "project": "Homelab Proxmox SDN Design",
-  "last_updated": "2026-05-29",
+  "last_updated": "2026-05-30",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -95,7 +95,8 @@
       ],
       "evidence": [
         "Created docs/current-network-diagram.md from data/network-plan.json, Cisco/FortiGate config snapshots, Proxmox SDN script, and session-handoff.md",
-        "Baseline ./init.sh passed after fixing init.sh Python selection and data/network-plan.json JSON syntax"
+        "Baseline ./init.sh passed after fixing init.sh Python selection and data/network-plan.json JSON syntax",
+        "2026-05-30 docs/multi-agent-deepseek-contract.md reassigned strict FortiGate implementation ownership to Composer"
       ],
       "notes": "Diagram intentionally calls out the FortiGate trunk/VLAN gateway review item and the Cisco Proxmox trunk discrepancy between validated config snapshots and network-plan target."
     }
