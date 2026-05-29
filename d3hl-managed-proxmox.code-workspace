@@ -2,13 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "netops-stack",
-			"path": "../netops-stack"
-		},
-		{
-			"path": "../network-mcp-docker-suite"
 		}
 	],
 	"settings": {}
