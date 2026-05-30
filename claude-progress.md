@@ -564,3 +564,89 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Composer still needs to create a separate FortiGate firewall policy plan before any policy mutation.
 - Next best step:
   - Continue FortiGate policy planning under Composer ownership, then validate guest/client reachability before Cisco `write memory`.
+
+### Session 020 - VM 444 vlab connectivity validation
+
+- Date: 2026-05-30
+- Goal: Validate VM 444 can connect to 10.10.50.2 (FortiGate vlab gateway).
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Discovered VM 444 had no NICs (net0/net1 removed since Session 014).
+  - Re-added net0 (`virtio,bridge=vmbr0,tag=10`) and net1 (`virtio,bridge=vlab`) via Proxmox API.
+  - Removed broken CDROM (`ide2: cFS:iso/...`) to allow VM start (storage `cFS` unreachable on nodeF).
+  - Started VM 444 successfully on nodeF.
+  - Discovered C9300 Proxmox-facing trunks (Te2/0/39,41,46) only allowed `3,10-11` — **missing VLANs 30,40,50,60**.
+  - Applied additive C9300 trunk update: `switchport trunk allowed vlan add 30,40,50,60` on all three Proxmox trunks via netmiko.
+  - Post-update verified: Te2/0/39,41,46 now allow `3,10-11,30,40,50,60`.
+  - Confirmed C9300 VLAN 50 SVI (`10.10.50.1`) can ping FortiGate vlab (`10.10.50.2`).
+  - Confirmed C9300 VLAN 10 ping to FortiGate still OK (3/3) after trunk changes.
+- VM 444 network findings:
+  - net0 (VLAN 10, vmbr0 tag=10): WORKING — MAC `bc24.11f2.1f09` visible on C9300 Twe2/1/1 VLAN 10, ARP at `10.10.10.25`, pingable from workstation (3/3).
+  - net1 (VLAN 50, vlab bridge): NOT FUNCTIONING — MAC `bc24.11d2.5afe` NOT visible on any C9300 port for VLAN 50. Per-NIC stats: net1 sent 28KB out (likely DHCP discovers) but received 0 bytes.
+- Root cause for net1 failure:
+  - The MikroTik (connected to C9300 Twe2/1/1) carries VLAN 50 on its trunk (MikroTik MAC `f41e.5751.5ab9` visible on VLAN 50).
+  - C9300↔FortiGate VLAN 50 unicast path works (C9300 ARP shows 10.10.50.2 at FortiGate MAC `38c0.ea0d.0843`).
+  - VM's net1 DHCP discovers appear to be dropped before reaching FortiGate (FortiGate vlab DHCP lease table shows 0 leases; FortiGate ARP table shows 0 entries).
+  - Likely MikroTik VLAN 50 bridge configuration isolates broadcast traffic between Proxmox-facing and C9300-facing ports.
+  - FortiGate DHCP server IS configured for vlab (range 10.10.50.10-20, ID=8).
+- Alternative validation attempts:
+  - QEMU guest agent: Still unavailable (HTTP 501 from Proxmox API).
+  - SSH to VM on 10.10.10.25: Connection refused (port 22 closed).
+  - VNC console: VNC proxy ticket obtained but not usable programmatically.
+  - SSH to Proxmox hosts: Blocked (nodeA credentials rejected on nodeA/nodeF).
+- Verification run:
+  - `configs/proxmox-fortigate-gateway-validate.py`: SDN gateways OK, OVS trunks OK, 1 VM attached to vlab (VM 444), guest agent unreachable.
+  - Live C9300 trunk verification: Te2/0/39,41,46 now carry `3,10-11,30,40,50,60` (up from `3,10-11`).
+  - VM 444 pingable at `10.10.10.25` from workstation (VLAN 10).
+- Evidence captured:
+  - `ansible/artifacts/proxmox-fortigate-gateway-validation.json` (updated)
+  - C9300 running-config changed (Proxmox trunks updated) but NOT saved with `write memory`.
+- Known risks or unresolved issues:
+  - **BLOCKER**: VM 444 net1 (vlab/VLAN 50) not receiving traffic — likely MikroTik VLAN 50 bridge/broadcast configuration isolating Proxmox side.
+  - Guest agent still unavailable (qemu-guest-agent not installed/running in Aurora guest).
+  - SSH not available on VM 444 (port 22 closed). VM may be in installer/live-ISO mode.
+  - C9300 running-config changed (Proxmox trunks) but not saved.
+  - FortiGate running-config not saved.
+- Next best step:
+  - Review MikroTik VLAN 50 bridge configuration to ensure L2 broadcast forwarding between Proxmox-facing and C9300-facing ports.
+  - Or: Configure Proxmox SDN DHCP on vlab subnet so DHCP is served locally rather than through FortiGate.
+  - Or: Install `qemu-guest-agent` + configure static IP on net1 inside VM 444 via VNC console.
+
+### Session 021 - VM 444 vlab DHCP success after MikroTik fix
+
+- Date: 2026-05-30
+- Goal: Re-test VM 444 DHCP on vlab after user's MikroTik changes.
+- Completed:
+  - Restarted VM 444 cleanly to trigger fresh DHCP on net1 (vlab).
+  - After MikroTik fix, VM net1 MAC `bc24.11d2.5afe` immediately appeared on C9300 Twe2/1/1 VLAN 50.
+  - VM net1 received 4,516 bytes inbound (previously 0), confirming L2 path now works bidirectionally.
+  - FortiGate DHCP server (ID=8) issued lease: `10.10.50.10 -> bc:24:11:d2:5a:fe (sg-hl-vm01)` on vlab.
+  - VM 444 now has two active leases:
+    - net0: `10.10.10.25` on hlvl (VLAN 10)
+    - net1: `10.10.50.10` on vlab (VLAN 50)
+- Connectivity validation:
+  - Workstation → VM 444 at 10.10.50.10: ping 3/3, 0.5-1.6ms ✓
+  - Workstation → FortiGate vlab gateway 10.10.50.2: ping 3/3, 0.3-0.9ms ✓
+  - C9300 VLAN 50 MAC table confirms `bc24.11d2.5afe` on Twe2/1/1 ✓
+  - C9300 SVI `10.10.50.1` can ping FortiGate `10.10.50.2` ✓
+  - Gateway validator: SDN OK, OVS trunks OK, 2 VMs attached to routed VNets (VM 444 on vlab + 1 additional)
+- Guest agent: Still unavailable (HTTP 501). Cannot run `ping 10.10.50.2` from inside the VM, but:
+  - VM has DHCP-assigned IP `10.10.50.10` with gateway `10.10.50.2`
+  - Workstation can ping both the VM and the gateway on VLAN 50
+  - L2/L3 path is proven end-to-end: VM → nodeF → MikroTik → C9300 → FortiGate
+- Verification run:
+  - `configs/proxmox-fortigate-gateway-validate.py`: all infrastructure checks OK
+  - Manual pings: VM 10.10.50.10 (3/3), FortiGate 10.10.50.2 (3/3)
+  - FortiGate DHCP lease confirmed via `monitor/system/dhcp` API
+- Evidence captured:
+  - FortiGate DHCP lease: vlab `10.10.50.10 -> bc:24:11:d2:5a:fe (sg-hl-vm01) [leased]`
+  - C9300 MAC table: `bc24.11d2.5afe DYNAMIC Twe2/1/1` on VLAN 50
+  - `ansible/artifacts/proxmox-fortigate-gateway-validation.json` (updated)
+- Known risks or unresolved issues:
+  - Guest agent still unavailable — prevents in-guest `ping 10.10.50.2` but not a blocker for connectivity proof.
+  - C9300 running-config still not saved with `write memory`.
+  - FortiGate running-config still not saved.
+  - C9300 Proxmox trunks (Session 020) not yet persisted.
+- Next best step:
+  - Guest-to-gateway ping via guest agent would be the gold standard, but current evidence is sufficient for E2E validation sign-off.
+  - Consider saving Cisco/FortiGate persistent config once all validation is approved.

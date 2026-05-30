@@ -30,7 +30,7 @@
         "Session 001: ping 10.10.10.2 source vlan10 returned 5/5",
         "2026-05-29 live C9300 FortiGate trunk TwentyFiveGigE2/1/2 updated additively from 10,11,100 to 10,11,30,40,50,60,100; VLAN10 ping to FortiGate remained OK"
       ],
-      "notes": "Running-config validated but NOT saved with write memory. FortiGate trunk now carries 10,11,30,40,50,60,100 for routed VLAN gateway work."
+      "notes": "Running-config validated but NOT saved with write memory. FortiGate trunk now carries 10,11,30,40,50,60,100 for routed VLAN gateway work. 2026-05-30 Proxmox-facing trunks (Te2/0/39,41,46) updated from 3,10-11 to 3,10-11,30,40,50,60."
     },
     {
       "id": "fortigate-001",
@@ -56,9 +56,10 @@
         "2026-05-29 FortiGate apply created vsvc VLAN30, vapps VLAN40, vlab VLAN50, and vdmz VLAN60 on parent x2; post-apply API verification showed 6/6 target matches",
         "2026-05-30 FortiGate discovery via service account: 6/6 interfaces match; 0 homelab policies pre-apply",
         "2026-05-30 FortiGate policy apply: 4 address objects, 4 zones (VSVC/VAPPS/VLAB/VDMZ), 7 Phase B firewall policies; 15/15 operations ok in fortigate-policy-apply.json; post-apply 7 zones and 12 total policies",
-        "2026-05-30 Codex approval: Composer FortiGate running-config policy implementation approved after baseline init, read-only rediscovery, 6/6 interface match, 15/15 apply operations ok, and policy IDs 10-16 present; persistent save deferred pending guest/client validation"
+        "2026-05-30 Codex approval: Composer FortiGate running-config policy implementation approved after baseline init, read-only rediscovery, 6/6 interface match, 15/15 apply operations ok, and policy IDs 10-16 present; persistent save deferred pending guest/client validation",
+        "2026-05-30 Session 021: VM 444 E2E validated on vlab/VLAN 50 — DHCP lease 10.10.50.10 via FortiGate ID=8, pingable from workstation, gateway 10.10.50.2 reachable. MikroTik broadcast fix resolved previous blocker."
       ],
-      "notes": "Live FortiGate VLAN interfaces 30,40,50,60 are present with short FortiOS-safe names. Parent interface verified as x2. Address objects, zones, and Phase B inter-VLAN policies applied 2026-05-30 and approved by Codex for running-config. Apply gates: CONFIRM_FORTIGATE_POLICY_PLAN_REVIEW=yes and CONFIRM_FORTIGATE_POLICY_APPLY=yes via configs/fortigate-policy-op-run.sh. FortiGate persistent save not yet performed. Guest-side E2E validation still pending."
+      "notes": "Live FortiGate VLAN interfaces 30,40,50,60 up on x2. Address objects, zones, Phase B inter-VLAN policies applied and Codex-approved for running-config. FortiGate DHCP server on vlab (ID=8) now successfully leasing to VM 444 (10.10.50.10). E2E VLAN 50 validation complete: VM → MikroTik → C9300 → FortiGate path proven. Persistent save deferred pending final approval."
     },
     {
       "id": "proxmox-001",
@@ -80,9 +81,11 @@
         "OVS trunks synced from live: nodeA=en10basep2, nodeB=ennic1s1, nodeD=eno1, nodeF=sfp1",
         "nodeA/B/D trunk: 3,10,11,30,40,50,60 | nodeF trunk: 10,11,30,40,50,60 (VLAN 3 via dedicated vmbr3)",
         "2026-05-29 Proxmox/FortiGate gateway validation: SDN gateway checks OK for vsvc/vapps/vlab/vdmz and OVS trunk checks OK for nodeA/nodeB/nodeD/nodeF",
-        "2026-05-29 VM 444 sg-hl-vm01 attached additively to vlab as net1 on nodeF; validator sees VM 444 on vlab but guest-agent ping is unavailable"
+        "2026-05-29 VM 444 sg-hl-vm01 attached additively to vlab as net1 on nodeF; validator sees VM 444 on vlab but guest-agent ping is unavailable",
+        "2026-05-30 VM 444 NICs re-added (had been removed); net0 working on VLAN 10 (10.10.10.25 reachable); net1 on vlab sends DHCP discovers but receives no response (MikroTik broadcast isolation suspected)",
+        "2026-05-30 Session 021: After MikroTik fix, VM 444 received DHCP lease on vlab: 10.10.50.10 (MAC bc24.11d2.5afe, sg-hl-vm01). Workstation → VM 10.10.50.10 ping 3/3. Workstation → FortiGate 10.10.50.2 ping 3/3. E2E VLAN 50 connectivity validated."
       ],
-      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide. Repo intent now treats vstore/VLAN20 as storage-side only with no FortiGate gateway. 2026-05-29 VM 444 is attached to vlab as net1 and running, but guest-side gateway ping still requires QEMU guest agent availability or guest IP configuration.",
+      "notes": "Repo synced from live Proxmox 2026-05-28. All 4 nodes have OVS trunk ports with SDN zone + 6 VNets active cluster-wide. 2026-05-30 Session 021: VM 444 E2E validated on vlab/VLAN 50 — DHCP lease obtained from FortiGate (10.10.50.10), pingable from workstation (3/3). FortiGate vlab gateway 10.10.50.2 also reachable (3/3). Guest agent still unavailable but connectivity proven via cross-platform pings.",
       "remaining": null
     },
     {
