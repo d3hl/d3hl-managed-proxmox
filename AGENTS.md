@@ -127,7 +127,7 @@ FortiGate trunk:
 Proxmox trunks:
 
 - Interfaces: `TenGigabitEthernet2/0/39`, `TenGigabitEthernet2/0/41`, `TenGigabitEthernet2/0/46`
-- Allowed VLANs: `3,10,11`
+- Allowed VLANs: `3,10,11,30,40,50,60`
 
 Do not allow VLAN 99 to Proxmox trunks unless explicitly requested.
 

@@ -612,6 +612,29 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Or: Configure Proxmox SDN DHCP on vlab subnet so DHCP is served locally rather than through FortiGate.
   - Or: Install `qemu-guest-agent` + configure static IP on net1 inside VM 444 via VNC console.
 
+### Session 022 - FortiGate Repo-Live Verify and Save Approval Path
+
+- Date: 2026-05-30
+- Goal: Verify FortiGate live config matches repo intent; document persistent save approval path.
+- Completed:
+  - Added `configs/fortigate-repo-live-verify.py` and `configs/fortigate-repo-live-verify-op-run.sh`.
+  - Added `docs/fortigate-persistent-save-approval.md` with preconditions, verification commands, save steps, and rollback.
+  - Ran repo-vs-live verification: 22/23 checks match, 1 mismatch, 0 missing, 0 unexpected.
+- Verification result:
+  - Interfaces: 6/6 match on parent `x2`
+  - Trunk VLANs on `x2`: 10,11,30,40,50,60,100 match `data/network-plan.json`
+  - Address objects: 4/4 match
+  - Zones: VSVC/VAPPS/VLAB/VDMZ match
+  - Policies: 6/7 match
+  - **MISMATCH**: `HOMELAB-TO-MGMT-LIMITED` — live `srcintf` is `[VAPPS, VSVC]` but repo expects `[VSVC, VAPPS, VLAB]`; `srcaddr` still includes `vlab address` on live
+- Evidence captured:
+  - `ansible/artifacts/fortigate-repo-live-verify.json`
+- Known risks or unresolved issues:
+  - Persistent save not executed; pending user decision on policy mismatch and Codex final sign-off.
+  - Cisco `write memory` still pending (Codex-owned).
+- Next best step:
+  - User/Codex decides whether to fix live policy (add VLAB to srcintf) or update repo intent.
+
 ### Session 021 - VM 444 vlab DHCP success after MikroTik fix
 
 - Date: 2026-05-30
