@@ -1,6 +1,6 @@
 {
   "project": "Homelab Proxmox SDN Design",
-  "last_updated": "2026-05-30",
+  "last_updated": "2026-05-31",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -28,9 +28,11 @@
       ],
       "evidence": [
         "Session 001: ping 10.10.10.2 source vlan10 returned 5/5",
-        "2026-05-29 live C9300 FortiGate trunk TwentyFiveGigE2/1/2 updated additively from 10,11,100 to 10,11,30,40,50,60,100; VLAN10 ping to FortiGate remained OK"
+        "2026-05-29 live C9300 FortiGate trunk TwentyFiveGigE2/1/2 updated additively from 10,11,100 to 10,11,30,40,50,60,100; VLAN10 ping to FortiGate remained OK",
+        "2026-05-31 live C9300 verification passed against data/network-plan.json: VLANs present, FortiGate trunk 10,11,30,40,50,60,100, Proxmox trunks 3,10,11,30,40,50,60, Vlan10 up/up, ping 10.10.10.2 source vlan10 OK",
+        "2026-05-31 C9300 write memory completed after verification; post-save verification still passed"
       ],
-      "notes": "Running-config validated but NOT saved with write memory. FortiGate trunk now carries 10,11,30,40,50,60,100 for routed VLAN gateway work. 2026-05-30 Proxmox-facing trunks (Te2/0/39,41,46) updated from 3,10-11 to 3,10-11,30,40,50,60."
+      "notes": "Running-config validated and saved with write memory on 2026-05-31. FortiGate trunk carries 10,11,30,40,50,60,100. Proxmox-facing trunks Te2/0/39, Te2/0/41, and Te2/0/46 carry 3,10,11,30,40,50,60."
     },
     {
       "id": "fortigate-001",

@@ -4,9 +4,9 @@
 
 - Repository root: `/home/d3/Github/d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
-- Standard verification path: Cisco validated; Proxmox SDN/API validation completed; FortiGate VLAN gateways 30,40,50,60 created.
-- Current highest-priority unfinished feature: `fortigate-001` (in progress — firewall policies and guest/client reachability still need validation once clients exist)
-- Current blocker: VM `444` / `sg-hl-vm01` is attached to `vlab` as `net1`, but guest-side gateway ping to `10.10.50.2` is not proven because the QEMU guest agent endpoint is unavailable and `net1` may still need guest IP configuration.
+- Standard verification path: Cisco validated and saved; Proxmox SDN/API validation completed; FortiGate VLAN gateways 30,40,50,60 created.
+- Current highest-priority unfinished feature: `fortigate-001` (in progress — FortiGate persistent save still needs explicit approval/path after Cisco save)
+- Current blocker: none for C9300 persistence; VM `444` / `sg-hl-vm01` has E2E VLAN 50 reachability via DHCP lease `10.10.50.10`, though QEMU guest agent remains unavailable.
 
 ## Quick Report - 2026-05-28
 
@@ -673,3 +673,35 @@ bash configs/proxmox-sdn-pvesh.sh plan
 - Next best step:
   - Guest-to-gateway ping via guest agent would be the gold standard, but current evidence is sufficient for E2E validation sign-off.
   - Consider saving Cisco/FortiGate persistent config once all validation is approved.
+
+### Session 022 - C9300 Verification and Persistent Save
+
+- Date: 2026-05-31
+- Goal: Verify C9300 VLANs, trunks, and SVI against repo intent, then save running-config after approval path.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Confirmed repo Cisco intent is aligned for expanded Proxmox trunks:
+    - `AGENTS.md`: Proxmox trunks allow `3,10,11,30,40,50,60`
+    - `configs/cisco-c9300-iosxe.cfg`: Te2/0/39, Te2/0/41, and Te2/0/46 allow `3,10,11,30,40,50,60`
+    - `data/network-plan.json`: C9300-to-Proxmox allowed VLANs `3,10,11,30,40,50,60`
+  - Added C9300 verification helper:
+    - `configs/cisco-c9300-verify.py`
+    - `configs/cisco-c9300-op-run.sh`
+  - Ran read-only live C9300 verification through 1Password-scoped credentials:
+    - VLANs present; none missing
+    - FortiGate trunk `TwentyFiveGigE2/1/2`: `10,11,30,40,50,60,100`
+    - Proxmox trunk `TenGigabitEthernet2/0/39`: `3,10,11,30,40,50,60`
+    - Proxmox trunk `TenGigabitEthernet2/0/41`: `3,10,11,30,40,50,60`
+    - Proxmox trunk `TenGigabitEthernet2/0/46`: `3,10,11,30,40,50,60`
+    - `Vlan10` up/up
+    - `ping 10.10.10.2 source vlan10` OK
+  - Ran gated persistent save:
+    - `CONFIRM_CISCO_WRITE_MEMORY=yes bash configs/cisco-c9300-op-run.sh --write-memory`
+  - Post-save verification passed with the same VLAN, trunk, SVI, and ping results.
+- Evidence captured:
+  - `ansible/artifacts/cisco-c9300-verification.json` (ignored artifact)
+- Known risks or unresolved issues:
+  - FortiGate running-config is still not persist-saved.
+  - QEMU guest agent for VM 444 is still unavailable, but E2E VLAN 50 connectivity is proven by DHCP lease and workstation pings.
+- Next best step:
+  - Decide whether to run FortiGate persistent save after final FortiGate verification.
