@@ -53,9 +53,12 @@
         "2026-05-29 repo/live comparison recorded in docs/fortigate-repo-live-comparison-2026-05-29.md",
         "2026-05-29 adopted live FortiGate names: hlvl tracks VLAN10, mgt tracks VLAN99, VLAN20 excluded from FortiGate routing, and only VLANs 30,40,50,60 remain as FortiGate candidates",
         "2026-05-29 read-only verification after intent update: hlvl and mgt matched; VLANs 30,40,50,60 are the only missing FortiGate targets",
-        "2026-05-29 FortiGate apply created vsvc VLAN30, vapps VLAN40, vlab VLAN50, and vdmz VLAN60 on parent x2; post-apply API verification showed 6/6 target matches"
+        "2026-05-29 FortiGate apply created vsvc VLAN30, vapps VLAN40, vlab VLAN50, and vdmz VLAN60 on parent x2; post-apply API verification showed 6/6 target matches",
+        "2026-05-30 FortiGate discovery via service account: 6/6 interfaces match; 0 homelab policies pre-apply",
+        "2026-05-30 FortiGate policy apply: 4 address objects, 4 zones (VSVC/VAPPS/VLAB/VDMZ), 7 Phase B firewall policies; 15/15 operations ok in fortigate-policy-apply.json; post-apply 7 zones and 12 total policies",
+        "2026-05-30 Codex approval: Composer FortiGate running-config policy implementation approved after baseline init, read-only rediscovery, 6/6 interface match, 15/15 apply operations ok, and policy IDs 10-16 present; persistent save deferred pending guest/client validation"
       ],
-      "notes": "Live FortiGate VLAN interfaces 30,40,50,60 are now present with short FortiOS-safe names. Parent interface verified as x2. C9300-to-FortiGate trunk now carries 10,11,30,40,50,60,100 in running-config. Local Windows Ansible CLI fails during startup with WinError 87; run Ansible from WSL/Linux or use configs/fortigate-api-apply-vlans.py from this workstation. Apply is gated by CONFIRM_FORTIGATE_APPLY=yes and CONFIRM_FORTIGATE_TRUNK_REVIEW=yes."
+      "notes": "Live FortiGate VLAN interfaces 30,40,50,60 are present with short FortiOS-safe names. Parent interface verified as x2. Address objects, zones, and Phase B inter-VLAN policies applied 2026-05-30 and approved by Codex for running-config. Apply gates: CONFIRM_FORTIGATE_POLICY_PLAN_REVIEW=yes and CONFIRM_FORTIGATE_POLICY_APPLY=yes via configs/fortigate-policy-op-run.sh. FortiGate persistent save not yet performed. Guest-side E2E validation still pending."
     },
     {
       "id": "proxmox-001",

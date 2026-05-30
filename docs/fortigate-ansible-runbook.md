@@ -47,6 +47,19 @@ If you prefer the stable item name `fortigate-100f`, create it and store the
 API token in an `access_token` field, then update this runbook and
 `ansible/group_vars/fortigates.yml` accordingly.
 
+## Read-Only Discovery (Interfaces + Policies)
+
+After `op signin` or with `OP_SERVICE_ACCOUNT_TOKEN` set:
+
+```bash
+bash configs/fortigate-discover-op-run.sh
+```
+
+Artifacts:
+
+- `ansible/artifacts/fortigate-verification.json` (interface intent comparison)
+- `ansible/artifacts/fortigate-discovery.json` (interfaces, zones, homelab-related policies)
+
 ## Safe Workflow
 
 1. Discover current interfaces:

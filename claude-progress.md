@@ -428,6 +428,116 @@ bash configs/proxmox-sdn-pvesh.sh plan
 - Next best step:
   - Enable/repair QEMU guest agent inside VM `444` or configure an IP on `net1`, then rerun `configs/proxmox-fortigate-gateway-validate.py` to prove guest-side ping to `10.10.50.2`.
 
+### Session 019 - Codex Approval of Composer FortiGate Config
+
+- Date: 2026-05-30
+- Goal: Validate and approve Composer's FortiGate policy/config evidence.
+- Completed:
+  - Ran standard baseline: `bash ./init.sh` passed.
+  - Reviewed Composer evidence:
+    - `ansible/artifacts/fortigate-policy-apply.json`
+    - `ansible/artifacts/fortigate-discovery.json`
+  - Reran read-only FortiGate discovery with `bash configs/fortigate-discover-op-run.sh`; exit 0.
+  - Confirmed FortiGate interface validation remains clean:
+    - 45 interfaces seen
+    - 6/6 target interfaces match
+    - 0 missing
+    - 0 mismatches
+    - parent remains `x2`
+  - Confirmed Composer's apply evidence:
+    - 15/15 operations OK
+    - 4 address objects created for `vsvc`, `vapps`, `vlab`, `vdmz`
+    - 4 zones created: `VSVC`, `VAPPS`, `VLAB`, `VDMZ`, each intrazone deny
+    - 7 Phase B policies present as policy IDs 10-16
+  - Confirmed policy/config scope stayed FortiGate-only:
+    - no VLAN 20 routed interface or policy target
+    - no VLAN 99 recreation outside existing `mgt`
+    - no Cisco or Proxmox mutation path in the FortiGate policy helper
+  - Python compile passed for:
+    - `configs/fortigate-api-discover.py`
+    - `configs/fortigate-api-apply-policies.py`
+    - `configs/fortigate-api-connect-test.py`
+- Approval:
+  - Codex approves Composer's FortiGate running-config policy implementation as matching the recorded FortiGate intent and evidence.
+  - Codex does not yet approve FortiGate persistent save until guest/client end-to-end validation passes.
+- Known risks or unresolved issues:
+  - Guest-side VM 444 gateway ping to `10.10.50.2` is still unvalidated.
+  - Cisco running-config is still not saved with `write memory`.
+  - FortiGate persistent save remains deferred until end-to-end validation.
+- Next best step:
+  - DeepSeek validates guest/client reachability on `vlab` or another routed VNet, then Codex can approve persistent saves.
+
+### Session 018 - FortiGate Policy Apply
+
+- Date: 2026-05-30
+- Goal: Create address objects, zones, and Phase B inter-VLAN firewall policies for vsvc/vapps/vlab/vdmz.
+- Completed:
+  - Added intent: `ansible/group_vars/fortigate_policies.yml`.
+  - Added gated apply: `configs/fortigate-api-apply-policies.py`, `configs/fortigate-policy-op-run.sh`.
+  - Applied with `CONFIRM_FORTIGATE_POLICY_PLAN_REVIEW=yes` and `CONFIRM_FORTIGATE_POLICY_APPLY=yes`.
+  - Created 4 address objects: `vsvc address`, `vapps address`, `vlab address`, `vdmz address`.
+  - Created 4 zones: `VSVC`, `VAPPS`, `VLAB`, `VDMZ` (each with matching interface, intrazone deny).
+  - Created 7 firewall policies per Phase B matrix.
+  - Post-apply discovery: 7 zones, 12 policies, 9 homelab address objects; interfaces still 6/6 match.
+- Evidence captured:
+  - `ansible/artifacts/fortigate-policy-apply.json` (15/15 operations ok)
+  - `ansible/artifacts/fortigate-discovery.json` (post-apply)
+- Known risks or unresolved issues:
+  - FortiGate config not persist-saved; Codex approval required before save.
+  - Guest-side VM 444 gateway ping still unvalidated (DeepSeek).
+  - Policy order: new policies appended after existing policyid 9; review order if behavior differs from intent.
+- Next best step:
+  - DeepSeek validates guest ping to `10.10.50.2` on VM 444; Codex reviews before FortiGate/Cisco persistent save.
+
+### Session 017 - FortiGate Live Discovery (Succeeded)
+
+- Date: 2026-05-30
+- Goal: Fresh read-only FortiGate API discovery with service account token.
+- Completed:
+  - Loaded `OP_SERVICE_ACCOUNT_TOKEN` from `~/.zshrc` into agent shell.
+  - Confirmed vault access: `AI`, `d3HL`, `d3HLPRV` all visible.
+  - Ran `bash configs/fortigate-discover-op-run.sh` — exit 0.
+  - Resolved token from `op://d3HLPRV/FORTIOS_ACCESS_TOKEN/credential` to FortiGate API bearer.
+  - Ran full discovery: interfaces + zones + policies + address objects.
+- Evidence captured:
+  - `ansible/artifacts/fortigate-verification.json`: 6/6 targets match, 0 missing, 0 mismatch.
+  - `ansible/artifacts/fortigate-discovery.json`: zones, policies, address objects captured.
+- Live FortiGate state (confirmed 2026-05-30):
+  - Interfaces: `hlvl` VLAN10, `mgt` hard-switch, `vsvc` VLAN30, `vapps` VLAN40, `vlab` VLAN50, `vdmz` VLAN60 — all up on parent `x2`.
+  - Also live: `k8s` VLAN11, `Wifi` VLAN100 (not managed by this project).
+  - Total interfaces seen: 45.
+  - Zones: `HL` (hlvl+lan+k8s, intrazone allow), `WIFI` (intrazone deny), `vpn_d3ipsec_zone`.
+  - Firewall policies: 5 total, **0 homelab-related policies** (vsvc/vapps/vlab/vdmz have no policies yet).
+  - Address objects for homelab subnets: `hlvl address` (10.10.10.0/24), `k8s address` (10.11.11.0/24), `Wifi address` (10.100.100.0/24), `spoke-d3_local_subnet_1` (10.10.10.0/24), `spoke-d3_local_subnet_2` (10.99.99.0/24).
+  - **No address objects exist for vsvc/vapps/vlab/vdmz subnets (10.10.30-60.0/24).**
+- Known risks or unresolved issues:
+  - Zone `HL` covers `hlvl`, `lan`, `k8s` with intrazone allow — new VLAN interfaces vsvc/vapps/vlab/vdmz are NOT in any zone.
+  - No firewall policies reference the new VLAN interfaces: inter-VLAN routing is possible at L3 but not policy-permitted yet.
+  - VM 444 guest-side ping to 10.10.50.2 still unvalidated.
+- Next best step:
+  - Produce FortiGate policy plan: address objects + zone membership + inter-VLAN policies for vsvc/vapps/vlab/vdmz.
+
+### Session 016 - FortiGate Discovery Tooling (Blocked on op auth)
+
+- Date: 2026-05-30
+- Goal: Run fresh read-only FortiGate API discovery (interfaces, zones, policies).
+- Completed:
+  - Installed native Linux `op` 2.34.0 in Fedora WSL (`dnf install 1password-cli`).
+  - Added `configs/fortigate-api-discover.py` for interfaces + zones + homelab-related firewall policies.
+  - Added `configs/fortigate-discover-op-run.sh` wrapper for `op run` or `OP_SERVICE_ACCOUNT_TOKEN`.
+  - Added `configs/setup-1password-service-account.sh` and WSL/service-account notes in `docs/1password-secrets.md`.
+- Verification run:
+  - `bash ./init.sh` passed earlier in session.
+  - `python -m py_compile configs/fortigate-api-discover.py` passed.
+  - Live discovery blocked: `op account list` works but `op vault list` and `op run` require sign-in or `OP_SERVICE_ACCOUNT_TOKEN`.
+- Evidence captured:
+  - Last known interface state remains `ansible/artifacts/fortigate-verification.json` (6/6 targets matched from Session 012).
+- Known risks or unresolved issues:
+  - Fresh policy/zone discovery not run yet in this session.
+  - Operator must run `eval "$(op signin --account my)"` or export `OP_SERVICE_ACCOUNT_TOKEN` before discovery.
+- Next best step:
+  - `bash configs/fortigate-discover-op-run.sh` after authentication, then continue FortiGate firewall policy planning.
+
 ### Session 015 - Assign Composer FortiGate Role
 
 - Date: 2026-05-30
