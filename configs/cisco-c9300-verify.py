@@ -100,7 +100,7 @@ def parse_vlan10_status(text: str) -> dict:
                 "line": line,
                 "ip": parts[1] if len(parts) > 1 else "",
                 "status": parts[-2] if len(parts) > 2 else "",
-                "protocol": parts[-1] if len(parts) > 1 else "",
+                "protocol": parts[-1] if len(parts) > 2 else "",
             }
     return {"line": "", "ip": "", "status": "", "protocol": ""}
 

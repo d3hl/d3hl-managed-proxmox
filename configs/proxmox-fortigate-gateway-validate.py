@@ -222,6 +222,10 @@ def agent_ping(node: str, vmid: int, gateway: str) -> dict:
         {"style": "linux", "args": ["-c", "3", "-W", "2", gateway]},
         {"style": "windows", "args": ["-n", "3", "-w", "2000", gateway]},
     ]
+    last_result = {
+        "status": "failed",
+        "error": "guest agent ping attempts did not return exitcode 0",
+    }
     for attempt in attempts:
         status, payload, error = api(
             "POST",
@@ -260,9 +264,22 @@ def agent_ping(node: str, vmid: int, gateway: str) -> dict:
                 "stdout_preview": (final.get("out-data") or "")[:300],
             }
         if final.get("exited"):
+            last_result = {
+                "status": "ping_failed",
+                "style": attempt["style"],
+                "exitcode": final.get("exitcode"),
+                "stdout_preview": (final.get("out-data") or "")[:300],
+                "error": f"guest agent ping exited with code {final.get('exitcode')}",
+            }
             continue
+        if final.get("status") != "exec_status_error":
+            last_result = {
+                "status": "exec_timeout",
+                "style": attempt["style"],
+                "error": "guest agent ping command did not exit within polling window",
+            }
 
-    return {"status": "failed", "error": "guest agent ping attempts did not return exitcode 0"}
+    return last_result
 
 
 def validate_guest_reachability(vms: list[dict]) -> list[dict]:
