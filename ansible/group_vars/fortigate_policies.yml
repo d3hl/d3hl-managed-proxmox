@@ -76,14 +76,14 @@ fortigate_firewall_policies:
   - name: HOMELAB-TO-MGMT-LIMITED
     status: enable
     action: accept
-    srcintf: [VSVC, VAPPS, VLAB]
+    srcintf: [VSVC, VAPPS]
     dstintf: [HL]
-    srcaddr: [vsvc address, vapps address, vlab address]
+    srcaddr: [vsvc address, vapps address]
     dstaddr: [hlvl address]
     service: [DNS, NTP, PING]
     schedule: always
     nat: disable
-    comments: Limited return/management traffic from homelab VLANs to management
+    comments: Limited return/management traffic from vsvc/vapps to management; VLAB intentionally excluded
 
   - name: VMSVC-VAPPS-EASTWEST
     status: enable

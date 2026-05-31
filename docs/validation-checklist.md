@@ -64,3 +64,39 @@ Expected:
 - VNets exist: `vmgmt`, `vstore`, `vsvc`, `vapps`, `vlab`, `vdmz`.
 - VNet interfaces appear on the Proxmox nodes after SDN apply.
 - VMs can attach to the correct VNet.
+
+## Network dashboard canvas refresh
+
+The homelab network dashboard is a Cursor canvas at
+`~/.cursor/projects/home-d3-Github-d3hl-managed-proxmox/canvases/homelab-network-dashboard.canvas.tsx`.
+It shows FortiGate → C9300 → Proxmox topology, VLAN relationships, interface status, and IP inventory.
+
+### Prerequisites
+
+- [ ] 1Password CLI authenticated (`op whoami`) or `OP_SERVICE_ACCOUNT_TOKEN` exported.
+- [ ] Vault `d3HLPRV` credentials available for FortiGate API, Cisco SSH, and Proxmox API.
+
+### Refresh from the canvas
+
+1. Open the canvas beside chat and click **Refresh live data**.
+2. The button opens an agent chat with a prompt to re-run discovery and update the canvas sidecar.
+3. Confirm `homelab-network-dashboard.canvas.data.json` timestamp updates after the agent completes.
+
+### Refresh from the shell
+
+```bash
+# Offline merge from existing artifacts only
+bash configs/network-dashboard-collect.sh --write-sidecar
+
+# Live discovery + merge + sidecar update
+bash configs/network-dashboard-collect.sh --live --write-sidecar
+```
+
+Expected outputs:
+
+- `data/network-dashboard-snapshot.json` — committed snapshot artifact
+- `~/.cursor/projects/home-d3-Github-d3hl-managed-proxmox/canvases/homelab-network-dashboard.canvas.data.json` — runtime canvas state
+
+### Rollback
+
+Delete `homelab-network-dashboard.canvas.data.json` to fall back to the embedded seed snapshot in the `.canvas.tsx` file.

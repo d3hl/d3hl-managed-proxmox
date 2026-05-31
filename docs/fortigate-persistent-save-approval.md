@@ -11,8 +11,8 @@ for persistent save, and the exact commands to run after approval.
 - [x] E2E VLAN 50 validation: VM 444 DHCP lease `10.10.50.10` via FortiGate vlab (Session 021)
 - [x] Workstation → VM `10.10.50.10` ping 3/3
 - [x] Workstation → FortiGate gateway `10.10.50.2` ping 3/3
-- [ ] Fresh repo-vs-live FortiGate verification passes (`configs/fortigate-repo-live-verify.py`)
-- [ ] Codex final approval for persistent save
+- [x] Fresh repo-vs-live FortiGate verification passes (`configs/fortigate-repo-live-verify.py`) — 23/23 match after HOMELAB-TO-MGMT-LIMITED align
+- [x] User approved persistent save (2026-05-31)
 
 ## Repo sources of truth
 
@@ -29,6 +29,7 @@ for persistent save, and the exact commands to run after approval.
 source ~/.zshrc   # OP_SERVICE_ACCOUNT_TOKEN
 bash configs/fortigate-discover-op-run.sh
 bash configs/fortigate-repo-live-verify-op-run.sh
+CONFIRM_FORTIGATE_PERSISTENT_SAVE=yes bash configs/fortigate-persist-save-op-run.sh
 ```
 
 Expected:
@@ -129,7 +130,8 @@ Reload unsaved running-config or restore pre-change trunk VLAN lists captured in
 |---|---|---|---|
 | 2026-05-30 | Codex | FortiGate running-config policy implementation | No — deferred pending E2E |
 | 2026-05-30 | — | E2E VLAN 50 validated (Session 021) | No — pending repo-live verify + final Codex sign-off |
-| TBD | Codex | FortiGate + Cisco persistent save | Pending |
+| 2026-05-31 | User | FortiGate persistent save (verify 23/23, config backup POST) | Yes |
+| 2026-05-31 | Session 022 | Cisco `write memory` | Yes |
 
 ## Next step
 
