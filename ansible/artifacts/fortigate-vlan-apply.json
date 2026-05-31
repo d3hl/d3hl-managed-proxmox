@@ -1,0 +1,38 @@
+{
+  "applied_at_epoch": 1780001466,
+  "host": "10.99.99.2:7443",
+  "vdom": "root",
+  "parent_interface": "x2",
+  "candidate_count": 4,
+  "failed_count": 0,
+  "operations": [
+    {
+      "name": "vsvc",
+      "method": "POST",
+      "status": "ok",
+      "http_status": 200,
+      "revision_changed": true
+    },
+    {
+      "name": "vapps",
+      "method": "POST",
+      "status": "ok",
+      "http_status": 200,
+      "revision_changed": true
+    },
+    {
+      "name": "vlab",
+      "method": "POST",
+      "status": "ok",
+      "http_status": 200,
+      "revision_changed": true
+    },
+    {
+      "name": "vdmz",
+      "method": "POST",
+      "status": "ok",
+      "http_status": 200,
+      "revision_changed": true
+    }
+  ]
+}

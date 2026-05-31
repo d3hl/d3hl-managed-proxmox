@@ -1,0 +1,336 @@
+{
+  "verified_at_epoch": 1780144764,
+  "vdom": "root",
+  "fortigate_host": "10.99.99.2:7443",
+  "total_interfaces_seen": 45,
+  "target_count": 6,
+  "match_count": 6,
+  "name_mismatch_count": 0,
+  "ip_conflict_count": 0,
+  "missing_count": 0,
+  "mismatch_count": 0,
+  "candidate_parent_interfaces": [
+    "x2"
+  ],
+  "actual_interfaces": [
+    {
+      "name": "ADVPN_SPOKE1",
+      "type": "tunnel",
+      "interface": "x1",
+      "vlanid": 0,
+      "ip": "10.10.1.3 255.255.255.255",
+      "allowaccess": "",
+      "alias": "",
+      "role": "undefined",
+      "status": "up"
+    },
+    {
+      "name": "Wifi",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 100,
+      "ip": "10.100.100.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "d3ipsec",
+      "type": "tunnel",
+      "interface": "wan-mr",
+      "vlanid": 0,
+      "ip": "0.0.0.0 0.0.0.0",
+      "allowaccess": "",
+      "alias": "",
+      "role": "undefined",
+      "status": "up"
+    },
+    {
+      "name": "hlvl",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 10,
+      "ip": "10.10.10.2 255.255.255.0",
+      "allowaccess": "ping https ssh snmp fgfm fabric",
+      "alias": "",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "k8s",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 11,
+      "ip": "10.11.11.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "lan",
+      "type": "hard-switch",
+      "interface": "",
+      "vlanid": 0,
+      "ip": "199.199.199.99 255.255.255.0",
+      "allowaccess": "ping https ssh",
+      "alias": "",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "mgt",
+      "type": "hard-switch",
+      "interface": "",
+      "vlanid": 0,
+      "ip": "10.99.99.2 255.255.255.0",
+      "allowaccess": "ping https",
+      "alias": "",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "vapps",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 40,
+      "ip": "10.10.40.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "Containers / apps",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "vdmz",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 60,
+      "ip": "10.10.60.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "DMZ / public-facing",
+      "role": "dmz",
+      "status": "up"
+    },
+    {
+      "name": "vlab",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 50,
+      "ip": "10.10.50.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "Lab / test",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "vsvc",
+      "type": "vlan",
+      "interface": "x2",
+      "vlanid": 30,
+      "ip": "10.10.30.2 255.255.255.0",
+      "allowaccess": "ping",
+      "alias": "VM services",
+      "role": "lan",
+      "status": "up"
+    },
+    {
+      "name": "wan-mr",
+      "type": "aggregate",
+      "interface": "",
+      "vlanid": 0,
+      "ip": "158.140.145.243 255.255.255.0",
+      "allowaccess": "fabric",
+      "alias": "MyRepublic",
+      "role": "wan",
+      "status": "up"
+    },
+    {
+      "name": "x1",
+      "type": "physical",
+      "interface": "",
+      "vlanid": 0,
+      "ip": "202.83.99.15 255.255.255.0",
+      "allowaccess": "fabric",
+      "alias": "ViewQuest",
+      "role": "wan",
+      "status": "up"
+    }
+  ],
+  "checks": [
+    {
+      "name": "hlvl",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "hlvl",
+        "type": "vlan",
+        "ip": "10.10.10.2/24",
+        "alias": "Proxmox management",
+        "role": "lan",
+        "allowaccess": [
+          "ping",
+          "https",
+          "ssh",
+          "snmp",
+          "fgfm",
+          "fabric"
+        ],
+        "source": "fortigate_existing_interfaces",
+        "vlanid": 10
+      },
+      "actual": {
+        "name": "hlvl",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 10,
+        "ip": "10.10.10.2 255.255.255.0",
+        "allowaccess": "ping https ssh snmp fgfm fabric",
+        "alias": "",
+        "role": "lan",
+        "status": "up"
+      }
+    },
+    {
+      "name": "mgt",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "mgt",
+        "type": "hard-switch",
+        "ip": "10.99.99.2/24",
+        "alias": "Infrastructure management",
+        "role": "lan",
+        "allowaccess": [
+          "ping",
+          "https",
+          "ssh"
+        ],
+        "source": "fortigate_existing_interfaces"
+      },
+      "actual": {
+        "name": "mgt",
+        "type": "hard-switch",
+        "interface": "",
+        "vlanid": 0,
+        "ip": "10.99.99.2 255.255.255.0",
+        "allowaccess": "ping https",
+        "alias": "",
+        "role": "lan",
+        "status": "up"
+      }
+    },
+    {
+      "name": "vsvc",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vsvc",
+        "type": "vlan",
+        "ip": "10.10.30.2/24",
+        "alias": "VM services",
+        "role": "lan",
+        "allowaccess": [
+          "ping"
+        ],
+        "source": "fortigate_vlan_interfaces",
+        "vlanid": 30
+      },
+      "actual": {
+        "name": "vsvc",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 30,
+        "ip": "10.10.30.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "VM services",
+        "role": "lan",
+        "status": "up"
+      }
+    },
+    {
+      "name": "vapps",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vapps",
+        "type": "vlan",
+        "ip": "10.10.40.2/24",
+        "alias": "Containers / apps",
+        "role": "lan",
+        "allowaccess": [
+          "ping"
+        ],
+        "source": "fortigate_vlan_interfaces",
+        "vlanid": 40
+      },
+      "actual": {
+        "name": "vapps",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 40,
+        "ip": "10.10.40.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "Containers / apps",
+        "role": "lan",
+        "status": "up"
+      }
+    },
+    {
+      "name": "vlab",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vlab",
+        "type": "vlan",
+        "ip": "10.10.50.2/24",
+        "alias": "Lab / test",
+        "role": "lan",
+        "allowaccess": [
+          "ping"
+        ],
+        "source": "fortigate_vlan_interfaces",
+        "vlanid": 50
+      },
+      "actual": {
+        "name": "vlab",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 50,
+        "ip": "10.10.50.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "Lab / test",
+        "role": "lan",
+        "status": "up"
+      }
+    },
+    {
+      "name": "vdmz",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vdmz",
+        "type": "vlan",
+        "ip": "10.10.60.2/24",
+        "alias": "DMZ / public-facing",
+        "role": "dmz",
+        "allowaccess": [
+          "ping"
+        ],
+        "source": "fortigate_vlan_interfaces",
+        "vlanid": 60
+      },
+      "actual": {
+        "name": "vdmz",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 60,
+        "ip": "10.10.60.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "DMZ / public-facing",
+        "role": "dmz",
+        "status": "up"
+      }
+    }
+  ]
+}

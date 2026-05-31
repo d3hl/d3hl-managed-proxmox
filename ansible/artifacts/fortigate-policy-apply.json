@@ -1,0 +1,99 @@
+{
+  "applied_at_epoch": 1780140992,
+  "host": "10.99.99.2:7443",
+  "vdom": "root",
+  "operation_count": 15,
+  "failed_count": 0,
+  "operations": [
+    {
+      "kind": "address",
+      "name": "vsvc address",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "address",
+      "name": "vapps address",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "address",
+      "name": "vlab address",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "address",
+      "name": "vdmz address",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "zone",
+      "name": "VSVC",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "zone",
+      "name": "VAPPS",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "zone",
+      "name": "VLAB",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "zone",
+      "name": "VDMZ",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "DENY-LAB-TO-DMZ",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "DENY-INTERNAL-TO-DMZ",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "MGMT-TO-HOMELAB",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "HOMELAB-TO-MGMT-LIMITED",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "VMSVC-VAPPS-EASTWEST",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "VLAB-TO-VMSVC",
+      "method": "POST",
+      "status": "ok"
+    },
+    {
+      "kind": "policy",
+      "name": "DMZ-TO-WAN-NAT",
+      "method": "POST",
+      "status": "ok"
+    }
+  ]
+}

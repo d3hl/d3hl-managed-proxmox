@@ -1,0 +1,686 @@
+{
+  "verified_at_epoch": 1780185043,
+  "fortigate_host": "10.99.99.2:7443",
+  "vdom": "root",
+  "parent_interface": "x2",
+  "check_count": 23,
+  "match_count": 23,
+  "mismatch_count": 0,
+  "missing_count": 0,
+  "unexpected_count": 0,
+  "live_extra_policies": [
+    "HL to Wan-",
+    "HL to Wifi",
+    "WIFI to HL",
+    "WIFII to wan",
+    "vpn_d3ipsec_local_allow"
+  ],
+  "live_extra_zones": [],
+  "checks": [
+    {
+      "label": "parent interface x2",
+      "status": "match",
+      "actual": "x2"
+    },
+    {
+      "label": "interface hlvl",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "hlvl",
+        "type": "vlan",
+        "vlanid": 10,
+        "ip": "10.10.10.2/24",
+        "allowaccess": [
+          "ping",
+          "https",
+          "ssh",
+          "snmp",
+          "fgfm",
+          "fabric"
+        ],
+        "alias": "Proxmox management",
+        "role": "lan",
+        "note": "Existing live VLAN 10 gateway; track by live name and do not recreate."
+      },
+      "actual": {
+        "type": "vlan",
+        "vlanid": 10,
+        "ip": "10.10.10.2 255.255.255.0",
+        "interface": "x2",
+        "status": "up"
+      }
+    },
+    {
+      "label": "interface mgt",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "mgt",
+        "type": "hard-switch",
+        "ip": "10.99.99.2/24",
+        "allowaccess": [
+          "ping",
+          "https",
+          "ssh"
+        ],
+        "alias": "Infrastructure management",
+        "role": "lan",
+        "note": "Existing live management hard-switch; do not create VLAN 99 interface."
+      },
+      "actual": {
+        "type": "hard-switch",
+        "vlanid": 0,
+        "ip": "10.99.99.2 255.255.255.0",
+        "interface": "",
+        "status": "up"
+      }
+    },
+    {
+      "label": "interface vsvc",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vsvc",
+        "vlanid": 30,
+        "ip": "10.10.30.2/24",
+        "allowaccess": [
+          "ping"
+        ],
+        "alias": "VM services",
+        "role": "lan"
+      },
+      "actual": {
+        "type": "vlan",
+        "vlanid": 30,
+        "ip": "10.10.30.2 255.255.255.0",
+        "interface": "x2",
+        "status": "up"
+      }
+    },
+    {
+      "label": "interface vapps",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vapps",
+        "vlanid": 40,
+        "ip": "10.10.40.2/24",
+        "allowaccess": [
+          "ping"
+        ],
+        "alias": "Containers / apps",
+        "role": "lan"
+      },
+      "actual": {
+        "type": "vlan",
+        "vlanid": 40,
+        "ip": "10.10.40.2 255.255.255.0",
+        "interface": "x2",
+        "status": "up"
+      }
+    },
+    {
+      "label": "interface vlab",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vlab",
+        "vlanid": 50,
+        "ip": "10.10.50.2/24",
+        "allowaccess": [
+          "ping"
+        ],
+        "alias": "Lab / test",
+        "role": "lan"
+      },
+      "actual": {
+        "type": "vlan",
+        "vlanid": 50,
+        "ip": "10.10.50.2 255.255.255.0",
+        "interface": "x2",
+        "status": "up"
+      }
+    },
+    {
+      "label": "interface vdmz",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vdmz",
+        "vlanid": 60,
+        "ip": "10.10.60.2/24",
+        "allowaccess": [
+          "ping"
+        ],
+        "alias": "DMZ / public-facing",
+        "role": "dmz"
+      },
+      "actual": {
+        "type": "vlan",
+        "vlanid": 60,
+        "ip": "10.10.60.2 255.255.255.0",
+        "interface": "x2",
+        "status": "up"
+      }
+    },
+    {
+      "label": "trunk VLANs on parent x2",
+      "status": "match",
+      "expected": [
+        10,
+        11,
+        30,
+        40,
+        50,
+        60,
+        100
+      ],
+      "actual": [
+        10,
+        11,
+        30,
+        40,
+        50,
+        60,
+        100
+      ],
+      "missing": [],
+      "extra": []
+    },
+    {
+      "label": "address vsvc address",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vsvc address",
+        "type": "interface-subnet",
+        "interface": "vsvc",
+        "subnet": "10.10.30.0/24"
+      },
+      "actual": {
+        "type": "interface-subnet",
+        "interface": "vsvc",
+        "subnet": "10.10.30.0 255.255.255.0"
+      }
+    },
+    {
+      "label": "address vapps address",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vapps address",
+        "type": "interface-subnet",
+        "interface": "vapps",
+        "subnet": "10.10.40.0/24"
+      },
+      "actual": {
+        "type": "interface-subnet",
+        "interface": "vapps",
+        "subnet": "10.10.40.0 255.255.255.0"
+      }
+    },
+    {
+      "label": "address vlab address",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vlab address",
+        "type": "interface-subnet",
+        "interface": "vlab",
+        "subnet": "10.10.50.0/24"
+      },
+      "actual": {
+        "type": "interface-subnet",
+        "interface": "vlab",
+        "subnet": "10.10.50.0 255.255.255.0"
+      }
+    },
+    {
+      "label": "address vdmz address",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "vdmz address",
+        "type": "interface-subnet",
+        "interface": "vdmz",
+        "subnet": "10.10.60.0/24"
+      },
+      "actual": {
+        "type": "interface-subnet",
+        "interface": "vdmz",
+        "subnet": "10.10.60.0 255.255.255.0"
+      }
+    },
+    {
+      "label": "zone VSVC",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "VSVC",
+        "interface": "vsvc",
+        "intrazone": "deny"
+      },
+      "actual": {
+        "interface": [
+          "vsvc"
+        ],
+        "intrazone": "deny"
+      }
+    },
+    {
+      "label": "zone VAPPS",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "VAPPS",
+        "interface": "vapps",
+        "intrazone": "deny"
+      },
+      "actual": {
+        "interface": [
+          "vapps"
+        ],
+        "intrazone": "deny"
+      }
+    },
+    {
+      "label": "zone VLAB",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "VLAB",
+        "interface": "vlab",
+        "intrazone": "deny"
+      },
+      "actual": {
+        "interface": [
+          "vlab"
+        ],
+        "intrazone": "deny"
+      }
+    },
+    {
+      "label": "zone VDMZ",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "name": "VDMZ",
+        "interface": "vdmz",
+        "intrazone": "deny"
+      },
+      "actual": {
+        "interface": [
+          "vdmz"
+        ],
+        "intrazone": "deny"
+      }
+    },
+    {
+      "label": "policy DENY-LAB-TO-DMZ",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          "VLAB"
+        ],
+        "dstintf": [
+          "VDMZ"
+        ],
+        "srcaddr": [
+          "vlab address"
+        ],
+        "dstaddr": [
+          "vdmz address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "DENY-LAB-TO-DMZ",
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          "VLAB"
+        ],
+        "dstintf": [
+          "VDMZ"
+        ],
+        "srcaddr": [
+          "vlab address"
+        ],
+        "dstaddr": [
+          "vdmz address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy DENY-INTERNAL-TO-DMZ",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          "VAPPS",
+          "VLAB",
+          "VSVC"
+        ],
+        "dstintf": [
+          "VDMZ"
+        ],
+        "srcaddr": [
+          "vapps address",
+          "vlab address",
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "vdmz address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "DENY-INTERNAL-TO-DMZ",
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          "VAPPS",
+          "VLAB",
+          "VSVC"
+        ],
+        "dstintf": [
+          "VDMZ"
+        ],
+        "srcaddr": [
+          "vapps address",
+          "vlab address",
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "vdmz address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy MGMT-TO-HOMELAB",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "HL"
+        ],
+        "dstintf": [
+          "VAPPS",
+          "VDMZ",
+          "VLAB",
+          "VSVC"
+        ],
+        "srcaddr": [
+          "hlvl address"
+        ],
+        "dstaddr": [
+          "vapps address",
+          "vdmz address",
+          "vlab address",
+          "vsvc address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "MGMT-TO-HOMELAB",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "HL"
+        ],
+        "dstintf": [
+          "VAPPS",
+          "VDMZ",
+          "VLAB",
+          "VSVC"
+        ],
+        "srcaddr": [
+          "hlvl address"
+        ],
+        "dstaddr": [
+          "vapps address",
+          "vdmz address",
+          "vlab address",
+          "vsvc address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy HOMELAB-TO-MGMT-LIMITED",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VAPPS",
+          "VSVC"
+        ],
+        "dstintf": [
+          "HL"
+        ],
+        "srcaddr": [
+          "vapps address",
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "hlvl address"
+        ],
+        "service": [
+          "DNS",
+          "NTP",
+          "PING"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "HOMELAB-TO-MGMT-LIMITED",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VAPPS",
+          "VSVC"
+        ],
+        "dstintf": [
+          "HL"
+        ],
+        "srcaddr": [
+          "vapps address",
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "hlvl address"
+        ],
+        "service": [
+          "DNS",
+          "NTP",
+          "PING"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy VMSVC-VAPPS-EASTWEST",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VSVC"
+        ],
+        "dstintf": [
+          "VAPPS"
+        ],
+        "srcaddr": [
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "vapps address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "VMSVC-VAPPS-EASTWEST",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VSVC"
+        ],
+        "dstintf": [
+          "VAPPS"
+        ],
+        "srcaddr": [
+          "vsvc address"
+        ],
+        "dstaddr": [
+          "vapps address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy VLAB-TO-VMSVC",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VLAB"
+        ],
+        "dstintf": [
+          "VSVC"
+        ],
+        "srcaddr": [
+          "vlab address"
+        ],
+        "dstaddr": [
+          "vsvc address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "VLAB-TO-VMSVC",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VLAB"
+        ],
+        "dstintf": [
+          "VSVC"
+        ],
+        "srcaddr": [
+          "vlab address"
+        ],
+        "dstaddr": [
+          "vsvc address"
+        ],
+        "service": [
+          "ALL"
+        ],
+        "nat": "disable",
+        "schedule": "always"
+      }
+    },
+    {
+      "label": "policy DMZ-TO-WAN-NAT",
+      "status": "match",
+      "mismatches": [],
+      "expected": {
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VDMZ"
+        ],
+        "dstintf": [
+          "virtual-wan-link"
+        ],
+        "srcaddr": [
+          "vdmz address"
+        ],
+        "dstaddr": [
+          "all"
+        ],
+        "service": [
+          "HTTP",
+          "HTTPS"
+        ],
+        "nat": "enable",
+        "schedule": "always"
+      },
+      "actual": {
+        "name": "DMZ-TO-WAN-NAT",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          "VDMZ"
+        ],
+        "dstintf": [
+          "virtual-wan-link"
+        ],
+        "srcaddr": [
+          "vdmz address"
+        ],
+        "dstaddr": [
+          "all"
+        ],
+        "service": [
+          "HTTP",
+          "HTTPS"
+        ],
+        "nat": "enable",
+        "schedule": "always"
+      }
+    }
+  ]
+}

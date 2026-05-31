@@ -1,0 +1,896 @@
+{
+  "discovered_at_epoch": 1780144765,
+  "vdom": "root",
+  "fortigate_host": "10.99.99.2:7443",
+  "interfaces": {
+    "total_seen": 45,
+    "target_checks": [
+      {
+        "name": "hlvl",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "hlvl",
+          "type": "vlan",
+          "ip": "10.10.10.2/24",
+          "alias": "Proxmox management",
+          "role": "lan",
+          "allowaccess": [
+            "ping",
+            "https",
+            "ssh",
+            "snmp",
+            "fgfm",
+            "fabric"
+          ],
+          "source": "fortigate_existing_interfaces",
+          "vlanid": 10
+        },
+        "actual": {
+          "name": "hlvl",
+          "type": "vlan",
+          "interface": "x2",
+          "vlanid": 10,
+          "ip": "10.10.10.2 255.255.255.0",
+          "allowaccess": "ping https ssh snmp fgfm fabric",
+          "alias": "",
+          "role": "lan",
+          "status": "up"
+        }
+      },
+      {
+        "name": "mgt",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "mgt",
+          "type": "hard-switch",
+          "ip": "10.99.99.2/24",
+          "alias": "Infrastructure management",
+          "role": "lan",
+          "allowaccess": [
+            "ping",
+            "https",
+            "ssh"
+          ],
+          "source": "fortigate_existing_interfaces"
+        },
+        "actual": {
+          "name": "mgt",
+          "type": "hard-switch",
+          "interface": "",
+          "vlanid": 0,
+          "ip": "10.99.99.2 255.255.255.0",
+          "allowaccess": "ping https",
+          "alias": "",
+          "role": "lan",
+          "status": "up"
+        }
+      },
+      {
+        "name": "vsvc",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "vsvc",
+          "type": "vlan",
+          "ip": "10.10.30.2/24",
+          "alias": "VM services",
+          "role": "lan",
+          "allowaccess": [
+            "ping"
+          ],
+          "source": "fortigate_vlan_interfaces",
+          "vlanid": 30
+        },
+        "actual": {
+          "name": "vsvc",
+          "type": "vlan",
+          "interface": "x2",
+          "vlanid": 30,
+          "ip": "10.10.30.2 255.255.255.0",
+          "allowaccess": "ping",
+          "alias": "VM services",
+          "role": "lan",
+          "status": "up"
+        }
+      },
+      {
+        "name": "vapps",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "vapps",
+          "type": "vlan",
+          "ip": "10.10.40.2/24",
+          "alias": "Containers / apps",
+          "role": "lan",
+          "allowaccess": [
+            "ping"
+          ],
+          "source": "fortigate_vlan_interfaces",
+          "vlanid": 40
+        },
+        "actual": {
+          "name": "vapps",
+          "type": "vlan",
+          "interface": "x2",
+          "vlanid": 40,
+          "ip": "10.10.40.2 255.255.255.0",
+          "allowaccess": "ping",
+          "alias": "Containers / apps",
+          "role": "lan",
+          "status": "up"
+        }
+      },
+      {
+        "name": "vlab",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "vlab",
+          "type": "vlan",
+          "ip": "10.10.50.2/24",
+          "alias": "Lab / test",
+          "role": "lan",
+          "allowaccess": [
+            "ping"
+          ],
+          "source": "fortigate_vlan_interfaces",
+          "vlanid": 50
+        },
+        "actual": {
+          "name": "vlab",
+          "type": "vlan",
+          "interface": "x2",
+          "vlanid": 50,
+          "ip": "10.10.50.2 255.255.255.0",
+          "allowaccess": "ping",
+          "alias": "Lab / test",
+          "role": "lan",
+          "status": "up"
+        }
+      },
+      {
+        "name": "vdmz",
+        "status": "match",
+        "mismatches": [],
+        "expected": {
+          "name": "vdmz",
+          "type": "vlan",
+          "ip": "10.10.60.2/24",
+          "alias": "DMZ / public-facing",
+          "role": "dmz",
+          "allowaccess": [
+            "ping"
+          ],
+          "source": "fortigate_vlan_interfaces",
+          "vlanid": 60
+        },
+        "actual": {
+          "name": "vdmz",
+          "type": "vlan",
+          "interface": "x2",
+          "vlanid": 60,
+          "ip": "10.10.60.2 255.255.255.0",
+          "allowaccess": "ping",
+          "alias": "DMZ / public-facing",
+          "role": "dmz",
+          "status": "up"
+        }
+      }
+    ],
+    "vlan_interfaces": [
+      {
+        "name": "Wifi",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 100,
+        "ip": "10.100.100.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "",
+        "role": "lan",
+        "status": "up"
+      },
+      {
+        "name": "hlvl",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 10,
+        "ip": "10.10.10.2 255.255.255.0",
+        "allowaccess": "ping https ssh snmp fgfm fabric",
+        "alias": "",
+        "role": "lan",
+        "status": "up"
+      },
+      {
+        "name": "k8s",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 11,
+        "ip": "10.11.11.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "",
+        "role": "lan",
+        "status": "up"
+      },
+      {
+        "name": "vapps",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 40,
+        "ip": "10.10.40.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "Containers / apps",
+        "role": "lan",
+        "status": "up"
+      },
+      {
+        "name": "vdmz",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 60,
+        "ip": "10.10.60.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "DMZ / public-facing",
+        "role": "dmz",
+        "status": "up"
+      },
+      {
+        "name": "vlab",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 50,
+        "ip": "10.10.50.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "Lab / test",
+        "role": "lan",
+        "status": "up"
+      },
+      {
+        "name": "vsvc",
+        "type": "vlan",
+        "interface": "x2",
+        "vlanid": 30,
+        "ip": "10.10.30.2 255.255.255.0",
+        "allowaccess": "ping",
+        "alias": "VM services",
+        "role": "lan",
+        "status": "up"
+      }
+    ],
+    "match_count": 6,
+    "missing_count": 0,
+    "mismatch_count": 0
+  },
+  "zones_and_policies": {
+    "zone_count": 7,
+    "zones": [
+      {
+        "name": "HL",
+        "interface": [
+          {
+            "interface-name": "hlvl",
+            "q_origin_key": "hlvl"
+          },
+          {
+            "interface-name": "lan",
+            "q_origin_key": "lan"
+          },
+          {
+            "interface-name": "k8s",
+            "q_origin_key": "k8s"
+          }
+        ],
+        "intrazone": "allow"
+      },
+      {
+        "name": "VAPPS",
+        "interface": [
+          {
+            "interface-name": "vapps",
+            "q_origin_key": "vapps"
+          }
+        ],
+        "intrazone": "deny"
+      },
+      {
+        "name": "VDMZ",
+        "interface": [
+          {
+            "interface-name": "vdmz",
+            "q_origin_key": "vdmz"
+          }
+        ],
+        "intrazone": "deny"
+      },
+      {
+        "name": "VLAB",
+        "interface": [
+          {
+            "interface-name": "vlab",
+            "q_origin_key": "vlab"
+          }
+        ],
+        "intrazone": "deny"
+      },
+      {
+        "name": "VSVC",
+        "interface": [
+          {
+            "interface-name": "vsvc",
+            "q_origin_key": "vsvc"
+          }
+        ],
+        "intrazone": "deny"
+      },
+      {
+        "name": "WIFI",
+        "interface": [
+          {
+            "interface-name": "Wifi",
+            "q_origin_key": "Wifi"
+          }
+        ],
+        "intrazone": "deny"
+      },
+      {
+        "name": "vpn_d3ipsec_zone",
+        "interface": [
+          {
+            "interface-name": "d3ipsec",
+            "q_origin_key": "d3ipsec"
+          }
+        ],
+        "intrazone": "deny"
+      }
+    ],
+    "policy_count": 12,
+    "homelab_related_policy_count": 11,
+    "homelab_related_policies": [
+      {
+        "policyid": 9,
+        "name": "HL to Wan-",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "virtual-wan-link",
+            "q_origin_key": "virtual-wan-link"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "enable",
+        "comments": ""
+      },
+      {
+        "policyid": 6,
+        "name": "vpn_d3ipsec_local_allow",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "vpn_d3ipsec_zone",
+            "q_origin_key": "vpn_d3ipsec_zone"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "d3ipsec_range",
+            "q_origin_key": "d3ipsec_range"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "enable",
+        "comments": "VPN: d3ipsec -- Created by VPN wizard"
+      },
+      {
+        "policyid": 7,
+        "name": "HL to Wifi",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "WIFI",
+            "q_origin_key": "WIFI"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "hlvl address",
+            "q_origin_key": "hlvl address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "Wifi address",
+            "q_origin_key": "Wifi address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": ""
+      },
+      {
+        "policyid": 8,
+        "name": "WIFI to HL",
+        "status": "disable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "WIFI",
+            "q_origin_key": "WIFI"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": " (Reverse of HL to Wifi)"
+      },
+      {
+        "policyid": 10,
+        "name": "DENY-LAB-TO-DMZ",
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          {
+            "name": "VLAB",
+            "q_origin_key": "VLAB"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "VDMZ",
+            "q_origin_key": "VDMZ"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vlab address",
+            "q_origin_key": "vlab address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "vdmz address",
+            "q_origin_key": "vdmz address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": "Block lab VLAN from reaching DMZ"
+      },
+      {
+        "policyid": 11,
+        "name": "DENY-INTERNAL-TO-DMZ",
+        "status": "enable",
+        "action": "deny",
+        "srcintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          },
+          {
+            "name": "VAPPS",
+            "q_origin_key": "VAPPS"
+          },
+          {
+            "name": "VLAB",
+            "q_origin_key": "VLAB"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "VDMZ",
+            "q_origin_key": "VDMZ"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          },
+          {
+            "name": "vapps address",
+            "q_origin_key": "vapps address"
+          },
+          {
+            "name": "vlab address",
+            "q_origin_key": "vlab address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "vdmz address",
+            "q_origin_key": "vdmz address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": "Block internal tiers from reaching DMZ"
+      },
+      {
+        "policyid": 12,
+        "name": "MGMT-TO-HOMELAB",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          },
+          {
+            "name": "VAPPS",
+            "q_origin_key": "VAPPS"
+          },
+          {
+            "name": "VLAB",
+            "q_origin_key": "VLAB"
+          },
+          {
+            "name": "VDMZ",
+            "q_origin_key": "VDMZ"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "hlvl address",
+            "q_origin_key": "hlvl address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          },
+          {
+            "name": "vapps address",
+            "q_origin_key": "vapps address"
+          },
+          {
+            "name": "vlab address",
+            "q_origin_key": "vlab address"
+          },
+          {
+            "name": "vdmz address",
+            "q_origin_key": "vdmz address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": "Admin access from VLAN 10 management to homelab routed VLANs"
+      },
+      {
+        "policyid": 13,
+        "name": "HOMELAB-TO-MGMT-LIMITED",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          },
+          {
+            "name": "VAPPS",
+            "q_origin_key": "VAPPS"
+          },
+          {
+            "name": "VLAB",
+            "q_origin_key": "VLAB"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "HL",
+            "q_origin_key": "HL"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          },
+          {
+            "name": "vapps address",
+            "q_origin_key": "vapps address"
+          },
+          {
+            "name": "vlab address",
+            "q_origin_key": "vlab address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "hlvl address",
+            "q_origin_key": "hlvl address"
+          }
+        ],
+        "service": [
+          {
+            "name": "DNS",
+            "q_origin_key": "DNS"
+          },
+          {
+            "name": "NTP",
+            "q_origin_key": "NTP"
+          },
+          {
+            "name": "PING",
+            "q_origin_key": "PING"
+          }
+        ],
+        "nat": "disable",
+        "comments": "Limited return/management traffic from homelab VLANs to management"
+      },
+      {
+        "policyid": 14,
+        "name": "VMSVC-VAPPS-EASTWEST",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "VAPPS",
+            "q_origin_key": "VAPPS"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "vapps address",
+            "q_origin_key": "vapps address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": "VM services to containers/apps east-west"
+      },
+      {
+        "policyid": 15,
+        "name": "VLAB-TO-VMSVC",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "VLAB",
+            "q_origin_key": "VLAB"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vlab address",
+            "q_origin_key": "vlab address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "disable",
+        "comments": "Lab VLAN to VM services"
+      },
+      {
+        "policyid": 16,
+        "name": "DMZ-TO-WAN-NAT",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "VDMZ",
+            "q_origin_key": "VDMZ"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "virtual-wan-link",
+            "q_origin_key": "virtual-wan-link"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vdmz address",
+            "q_origin_key": "vdmz address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "service": [
+          {
+            "name": "HTTP",
+            "q_origin_key": "HTTP"
+          },
+          {
+            "name": "HTTPS",
+            "q_origin_key": "HTTPS"
+          }
+        ],
+        "nat": "enable",
+        "comments": "Controlled DMZ egress to WAN with NAT"
+      }
+    ],
+    "homelab_address_object_count": 9,
+    "homelab_address_objects": [
+      {
+        "name": "Wifi address",
+        "type": "interface-subnet",
+        "subnet": "10.100.100.0 255.255.255.0",
+        "interface": "Wifi"
+      },
+      {
+        "name": "hlvl address",
+        "type": "interface-subnet",
+        "subnet": "10.10.10.0 255.255.255.0",
+        "interface": "hlvl"
+      },
+      {
+        "name": "k8s address",
+        "type": "interface-subnet",
+        "subnet": "10.11.11.0 255.255.255.0",
+        "interface": "k8s"
+      },
+      {
+        "name": "spoke-d3_local_subnet_1",
+        "type": "ipmask",
+        "subnet": "10.10.10.0 255.255.255.0",
+        "interface": ""
+      },
+      {
+        "name": "spoke-d3_local_subnet_2",
+        "type": "ipmask",
+        "subnet": "10.99.99.0 255.255.255.0",
+        "interface": ""
+      },
+      {
+        "name": "vapps address",
+        "type": "interface-subnet",
+        "subnet": "10.10.40.0 255.255.255.0",
+        "interface": "vapps"
+      },
+      {
+        "name": "vdmz address",
+        "type": "interface-subnet",
+        "subnet": "10.10.60.0 255.255.255.0",
+        "interface": "vdmz"
+      },
+      {
+        "name": "vlab address",
+        "type": "interface-subnet",
+        "subnet": "10.10.50.0 255.255.255.0",
+        "interface": "vlab"
+      },
+      {
+        "name": "vsvc address",
+        "type": "interface-subnet",
+        "subnet": "10.10.30.0 255.255.255.0",
+        "interface": "vsvc"
+      }
+    ]
+  }
+}

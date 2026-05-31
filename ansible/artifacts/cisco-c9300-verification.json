@@ -1,0 +1,176 @@
+{
+  "summary": {
+    "verified_at_epoch": 1780172267,
+    "host": "10.10.10.1",
+    "saved": true,
+    "pass": true,
+    "failures": [],
+    "vlan_missing": [],
+    "trunk_failures": [],
+    "vlan10": {
+      "expected_ip": "10.10.10.1",
+      "actual": {
+        "line": "Vlan10                 10.10.10.1      YES NVRAM  up                    up      ",
+        "ip": "10.10.10.1",
+        "status": "up",
+        "protocol": "up"
+      },
+      "running_has_expected_ip": true,
+      "up_up": true
+    },
+    "ping_vlan10_to_fortigate_success": true,
+    "write_memory_output": "write mem\nBuilding configuration...\n[OK]\nd39k3#"
+  },
+  "raw": {
+    "show_vlan_brief": "\nVLAN Name                             Status    Ports\n---- -------------------------------- --------- -------------------------------\n1    default                          active    Tw2/0/25, Te2/0/42, Ap2/0/1\n3    quorum                           active    Tw2/0/6, Tw2/0/8, Tw2/0/9\n10   PROXMOX_MGMT                     active    Tw2/0/13, Tw2/0/23\n11   k8s                              active    \n20   STORAGE_CEPH                     active    Te2/0/37, Te2/0/38, Te2/0/43, Te2/0/44, Te2/0/45\n21   logs                             active    \n30   VM_SERVICES                      active    \n40   CONTAINERS_APPS                  active    \n50   LAB_TEST                         active    \n60   DMZ                              active    \n99   INFRA_MGMT                       active    Tw2/0/1, Tw2/0/2, Tw2/0/3, Tw2/0/4, Tw2/0/5, Tw2/0/22, Tw2/0/24\n100  wifi                             active    Tw2/0/11, Tw2/0/12, Te2/0/48\n999  VLAN0999                         active    Tw2/0/7, Tw2/0/10, Tw2/0/14, Tw2/0/15, Tw2/0/16, Tw2/0/17, Tw2/0/18, Tw2/0/19, Tw2/0/21, Tw2/0/26, Tw2/0/27, Tw2/0/28, Te2/0/40\n1002 fddi-default                     act/unsup \n1003 token-ring-default               act/unsup \n1004 fddinet-default                  act/unsup \n1005 trnet-default                    act/unsup ",
+    "show_interfaces_trunk": "\nPort           Mode             Encapsulation  Status        Native vlan  \nTe2/0/39       on               802.1q         trunking      1\nTe2/0/41       on               802.1q         trunking      1\nTe2/0/46       on               802.1q         trunking      1\nTwe2/1/1       on               802.1q         trunking      1\nTwe2/1/2       on               802.1q         trunking      1\n\nPort           Vlans allowed on trunk\nTe2/0/39       3,10-11,30,40,50,60\nTe2/0/41       3,10-11,30,40,50,60\nTe2/0/46       3,10-11,30,40,50,60\nTwe2/1/1       10-11,20,30,40,50,60,100\nTwe2/1/2       10-11,30,40,50,60,100\n\nPort           Vlans allowed and active in management domain\nTe2/0/39       3,10-11,30,40,50,60\nTe2/0/41       3,10-11,30,40,50,60\nTe2/0/46       3,10-11,30,40,50,60\nTwe2/1/1       10-11,20,30,40,50,60,100\nTwe2/1/2       10-11,30,40,50,60,100\n\nPort           Vlans in spanning tree forwarding state and not pruned\nTe2/0/39       3,10-11,30,40,50,60\nTe2/0/41       3,10-11,30,40,50,60\nTe2/0/46       3,10-11,30,40,50,60\nTwe2/1/1       10-11,20,30,40,50,60,100\nTwe2/1/2       10-11,30,40,50,60,100",
+    "show_ip_interface_brief": "Interface              IP-Address      OK? Method Status                Protocol\nVlan1                  192.168.1.89    YES NVRAM  up                    up      \nVlan3                  192.168.3.1     YES NVRAM  up                    up      \nVlan10                 10.10.10.1      YES NVRAM  up                    up      \nVlan11                 10.11.11.1      YES NVRAM  up                    up      \nVlan20                 10.20.20.1      YES NVRAM  up                    up      \nVlan50                 10.10.50.1      YES manual up                    up      \nVlan99                 10.99.99.1      YES NVRAM  up                    up      \nVlan100                10.100.100.1    YES NVRAM  up                    up      \nGigabitEthernet0/0     10.99.99.254    YES NVRAM  down                  down    \nTw2/0/1                unassigned      YES unset  up                    up      \nTw2/0/2                unassigned      YES unset  up                    up      \nTw2/0/3                unassigned      YES unset  down                  down    \nTw2/0/4                unassigned      YES unset  up                    up      \nTw2/0/5                unassigned      YES unset  up                    up      \nTw2/0/6                unassigned      YES unset  up                    up      \nTw2/0/7                unassigned      YES unset  administratively down down    \nTw2/0/8                unassigned      YES unset  administratively down down    \nTw2/0/9                unassigned      YES unset  administratively down down    \nTw2/0/10               unassigned      YES unset  administratively down down    \nTw2/0/11               unassigned      YES unset  up                    up      \nTw2/0/12               unassigned      YES unset  administratively down down    \nTw2/0/13               unassigned      YES unset  down                  down    \nTw2/0/14               unassigned      YES unset  administratively down down    \nTw2/0/15               unassigned      YES unset  administratively down down    \nTw2/0/16               unassigned      YES unset  administratively down down    \nTw2/0/17               unassigned      YES unset  administratively down down    \nTw2/0/18               unassigned      YES unset  administratively down down    \nTw2/0/19               unassigned      YES unset  administratively down down    \nTw2/0/20               unassigned      YES unset  down                  down    \nTw2/0/21               unassigned      YES unset  administratively down down    \nTw2/0/22               unassigned      YES unset  up                    up      \nTw2/0/23               unassigned      YES unset  down                  down    \nTw2/0/24               unassigned      YES unset  up                    up      \nTw2/0/25               unassigned      YES unset  down                  down    \nTw2/0/26               unassigned      YES unset  administratively down down    \nTw2/0/27               unassigned      YES unset  administratively down down    \nTw2/0/28               unassigned      YES unset  administratively down down    \nTw2/0/29               unassigned      YES unset  up                    up      \nTw2/0/30               unassigned      YES unset  up                    up      \nTw2/0/31               unassigned      YES unset  up                    up      \nTw2/0/32               unassigned      YES unset  up                    up      \nTw2/0/33               unassigned      YES unset  up                    up      \nTw2/0/34               unassigned      YES unset  up                    up      \nTw2/0/35               unassigned      YES unset  up                    up      \nTw2/0/36               unassigned      YES unset  up                    up      \nTe2/0/37               unassigned      YES unset  down                  down    \nTe2/0/38               unassigned      YES unset  down                  down    \nTe2/0/39               unassigned      YES unset  up                    up      \nTe2/0/40               unassigned      YES unset  administratively down down    \nTe2/0/41               unassigned      YES unset  up                    up      \nTe2/0/42               unassigned      YES unset  down                  down    \nTe2/0/43               unassigned      YES unset  administratively down down    \nTe2/0/44               unassigned      YES unset  down                  down    \nTe2/0/45               unassigned      YES unset  up                    up      \nTe2/0/46               unassigned      YES unset  up                    up      \nTe2/0/47               unassigned      YES unset  up                    up      \nTe2/0/48               unassigned      YES unset  up                    up      \nGigabitEthernet2/1/1   unassigned      YES unset  administratively down down    \nGigabitEthernet2/1/2   unassigned      YES unset  down                  down    \nGigabitEthernet2/1/3   unassigned      YES unset  down                  down    \nGigabitEthernet2/1/4   unassigned      YES unset  down                  down    \nTe2/1/1                unassigned      YES unset  administratively down down    \nTe2/1/2                unassigned      YES unset  administratively down down    \nTe2/1/3                unassigned      YES unset  administratively down down    \nTe2/1/4                unassigned      YES unset  administratively down down    \nTe2/1/5                unassigned      YES unset  administratively down down    \nTe2/1/6                unassigned      YES unset  administratively down down    \nTe2/1/7                unassigned      YES unset  administratively down down    \nTe2/1/8                unassigned      YES unset  administratively down down    \nFo2/1/1                unassigned      YES unset  administratively down down    \nFo2/1/2                unassigned      YES unset  administratively down down    \nTwentyFiveGigE2/1/1    unassigned      YES unset  up                    up      \nTwentyFiveGigE2/1/2    unassigned      YES unset  up                    up      \nAp2/0/1                unassigned      YES unset  up                    up      \nPort-channel1          unassigned      YES unset  up                    up      \nLoopback1              unassigned      YES unset  up                    up      \nTLS-VIF3               unassigned      NO  unset  up                    up      ",
+    "show_running_config_interface_vlan10": "Building configuration...\n\nCurrent configuration : 146 bytes\n!\ninterface Vlan10\n description Core switch management\n ip address 10.10.10.1 255.255.255.0\n ip helper-address 10.10.10.2\n no ip route-cache\nend\n",
+    "ping_10_10_10_2_source_vlan10": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 10.10.10.2, timeout is 2 seconds:\nPacket sent with a source address of 10.10.10.1 \n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms",
+    "show_startup_config_interface_vlan10": "                          ^\n% Invalid input detected at '^' marker.\n",
+    "show_startup_config_interface_fortigate_trunk": "                          ^\n% Invalid input detected at '^' marker.\n",
+    "trunk_running_configs": {
+      "TwentyFiveGigE2/1/2": "Building configuration...\n\nCurrent configuration : 352 bytes\n!\ninterface TwentyFiveGigE2/1/2\n description Trunk_to_FortiGate_100F\n switchport trunk allowed vlan 10,11,30,40,50,60,100\n switchport mode trunk\n device-tracking attach-policy MERAKI_NO_TRACK\n ip flow monitor MERAKI_TA1_NO_AVC_V4_IN input\n ip flow monitor MERAKI_TA1_NO_AVC_V4_OUT output\n ip dhcp relay information trusted\n ip dhcp snooping trust\nend\n",
+      "TenGigabitEthernet2/0/39": "Building configuration...\n\nCurrent configuration : 393 bytes\n!\ninterface TenGigabitEthernet2/0/39\n description Trunk_to_Proxmox_nodeA\n switchport trunk allowed vlan 3,10,11,30,40,50,60\n switchport mode trunk\n device-tracking attach-policy MERAKI_TRUNK_TRACK\n ip flow monitor MERAKI_TA1_V4_IN input\n ip flow monitor MERAKI_TA2_IPV4 input\n ip flow monitor MERAKI_TA1_V4_OUT output\n ip flow monitor MERAKI_TA2_IPV4 output\n spanning-tree portfast trunk\nend\n",
+      "TenGigabitEthernet2/0/41": "Building configuration...\n\nCurrent configuration : 395 bytes\n!\ninterface TenGigabitEthernet2/0/41\n description Trunk_to_Proxmox_nodeB\n switchport trunk allowed vlan 3,10,11,30,40,50,60\n switchport mode trunk\n device-tracking attach-policy MERAKI_TRUNK_TRACK\n ip flow monitor MERAKI_TA1_V4_IN input\n ip flow monitor MERAKI_TA2_IPV4 input\n ip flow monitor MERAKI_TA1_V4_OUT output\n ip flow monitor MERAKI_TA2_IPV4 output\n spanning-tree portfast disable\nend\n",
+      "TenGigabitEthernet2/0/46": "Building configuration...\n\nCurrent configuration : 405 bytes\n!\ninterface TenGigabitEthernet2/0/46\n description Trunk_to_Proxmox_nodeD\n switchport access vlan 11\n switchport trunk allowed vlan 3,10,11,30,40,50,60\n switchport mode trunk\n device-tracking\n ip flow monitor MERAKI_TA1_V4_IN input\n ip flow monitor MERAKI_TA2_IPV4 input\n ip flow monitor MERAKI_TA1_V4_OUT output\n ip flow monitor MERAKI_TA2_IPV4 output\n speed auto 10000\n spanning-tree portfast trunk\nend\n"
+    }
+  },
+  "checks": {
+    "vlans": {
+      "expected": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        99
+      ],
+      "actual": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        99
+      ],
+      "missing": [],
+      "match": true
+    },
+    "trunks": [
+      {
+        "interface": "TwentyFiveGigE2/1/2",
+        "expected_allowed_vlans": [
+          10,
+          11,
+          30,
+          40,
+          50,
+          60,
+          100
+        ],
+        "actual_allowed_vlans": [
+          10,
+          11,
+          30,
+          40,
+          50,
+          60,
+          100
+        ],
+        "missing": [],
+        "extra": [],
+        "match": true
+      },
+      {
+        "interface": "TenGigabitEthernet2/0/39",
+        "expected_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "actual_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "missing": [],
+        "extra": [],
+        "match": true
+      },
+      {
+        "interface": "TenGigabitEthernet2/0/41",
+        "expected_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "actual_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "missing": [],
+        "extra": [],
+        "match": true
+      },
+      {
+        "interface": "TenGigabitEthernet2/0/46",
+        "expected_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "actual_allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "missing": [],
+        "extra": [],
+        "match": true
+      }
+    ],
+    "vlan10": {
+      "expected_ip": "10.10.10.1",
+      "actual": {
+        "line": "Vlan10                 10.10.10.1      YES NVRAM  up                    up      ",
+        "ip": "10.10.10.1",
+        "status": "up",
+        "protocol": "up"
+      },
+      "running_has_expected_ip": true,
+      "up_up": true
+    },
+    "ping_vlan10_to_fortigate": {
+      "success": true,
+      "output": "Type escape sequence to abort.\nSending 5, 100-byte ICMP Echos to 10.10.10.2, timeout is 2 seconds:\nPacket sent with a source address of 10.10.10.1 \n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms"
+    }
+  }
+}

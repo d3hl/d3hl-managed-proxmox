@@ -1,0 +1,320 @@
+{
+  "validated_at_epoch": 1780162724,
+  "proxmox_url": "https://10.10.10.10:8006",
+  "version": {
+    "version": "9.2.2",
+    "repoid": "b9984c6d90a4bd80",
+    "console": "html5",
+    "release": "9.2"
+  },
+  "sdn": {
+    "zones": [
+      {
+        "zone": "ztrunk",
+        "bridge": "vmbr0",
+        "digest": "cd99e39984b8b30cffb1291a7658c52e15bd935a",
+        "type": "vlan",
+        "nodes": "nodeA,nodeB,nodeD,nodeF"
+      }
+    ],
+    "vnets": [
+      {
+        "tag": 40,
+        "zone": "ztrunk",
+        "type": "vnet",
+        "vnet": "vapps",
+        "isolate-ports": 1,
+        "digest": "faea03140295555ec88904bbcda8c66f89f55905"
+      },
+      {
+        "type": "vnet",
+        "digest": "faea03140295555ec88904bbcda8c66f89f55905",
+        "vnet": "vdmz",
+        "tag": 60,
+        "zone": "ztrunk"
+      },
+      {
+        "type": "vnet",
+        "digest": "faea03140295555ec88904bbcda8c66f89f55905",
+        "vnet": "vlab",
+        "tag": 50,
+        "zone": "ztrunk"
+      },
+      {
+        "type": "vnet",
+        "digest": "faea03140295555ec88904bbcda8c66f89f55905",
+        "zone": "ztrunk",
+        "vnet": "vmgmt",
+        "tag": 10
+      },
+      {
+        "type": "vnet",
+        "digest": "faea03140295555ec88904bbcda8c66f89f55905",
+        "zone": "ztrunk",
+        "vnet": "vsvc",
+        "tag": 30
+      }
+    ],
+    "subnets": [
+      {
+        "type": "subnet",
+        "zone": "ztrunk",
+        "digest": "e4a7db047869baa5730dd46c46ac7a503e92abea",
+        "mask": "24",
+        "gateway": "10.10.30.2",
+        "subnet": "ztrunk-10.10.30.0-24",
+        "id": "ztrunk-10.10.30.0-24",
+        "cidr": "10.10.30.0/24",
+        "network": "10.10.30.0",
+        "vnet": "vsvc",
+        "dhcp-range": []
+      },
+      {
+        "zone": "ztrunk",
+        "type": "subnet",
+        "gateway": "10.10.40.2",
+        "subnet": "ztrunk-10.10.40.0-24",
+        "mask": "24",
+        "digest": "e4a7db047869baa5730dd46c46ac7a503e92abea",
+        "id": "ztrunk-10.10.40.0-24",
+        "vnet": "vapps",
+        "dhcp-range": [],
+        "cidr": "10.10.40.0/24",
+        "network": "10.10.40.0"
+      },
+      {
+        "vnet": "vlab",
+        "dhcp-range": [],
+        "network": "10.10.50.0",
+        "cidr": "10.10.50.0/24",
+        "id": "ztrunk-10.10.50.0-24",
+        "subnet": "ztrunk-10.10.50.0-24",
+        "gateway": "10.10.50.2",
+        "mask": "24",
+        "digest": "e4a7db047869baa5730dd46c46ac7a503e92abea",
+        "zone": "ztrunk",
+        "type": "subnet"
+      },
+      {
+        "mask": "24",
+        "digest": "e4a7db047869baa5730dd46c46ac7a503e92abea",
+        "gateway": "10.10.60.2",
+        "subnet": "ztrunk-10.10.60.0-24",
+        "type": "subnet",
+        "zone": "ztrunk",
+        "cidr": "10.10.60.0/24",
+        "network": "10.10.60.0",
+        "dhcp-range": [],
+        "vnet": "vdmz",
+        "id": "ztrunk-10.10.60.0-24"
+      }
+    ],
+    "checks": [
+      {
+        "vnet": "vsvc",
+        "expected_vlan": 30,
+        "live_vlan": 30,
+        "expected_gateway": "10.10.30.2",
+        "live_gateway": "10.10.30.2",
+        "vnet_ok": true,
+        "gateway_ok": true
+      },
+      {
+        "vnet": "vapps",
+        "expected_vlan": 40,
+        "live_vlan": 40,
+        "expected_gateway": "10.10.40.2",
+        "live_gateway": "10.10.40.2",
+        "vnet_ok": true,
+        "gateway_ok": true
+      },
+      {
+        "vnet": "vlab",
+        "expected_vlan": 50,
+        "live_vlan": 50,
+        "expected_gateway": "10.10.50.2",
+        "live_gateway": "10.10.50.2",
+        "vnet_ok": true,
+        "gateway_ok": true
+      },
+      {
+        "vnet": "vdmz",
+        "expected_vlan": 60,
+        "live_vlan": 60,
+        "expected_gateway": "10.10.60.2",
+        "live_gateway": "10.10.60.2",
+        "vnet_ok": true,
+        "gateway_ok": true
+      }
+    ]
+  },
+  "trunks": [
+    {
+      "node": "nodeA",
+      "port": "en10basep2",
+      "ovs_options": "trunk=3,10,11,30,40,50,60 vlan_mode=native-untagged",
+      "expected_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "live_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "missing_vlans": [],
+      "ok": true
+    },
+    {
+      "node": "nodeB",
+      "port": "ennic1s1",
+      "ovs_options": "vlan_mode=native-untagged trunks=3,10,11,30,40,50,60",
+      "expected_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "live_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "missing_vlans": [],
+      "ok": true
+    },
+    {
+      "node": "nodeD",
+      "port": "eno1",
+      "ovs_options": "trunks=3,10,11,30,40,50,60 vlan_mode=native-untagged",
+      "expected_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "live_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "missing_vlans": [],
+      "ok": true
+    },
+    {
+      "node": "nodeF",
+      "port": "sfp1",
+      "ovs_options": "vlan_mode=native-untagged trunk=3,10,11,30,40,50,60",
+      "expected_vlans": [
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "live_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ],
+      "missing_vlans": [],
+      "ok": true
+    }
+  ],
+  "vm_count": 20,
+  "attached_vms": [
+    {
+      "vmid": 201,
+      "name": "omni-master",
+      "node": "nodeA",
+      "type": "qemu",
+      "status": "stopped",
+      "nics": [
+        {
+          "key": "net2",
+          "bridge": "vlab",
+          "tag": null,
+          "target_vnet": "vlab",
+          "raw": "virtio=BC:24:11:77:DB:08,bridge=vlab,firewall=1"
+        }
+      ]
+    },
+    {
+      "vmid": 444,
+      "name": "sg-hl-vm01",
+      "node": "nodeF",
+      "type": "qemu",
+      "status": "running",
+      "nics": [
+        {
+          "key": "net1",
+          "bridge": "vlab",
+          "tag": null,
+          "target_vnet": "vlab",
+          "raw": "virtio=BC:24:11:D2:5A:FE,bridge=vlab"
+        }
+      ]
+    }
+  ],
+  "guest_reachability": [
+    {
+      "vmid": 201,
+      "name": "omni-master",
+      "node": "nodeA",
+      "type": "qemu",
+      "status": "stopped",
+      "bridge": "vlab",
+      "tag": null,
+      "target_vnet": "vlab",
+      "gateway": "10.10.50.2",
+      "reachability": {
+        "status": "not_tested",
+        "reason": "VM is not running"
+      }
+    },
+    {
+      "vmid": 444,
+      "name": "sg-hl-vm01",
+      "node": "nodeF",
+      "type": "qemu",
+      "status": "running",
+      "bridge": "vlab",
+      "tag": null,
+      "target_vnet": "vlab",
+      "gateway": "10.10.50.2",
+      "reachability": {
+        "status": "agent_unavailable",
+        "http_status": 501,
+        "error": "{\"data\":null,\"message\":\"Method 'GET /nodes/nodeF/qemu/444/agent/ping' not implemented\"}"
+      }
+    }
+  ]
+}
