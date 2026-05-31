@@ -1,0 +1,122 @@
+---
+# FortiGate address objects, zones, and inter-VLAN firewall policies.
+# Apply with configs/fortigate-api-apply-policies.py after review.
+
+fortigate_policy_vdom: root
+
+fortigate_address_objects:
+  - name: vsvc address
+    type: interface-subnet
+    interface: vsvc
+    subnet: 10.10.30.0/24
+  - name: vapps address
+    type: interface-subnet
+    interface: vapps
+    subnet: 10.10.40.0/24
+  - name: vlab address
+    type: interface-subnet
+    interface: vlab
+    subnet: 10.10.50.0/24
+  - name: vdmz address
+    type: interface-subnet
+    interface: vdmz
+    subnet: 10.10.60.0/24
+
+fortigate_zones:
+  - name: VSVC
+    interface: vsvc
+    intrazone: deny
+  - name: VAPPS
+    interface: vapps
+    intrazone: deny
+  - name: VLAB
+    interface: vlab
+    intrazone: deny
+  - name: VDMZ
+    interface: vdmz
+    intrazone: deny
+
+# Phase B inter-VLAN policy matrix. Policy order matters: denies before broad accepts
+# on the same path; new policies are appended after existing policyid 9.
+fortigate_firewall_policies:
+  - name: DENY-LAB-TO-DMZ
+    status: enable
+    action: deny
+    srcintf: [VLAB]
+    dstintf: [VDMZ]
+    srcaddr: [vlab address]
+    dstaddr: [vdmz address]
+    service: [ALL]
+    schedule: always
+    comments: Block lab VLAN from reaching DMZ
+
+  - name: DENY-INTERNAL-TO-DMZ
+    status: enable
+    action: deny
+    srcintf: [VSVC, VAPPS, VLAB]
+    dstintf: [VDMZ]
+    srcaddr: [vsvc address, vapps address, vlab address]
+    dstaddr: [vdmz address]
+    service: [ALL]
+    schedule: always
+    comments: Block internal tiers from reaching DMZ
+
+  - name: MGMT-TO-HOMELAB
+    status: enable
+    action: accept
+    srcintf: [HL]
+    dstintf: [VSVC, VAPPS, VLAB, VDMZ]
+    srcaddr: [hlvl address]
+    dstaddr: [vsvc address, vapps address, vlab address, vdmz address]
+    service: [ALL]
+    schedule: always
+    nat: disable
+    comments: Admin access from VLAN 10 management to homelab routed VLANs
+
+  - name: HOMELAB-TO-MGMT-LIMITED
+    status: enable
+    action: accept
+    srcintf: [VSVC, VAPPS]
+    dstintf: [HL]
+    srcaddr: [vsvc address, vapps address]
+    dstaddr: [hlvl address]
+    service: [DNS, NTP, PING]
+    schedule: always
+    nat: disable
+    comments: Limited return/management traffic from vsvc/vapps to management; VLAB intentionally excluded
+
+  - name: VMSVC-VAPPS-EASTWEST
+    status: enable
+    action: accept
+    srcintf: [VSVC]
+    dstintf: [VAPPS]
+    srcaddr: [vsvc address]
+    dstaddr: [vapps address]
+    service: [ALL]
+    schedule: always
+    nat: disable
+    comments: VM services to containers/apps east-west
+
+  - name: VLAB-TO-VMSVC
+    status: enable
+    action: accept
+    srcintf: [VLAB]
+    dstintf: [VSVC]
+    srcaddr: [vlab address]
+    dstaddr: [vsvc address]
+    service: [ALL]
+    schedule: always
+    nat: disable
+    comments: Lab VLAN to VM services
+
+  - name: DMZ-TO-WAN-NAT
+    status: enable
+    action: accept
+    srcintf: [VDMZ]
+    dstintf: [virtual-wan-link]
+    srcaddr: [vdmz address]
+    dstaddr: [all]
+    service: [HTTP, HTTPS]
+    schedule: always
+    nat: enable
+    comments: Controlled DMZ egress to WAN with NAT

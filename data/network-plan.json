@@ -4,7 +4,7 @@
     "fortigate_100f": {
       "role": "main firewall and VLAN gateway",
       "management_ip": "10.99.99.2/24",
-      "gateway_convention": ".2 on every VLAN"
+      "gateway_convention": ".2 on firewall-routed VLANs; VLAN 20 is not routed to the firewall"
     },
     "cisco_c9300": {
       "role": "core L3 switch",
@@ -14,9 +14,10 @@
     },
     "proxmox": {
       "nodes": [
-        "pve01",
-        "pve02",
-        "pve03"
+        "nodeA",
+        "nodeB",
+        "nodeD",
+        "nodeF"
       ],
       "base_bridge": "vmbr0",
       "sdn_zone": "ztrunk"
@@ -29,6 +30,8 @@
       "vlan": 10,
       "subnet": "10.10.10.0/24",
       "gateway": "10.10.10.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "hlvl",
       "vnet": "vmgmt"
     },
     {
@@ -36,7 +39,10 @@
       "name": "STORAGE_CEPH",
       "vlan": 20,
       "subnet": "10.20.20.0/24",
-      "gateway": "10.20.20.2",
+      "gateway": null,
+      "gateway_device": "c9300",
+      "fortigate_interface": null,
+      "note": "Storage VLAN remains on C9300/storage side and is not routed to the FortiGate.",
       "vnet": "vstore"
     },
     {
@@ -45,6 +51,8 @@
       "vlan": 30,
       "subnet": "10.10.30.0/24",
       "gateway": "10.10.30.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "vsvc",
       "vnet": "vsvc"
     },
     {
@@ -53,6 +61,8 @@
       "vlan": 40,
       "subnet": "10.10.40.0/24",
       "gateway": "10.10.40.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "vapps",
       "vnet": "vapps"
     },
     {
@@ -61,6 +71,8 @@
       "vlan": 50,
       "subnet": "10.10.50.0/24",
       "gateway": "10.10.50.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "vlab",
       "vnet": "vlab"
     },
     {
@@ -69,6 +81,8 @@
       "vlan": 60,
       "subnet": "10.10.60.0/24",
       "gateway": "10.10.60.2",
+      "gateway_device": "fortigate",
+      "fortigate_interface": "vdmz",
       "vnet": "vdmz"
     },
     {
@@ -77,6 +91,8 @@
       "vlan": 99,
       "subnet": "10.99.99.0/24",
       "gateway": "10.99.99.2",
+      "gateway_device": "fortigate_mgt_hard_switch",
+      "fortigate_interface": "mgt",
       "vnet": null
     }
   ],
@@ -87,6 +103,10 @@
       "allowed_vlans": [
         10,
         11,
+        30,
+        40,
+        50,
+        60,
         100
       ]
     },
@@ -108,8 +128,18 @@
       "allowed_vlans": [
         3,
         10,
-        11
+        11,
+        30,
+        40,
+        50,
+        60
       ]
+    },
+    "proxmox_ovs_trunks": {
+      "nodeA": {"port": "en10basep2", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeB": {"port": "ennic1s1", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeD": {"port": "eno1", "vlans": "3,10,11,30,40,50,60", "bridge": "vmbr0"},
+      "nodeF": {"port": "sfp1", "vlans": "10,11,30,40,50,60", "bridge": "vmbr0", "note": "VLAN 3 via dedicated vmbr3/nic4"}
     }
   }
 }

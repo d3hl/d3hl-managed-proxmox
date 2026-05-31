@@ -9,7 +9,7 @@ Continue Homelab Proxmox SDN Design
 Use this repository as the source of truth for a practical homelab network design using:
 
 - Proxmox VE SDN
-- FortiGate 100F as main firewall and VLAN gateway
+- FortiGate 100F as main firewall and gateway for approved routed VLANs
 - Cisco Catalyst C9300 as core L3 switch
 - VLAN-based segmentation
 - Context7 MCP for vendor documentation lookups
@@ -18,14 +18,14 @@ Use this repository as the source of truth for a practical homelab network desig
 
 ## Important existing decisions
 
-1. FortiGate owns `.2` on every VLAN.
+1. FortiGate owns `.2` on VLAN 10 and approved routed VLANs 30, 40, 50, and 60.
 2. C9300 management IP is `10.10.10.1/24`.
-3. FortiGate infrastructure management IP is `10.99.99.2/24`.
-4. FortiGate is the L3 gateway/firewall for all VLANs.
+3. FortiGate infrastructure management IP is `10.99.99.2/24` on `mgt` hard-switch.
+4. VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
 5. C9300 is reached for management at `10.10.10.1` on VLAN 10.
 6. Do not change C9300 inter-VLAN routing behavior without an explicit reviewed plan.
 7. Do not create or remove C9300 SVIs without an explicit reviewed plan.
-8. VLAN 99 is infrastructure management.
+8. VLAN 99 is infrastructure management on FortiGate `mgt`; do not create a VLAN 99 subinterface.
 9. Do not trunk VLAN 99 to Proxmox nodes unless explicitly requested.
 10. Proxmox SDN uses VLAN Zone `ztrunk` on `vmbr0`.
 
@@ -47,12 +47,12 @@ Read these files before making changes:
 | VLAN | Purpose | Subnet | Gateway |
 |---:|---|---|---|
 | 10 | Proxmox management | 10.10.10.0/24 | 10.10.10.2 |
-| 20 | Storage / Ceph | 10.20.20.0/24 | 10.20.20.2 |
+| 20 | Storage / Ceph | 10.20.20.0/24 | none on FortiGate |
 | 30 | VM services | 10.10.30.0/24 | 10.10.30.2 |
 | 40 | Containers / apps | 10.10.40.0/24 | 10.10.40.2 |
 | 50 | Lab / test | 10.10.50.0/24 | 10.10.50.2 |
 | 60 | DMZ / public-facing | 10.10.60.0/24 | 10.10.60.2 |
-| 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 |
+| 99 | Infrastructure management | 10.99.99.0/24 | 10.99.99.2 on `mgt` |
 
 ## First Codex action
 
@@ -97,7 +97,9 @@ If Cisco IOS XE MCP is available:
 If FortiGate MCP is available:
 
 - Read current interface config first.
-- Confirm parent interface before creating VLAN interfaces.
+- Confirm parent interface `x2` and C9300 trunk allowance before creating VLAN interfaces.
+- Track VLAN 10 as live interface `hlvl`.
+- Create only missing FortiGate VLAN interfaces 30, 40, 50, and 60 unless explicitly instructed otherwise.
 - Create firewall policies separately from interface creation.
 - Avoid exposing management access broadly.
 

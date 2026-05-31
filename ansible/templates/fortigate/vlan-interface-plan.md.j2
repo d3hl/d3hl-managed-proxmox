@@ -1,0 +1,42 @@
+# FortiGate VLAN Interface Plan
+
+This plan is rendered from `ansible/group_vars/fortigates.yml`.
+
+## Assumptions
+
+- FortiGate keeps the existing live VLAN 10 gateway as `hlvl`.
+- FortiGate keeps infrastructure management on the existing `mgt` hard-switch.
+- VLAN 20 remains on the C9300/storage side and is not routed to the firewall.
+- This plan only creates or updates missing FortiGate VLAN gateways for VLANs 30, 40, 50, and 60.
+- VDOM: `{{ fortigate_vdom }}`
+- Parent interface: `{{ fortigate_parent_interface }}`
+- Apply is blocked until `CONFIRM_FORTIGATE_APPLY=yes` and `CONFIRM_FORTIGATE_TRUNK_REVIEW=yes` are set.
+
+## Existing Interfaces Tracked
+
+| Interface | VLAN | IP | Access | Alias | Role |
+|---|---:|---|---|---|---|
+{% for item in fortigate_existing_interfaces -%}
+| {{ item.name }} | {{ item.vlanid | default('n/a') }} | {{ item.ip }} | {{ item.allowaccess | join(',') }} | {{ item.alias }} | {{ item.role }} |
+{% endfor %}
+
+## Candidate Interfaces To Add After Trunk Review
+
+| Interface | VLAN | IP | Access | Alias | Role |
+|---|---:|---|---|---|---|
+{% for item in fortigate_vlan_interfaces -%}
+| {{ item.name }} | {{ item.vlanid }} | {{ item.ip }} | {{ item.allowaccess | join(',') }} | {{ item.alias }} | {{ item.role }} |
+{% endfor %}
+
+## Validation Commands
+
+```text
+show system interface
+get system interface
+execute ping-options source 10.10.10.2
+execute ping 10.10.10.1
+```
+
+## Rollback Hint
+
+Remove only VLAN interfaces created by this plan: `vsvc`, `vapps`, `vlab`, and `vdmz`. Do not delete `hlvl`, `mgt`, or any VLAN 20 objects as part of this FortiGate plan.

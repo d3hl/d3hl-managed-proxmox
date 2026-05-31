@@ -3,7 +3,7 @@
 This bundle contains execution-ready configuration artifacts for a practical homelab network using:
 
 - Proxmox VE SDN
-- FortiGate 100F as main firewall and VLAN gateway
+- FortiGate 100F as main firewall and gateway for approved routed VLANs
 - Cisco Catalyst C9300 as core L2 switch
 - VLAN-based segmentation
 - Proxmox SDN VLAN Zone using `vmbr0`
@@ -28,21 +28,23 @@ Proxmox Nodes: nodeA, nodeB, nodeD, nodeF
 
 ## Gateway model
 
-FortiGate owns `.2` on every VLAN and is the default gateway for routed VLANs.
+FortiGate owns `.2` on VLAN 10 and the approved routed VLANs 30, 40, 50, and 60.
+VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
+VLAN 99 remains on the FortiGate `mgt` hard-switch.
 
 Cisco C9300 is reached for management on VLAN 10 at `10.10.10.1/24`.
 
 ## VLAN table
 
-| Purpose | VLAN | Subnet | FortiGate Gateway |
+| Purpose | VLAN | Subnet | Gateway |
 |---|---:|---|---|
-| Proxmox management | 10 | 10.10.10.0/24 | 10.10.10.2 |
-| Storage / Ceph | 20 | 10.20.20.0/24 | 10.20.20.2 |
+| Proxmox management | 10 | 10.10.10.0/24 | 10.10.10.2 on `hlvl` |
+| Storage / Ceph | 20 | 10.20.20.0/24 | none on FortiGate |
 | VM services | 30 | 10.10.30.0/24 | 10.10.30.2 |
 | Containers / apps | 40 | 10.10.40.0/24 | 10.10.40.2 |
 | Lab / test | 50 | 10.10.50.0/24 | 10.10.50.2 |
 | DMZ / public-facing | 60 | 10.10.60.0/24 | 10.10.60.2 |
-| Infrastructure management | 99 | 10.99.99.0/24 | 10.99.99.2 |
+| Infrastructure management | 99 | 10.99.99.0/24 | 10.99.99.2 on `mgt` |
 
 ## Files
 
@@ -64,7 +66,7 @@ Cisco C9300 is reached for management on VLAN 10 at `10.10.10.1/24`.
 Review interface names before applying.
 
 Do not paste directly into production devices without checking:
-- FortiGate parent interface or aggregate name
+- FortiGate parent interface `x2` and C9300 trunk allowance for VLANs `10,11,30,40,50,60,100`
 - C9300 port names
 - Proxmox node names
 - Existing VLANs and trunks

@@ -1,0 +1,68 @@
+---
+ansible_connection: httpapi
+ansible_network_os: fortinet.fortios.fortios
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+ansible_httpapi_port: 7443
+
+fortigate_vdom: root
+fortigate_access_token: "{{ lookup('env', 'FORTIOS_ACCESS_TOKEN') }}"
+fortigate_parent_interface: "x2"
+fortigate_apply_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_APPLY') }}"
+fortigate_trunk_review_confirm: "{{ lookup('env', 'CONFIRM_FORTIGATE_TRUNK_REVIEW') }}"
+
+fortigate_existing_interfaces:
+  - name: hlvl
+    type: vlan
+    vlanid: 10
+    ip: 10.10.10.2/24
+    allowaccess:
+      - ping
+      - https
+      - ssh
+      - snmp
+      - fgfm
+      - fabric
+    alias: Proxmox management
+    role: lan
+    note: Existing live VLAN 10 gateway; track by live name and do not recreate.
+  - name: mgt
+    type: hard-switch
+    ip: 10.99.99.2/24
+    allowaccess:
+      - ping
+      - https
+      - ssh
+    alias: Infrastructure management
+    role: lan
+    note: Existing live management hard-switch; do not create VLAN 99 interface.
+
+fortigate_vlan_interfaces:
+  - name: vsvc
+    vlanid: 30
+    ip: 10.10.30.2/24
+    allowaccess:
+      - ping
+    alias: VM services
+    role: lan
+  - name: vapps
+    vlanid: 40
+    ip: 10.10.40.2/24
+    allowaccess:
+      - ping
+    alias: Containers / apps
+    role: lan
+  - name: vlab
+    vlanid: 50
+    ip: 10.10.50.2/24
+    allowaccess:
+      - ping
+    alias: Lab / test
+    role: lan
+  - name: vdmz
+    vlanid: 60
+    ip: 10.10.60.2/24
+    allowaccess:
+      - ping
+    alias: DMZ / public-facing
+    role: dmz

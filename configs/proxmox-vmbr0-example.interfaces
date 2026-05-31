@@ -4,9 +4,10 @@
 # Change IP address per Proxmox host.
 #
 # Example:
-# pve01: 10.10.10.11/24
-# pve02: 10.10.10.12/24
-# pve03: 10.10.10.13/24
+# nodeA: 10.10.10.10/24
+# nodeB: 10.10.10.15/24
+# nodeD: 10.10.10.17/24
+# nodeF: 10.10.10.18/24
 #
 # FortiGate VLAN 10 gateway: 10.10.10.2
 

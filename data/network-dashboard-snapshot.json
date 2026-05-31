@@ -1,0 +1,715 @@
+{
+  "collected_at_epoch": 1780172563,
+  "sources": {
+    "fortigate": "ansible/artifacts/fortigate-discovery.json",
+    "cisco": "ansible/artifacts/cisco-c9300-verification.json",
+    "proxmox": "ansible/artifacts/proxmox-fortigate-gateway-validation.json",
+    "plan": "data/network-plan.json"
+  },
+  "topology": {
+    "layers": [
+      "fortigate",
+      "c9300",
+      "proxmox"
+    ],
+    "edges": [
+      {
+        "from": "fortigate",
+        "to": "c9300",
+        "interface": "TwentyFiveGigE2/1/2",
+        "allowed_vlans": [
+          10,
+          11,
+          30,
+          40,
+          50,
+          60,
+          100
+        ],
+        "status": "up"
+      },
+      {
+        "from": "c9300",
+        "to": "nodeA",
+        "interface": "TenGigabitEthernet2/0/39",
+        "allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "status": "up"
+      },
+      {
+        "from": "c9300",
+        "to": "nodeB",
+        "interface": "TenGigabitEthernet2/0/41",
+        "allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "status": "up"
+      },
+      {
+        "from": "c9300",
+        "to": "nodeD",
+        "interface": "TenGigabitEthernet2/0/46",
+        "allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "status": "up"
+      },
+      {
+        "from": "c9300",
+        "to": "nodeF",
+        "interface": "sfp1",
+        "allowed_vlans": [
+          3,
+          10,
+          11,
+          30,
+          40,
+          50,
+          60
+        ],
+        "status": "up"
+      }
+    ]
+  },
+  "vlans": [
+    {
+      "id": 10,
+      "name": "PROXMOX_MGMT",
+      "purpose": "Proxmox management",
+      "subnet": "10.10.10.0/24",
+      "gateway": "10.10.10.2",
+      "fortigate_if": "hlvl",
+      "vnet": "vmgmt",
+      "fg_status": "up",
+      "on_fg_trunk": true,
+      "on_pve_trunk": true,
+      "pve_vnet": "vmgmt"
+    },
+    {
+      "id": 20,
+      "name": "STORAGE_CEPH",
+      "purpose": "Storage / Ceph",
+      "subnet": "10.20.20.0/24",
+      "gateway": null,
+      "fortigate_if": null,
+      "vnet": "vstore",
+      "fg_status": "unknown",
+      "on_fg_trunk": false,
+      "on_pve_trunk": false,
+      "pve_vnet": null
+    },
+    {
+      "id": 30,
+      "name": "VM_SERVICES",
+      "purpose": "VM services",
+      "subnet": "10.10.30.0/24",
+      "gateway": "10.10.30.2",
+      "fortigate_if": "vsvc",
+      "vnet": "vsvc",
+      "fg_status": "up",
+      "on_fg_trunk": true,
+      "on_pve_trunk": true,
+      "pve_vnet": "vsvc"
+    },
+    {
+      "id": 40,
+      "name": "CONTAINERS_APPS",
+      "purpose": "Containers / apps",
+      "subnet": "10.10.40.0/24",
+      "gateway": "10.10.40.2",
+      "fortigate_if": "vapps",
+      "vnet": "vapps",
+      "fg_status": "up",
+      "on_fg_trunk": true,
+      "on_pve_trunk": true,
+      "pve_vnet": "vapps"
+    },
+    {
+      "id": 50,
+      "name": "LAB_TEST",
+      "purpose": "Lab / test",
+      "subnet": "10.10.50.0/24",
+      "gateway": "10.10.50.2",
+      "fortigate_if": "vlab",
+      "vnet": "vlab",
+      "fg_status": "up",
+      "on_fg_trunk": true,
+      "on_pve_trunk": true,
+      "pve_vnet": "vlab"
+    },
+    {
+      "id": 60,
+      "name": "DMZ",
+      "purpose": "DMZ / public-facing",
+      "subnet": "10.10.60.0/24",
+      "gateway": "10.10.60.2",
+      "fortigate_if": "vdmz",
+      "vnet": "vdmz",
+      "fg_status": "up",
+      "on_fg_trunk": true,
+      "on_pve_trunk": true,
+      "pve_vnet": "vdmz"
+    },
+    {
+      "id": 99,
+      "name": "INFRA_MGMT",
+      "purpose": "Infrastructure management",
+      "subnet": "10.99.99.0/24",
+      "gateway": "10.99.99.2",
+      "fortigate_if": "mgt",
+      "vnet": null,
+      "fg_status": "unknown",
+      "on_fg_trunk": false,
+      "on_pve_trunk": false,
+      "pve_vnet": null
+    }
+  ],
+  "interfaces": [
+    {
+      "device": "FortiGate",
+      "name": "hlvl",
+      "vlan": 10,
+      "ip": "10.10.10.2/24",
+      "link_status": "up",
+      "role": "gateway"
+    },
+    {
+      "device": "FortiGate",
+      "name": "mgt",
+      "vlan": null,
+      "ip": "10.99.99.2/24",
+      "link_status": "up",
+      "role": "management"
+    },
+    {
+      "device": "FortiGate",
+      "name": "vsvc",
+      "vlan": 30,
+      "ip": "10.10.30.2/24",
+      "link_status": "up",
+      "role": "gateway"
+    },
+    {
+      "device": "FortiGate",
+      "name": "vapps",
+      "vlan": 40,
+      "ip": "10.10.40.2/24",
+      "link_status": "up",
+      "role": "gateway"
+    },
+    {
+      "device": "FortiGate",
+      "name": "vlab",
+      "vlan": 50,
+      "ip": "10.10.50.2/24",
+      "link_status": "up",
+      "role": "gateway"
+    },
+    {
+      "device": "FortiGate",
+      "name": "vdmz",
+      "vlan": 60,
+      "ip": "10.10.60.2/24",
+      "link_status": "up",
+      "role": "gateway"
+    },
+    {
+      "device": "C9300",
+      "name": "TwentyFiveGigE2/1/2",
+      "vlan": null,
+      "ip": "",
+      "link_status": "up",
+      "role": "trunk",
+      "allowed_vlans": [
+        10,
+        11,
+        30,
+        40,
+        50,
+        60,
+        100
+      ]
+    },
+    {
+      "device": "C9300",
+      "name": "TenGigabitEthernet2/0/39",
+      "vlan": null,
+      "ip": "",
+      "link_status": "up",
+      "role": "trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "C9300",
+      "name": "TenGigabitEthernet2/0/41",
+      "vlan": null,
+      "ip": "",
+      "link_status": "up",
+      "role": "trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "C9300",
+      "name": "TenGigabitEthernet2/0/46",
+      "vlan": null,
+      "ip": "",
+      "link_status": "up",
+      "role": "trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan1",
+      "vlan": 1,
+      "ip": "192.168.1.89/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan3",
+      "vlan": 3,
+      "ip": "192.168.3.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan10",
+      "vlan": 10,
+      "ip": "10.10.10.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan11",
+      "vlan": 11,
+      "ip": "10.11.11.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan20",
+      "vlan": 20,
+      "ip": "10.20.20.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan50",
+      "vlan": 50,
+      "ip": "10.10.50.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan99",
+      "vlan": 99,
+      "ip": "10.99.99.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "C9300",
+      "name": "Vlan100",
+      "vlan": 100,
+      "ip": "10.100.100.1/24",
+      "link_status": "up",
+      "role": "SVI"
+    },
+    {
+      "device": "Proxmox",
+      "name": "nodeA/en10basep2",
+      "vlan": null,
+      "ip": "10.10.10.18",
+      "link_status": "up",
+      "role": "ovs_trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "Proxmox",
+      "name": "nodeB/ennic1s1",
+      "vlan": null,
+      "ip": "10.10.10.15",
+      "link_status": "up",
+      "role": "ovs_trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "Proxmox",
+      "name": "nodeD/eno1",
+      "vlan": null,
+      "ip": "10.10.10.17",
+      "link_status": "up",
+      "role": "ovs_trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    },
+    {
+      "device": "Proxmox",
+      "name": "nodeF/sfp1",
+      "vlan": null,
+      "ip": "10.10.10.10",
+      "link_status": "up",
+      "role": "ovs_trunk",
+      "allowed_vlans": [
+        3,
+        10,
+        11,
+        30,
+        40,
+        50,
+        60
+      ]
+    }
+  ],
+  "ip_inventory": [
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.2",
+      "device": "FortiGate",
+      "interface": "hlvl",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.30.0/24",
+      "address": "10.10.30.2",
+      "device": "FortiGate",
+      "interface": "vsvc",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.40.0/24",
+      "address": "10.10.40.2",
+      "device": "FortiGate",
+      "interface": "vapps",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.50.0/24",
+      "address": "10.10.50.2",
+      "device": "FortiGate",
+      "interface": "vlab",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.60.0/24",
+      "address": "10.10.60.2",
+      "device": "FortiGate",
+      "interface": "vdmz",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "10.99.99.0/24",
+      "address": "10.99.99.2",
+      "device": "FortiGate",
+      "interface": "mgt",
+      "role": "gateway",
+      "status": "up"
+    },
+    {
+      "subnet": "",
+      "address": "192.168.1.89",
+      "device": "C9300",
+      "interface": "Vlan1",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "",
+      "address": "192.168.3.1",
+      "device": "C9300",
+      "interface": "Vlan3",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.1",
+      "device": "C9300",
+      "interface": "Vlan10",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.11.11.0/24",
+      "address": "10.11.11.1",
+      "device": "C9300",
+      "interface": "Vlan11",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.20.20.0/24",
+      "address": "10.20.20.1",
+      "device": "C9300",
+      "interface": "Vlan20",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.50.0/24",
+      "address": "10.10.50.1",
+      "device": "C9300",
+      "interface": "Vlan50",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.99.99.0/24",
+      "address": "10.99.99.1",
+      "device": "C9300",
+      "interface": "Vlan99",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.100.100.0/24",
+      "address": "10.100.100.1",
+      "device": "C9300",
+      "interface": "Vlan100",
+      "role": "SVI",
+      "status": "up"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.18",
+      "device": "Proxmox",
+      "interface": "nodeA mgmt",
+      "role": "node",
+      "status": "known"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.15",
+      "device": "Proxmox",
+      "interface": "nodeB mgmt",
+      "role": "node",
+      "status": "known"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.17",
+      "device": "Proxmox",
+      "interface": "nodeD mgmt",
+      "role": "node",
+      "status": "known"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.10",
+      "device": "Proxmox",
+      "interface": "nodeF mgmt",
+      "role": "node",
+      "status": "known"
+    },
+    {
+      "subnet": "10.10.50.0/24",
+      "address": "10.10.50.10",
+      "device": "VM",
+      "interface": "sg-hl-vm01 net1/vlab",
+      "role": "guest",
+      "status": "known"
+    },
+    {
+      "subnet": "10.10.10.0/24",
+      "address": "10.10.10.25",
+      "device": "VM",
+      "interface": "sg-hl-vm01 net0/vmgmt",
+      "role": "guest",
+      "status": "known"
+    }
+  ],
+  "subnet_utilization": [
+    {
+      "cidr": "10.10.10.0/24",
+      "vlan": 10,
+      "name": "PROXMOX_MGMT",
+      "total_hosts": 254,
+      "known_used": 7,
+      "segments": [
+        {
+          "id": "SVI",
+          "value": 1
+        },
+        {
+          "id": "gateway",
+          "value": 1
+        },
+        {
+          "id": "guest",
+          "value": 1
+        },
+        {
+          "id": "node",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "cidr": "10.20.20.0/24",
+      "vlan": 20,
+      "name": "STORAGE_CEPH",
+      "total_hosts": 254,
+      "known_used": 1,
+      "segments": [
+        {
+          "id": "SVI",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "cidr": "10.10.30.0/24",
+      "vlan": 30,
+      "name": "VM_SERVICES",
+      "total_hosts": 254,
+      "known_used": 1,
+      "segments": [
+        {
+          "id": "gateway",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "cidr": "10.10.40.0/24",
+      "vlan": 40,
+      "name": "CONTAINERS_APPS",
+      "total_hosts": 254,
+      "known_used": 1,
+      "segments": [
+        {
+          "id": "gateway",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "cidr": "10.10.50.0/24",
+      "vlan": 50,
+      "name": "LAB_TEST",
+      "total_hosts": 254,
+      "known_used": 3,
+      "segments": [
+        {
+          "id": "SVI",
+          "value": 1
+        },
+        {
+          "id": "gateway",
+          "value": 1
+        },
+        {
+          "id": "guest",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "cidr": "10.10.60.0/24",
+      "vlan": 60,
+      "name": "DMZ",
+      "total_hosts": 254,
+      "known_used": 1,
+      "segments": [
+        {
+          "id": "gateway",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "cidr": "10.99.99.0/24",
+      "vlan": 99,
+      "name": "INFRA_MGMT",
+      "total_hosts": 254,
+      "known_used": 2,
+      "segments": [
+        {
+          "id": "SVI",
+          "value": 1
+        },
+        {
+          "id": "gateway",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}

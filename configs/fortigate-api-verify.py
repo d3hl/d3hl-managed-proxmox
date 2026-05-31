@@ -1,0 +1,316 @@
+#!/usr/bin/env python3
+"""Read-only FortiGate interface verification.
+
+Uses FORTIGATE_HOST and FORTIOS_ACCESS_TOKEN from the environment. Intended to
+be run via 1Password `op run` so no token is stored or printed.
+"""
+
+from __future__ import annotations
+
+import ipaddress
+import json
+import os
+import ssl
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+import yaml
+
+
+ROOT = Path(__file__).resolve().parents[1]
+FORTIGATE_VARS = ROOT / "ansible" / "group_vars" / "fortigates.yml"
+OUT_DIR = ROOT / "ansible" / "artifacts"
+OUT_FILE = OUT_DIR / "fortigate-verification.json"
+
+VDOM = os.environ.get("FORTIGATE_VDOM", "root")
+
+
+def fail(message: str) -> int:
+    print(f"ERROR: {message}", file=sys.stderr)
+    return 1
+
+
+def normalize_host(value: str) -> str:
+    value = value.strip().rstrip("/")
+    if not value:
+        raise ValueError("FORTIGATE_HOST is empty")
+    parsed = urllib.parse.urlparse(value if "://" in value else f"https://{value}")
+    if not parsed.hostname:
+        raise ValueError("FORTIGATE_HOST is not a valid host or URL")
+    netloc = parsed.netloc
+    return f"{parsed.scheme or 'https'}://{netloc}"
+
+
+def api_get(base_url: str, token: str, path: str) -> dict:
+    query = urllib.parse.urlencode({"vdom": VDOM})
+    url = f"{base_url}{path}?{query}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json",
+        },
+        method="GET",
+    )
+    context = ssl._create_unverified_context()
+    with urllib.request.urlopen(req, timeout=20, context=context) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def target_interfaces() -> list[dict]:
+    data = yaml.safe_load(FORTIGATE_VARS.read_text(encoding="utf-8"))
+    targets = []
+    for source_key in ("fortigate_existing_interfaces", "fortigate_vlan_interfaces"):
+        for item in data.get(source_key, []):
+            target = {
+                "name": item["name"],
+                "type": item.get("type", "vlan"),
+                "ip": item["ip"],
+                "alias": item.get("alias"),
+                "role": item.get("role"),
+                "allowaccess": item.get("allowaccess", []),
+                "source": source_key,
+            }
+            if "vlanid" in item:
+                target["vlanid"] = item["vlanid"]
+            targets.append(target)
+    return targets
+
+
+def expected_vlanid(target: dict) -> int | None:
+    if "vlanid" not in target:
+        return None
+    try:
+        return int(target["vlanid"])
+    except (TypeError, ValueError):
+        return None
+
+
+def equivalent_vlan(target: dict, vlan_interfaces: list[dict]) -> dict | None:
+    vlanid = expected_vlanid(target)
+    if target.get("type") != "vlan" or vlanid is None:
+        return None
+    return next(
+        (
+            item
+            for item in vlan_interfaces
+            if int(item.get("vlanid", -1)) == vlanid
+            and normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
+        ),
+        None,
+    )
+
+
+def normalize_ip(value: str | None) -> str | None:
+    if not value:
+        return None
+    first = str(value).split()[0]
+    try:
+        return str(ipaddress.ip_interface(first).ip)
+    except ValueError:
+        return first
+
+
+def interface_summary(item: dict) -> dict:
+    return {
+        "name": item.get("name"),
+        "type": item.get("type"),
+        "interface": item.get("interface"),
+        "vlanid": item.get("vlanid"),
+        "ip": item.get("ip"),
+        "allowaccess": item.get("allowaccess"),
+        "alias": item.get("alias"),
+        "role": item.get("role"),
+        "status": item.get("status"),
+    }
+
+
+def run() -> int:
+    host = os.environ.get("FORTIGATE_HOST", "")
+    token = os.environ.get("FORTIOS_ACCESS_TOKEN", "")
+    if not host:
+        return fail("FORTIGATE_HOST is required")
+    if not token:
+        return fail("FORTIOS_ACCESS_TOKEN is required")
+
+    try:
+        base_url = normalize_host(host)
+    except ValueError as exc:
+        return fail(str(exc))
+
+    try:
+        response = api_get(base_url, token, "/api/v2/cmdb/system/interface")
+    except urllib.error.HTTPError as exc:
+        return fail(f"FortiGate API returned HTTP {exc.code}; check token permissions and host")
+    except urllib.error.URLError as exc:
+        return fail(f"FortiGate API connection failed: {exc.reason}")
+    except TimeoutError:
+        return fail("FortiGate API connection timed out")
+
+    interfaces = response.get("results", [])
+    by_name = {item.get("name"): item for item in interfaces}
+    targets = target_interfaces()
+    actual_interface_summary = [
+        interface_summary(item)
+        for item in interfaces
+        if item.get("type") == "vlan"
+        or item.get("vlanid")
+        or item.get("interface")
+        or normalize_ip(item.get("ip")) not in (None, "0.0.0.0")
+    ]
+    vlan_interfaces = [
+        item
+        for item in interfaces
+        if item.get("type") == "vlan" and item.get("vlanid") not in (None, "", 0)
+    ]
+
+    checks = []
+    parent_interfaces = set()
+    for target in targets:
+        actual = by_name.get(target["name"])
+        if not actual:
+            equivalent = equivalent_vlan(target, vlan_interfaces)
+            ip_conflict = next(
+                (
+                    item
+                    for item in interfaces
+                    if normalize_ip(item.get("ip")) == normalize_ip(target["ip"])
+                ),
+                None,
+            )
+            if equivalent:
+                parent = equivalent.get("interface")
+                if parent:
+                    parent_interfaces.add(parent)
+                checks.append(
+                    {
+                        "name": target["name"],
+                        "status": "name_mismatch",
+                        "expected": target,
+                        "actual": interface_summary(equivalent),
+                    }
+                )
+                continue
+            if ip_conflict:
+                checks.append(
+                    {
+                        "name": target["name"],
+                        "status": "ip_conflict",
+                        "expected": target,
+                        "actual": interface_summary(ip_conflict),
+                    }
+                )
+                continue
+            checks.append(
+                {
+                    "name": target["name"],
+                    "status": "missing",
+                    "expected": target,
+                    "actual": None,
+                }
+            )
+            continue
+
+        actual_ip = normalize_ip(actual.get("ip"))
+        expected_ip = normalize_ip(target["ip"])
+        parent = actual.get("interface")
+        if target.get("type") == "vlan" and parent:
+            parent_interfaces.add(parent)
+
+        mismatches = []
+        vlanid = expected_vlanid(target)
+        if vlanid is not None and int(actual.get("vlanid", -1)) != vlanid:
+            mismatches.append("vlanid")
+        if actual_ip != expected_ip:
+            mismatches.append("ip")
+        if target.get("type") and actual.get("type") != target["type"]:
+            mismatches.append("type")
+
+        checks.append(
+            {
+                "name": target["name"],
+                "status": "match" if not mismatches else "mismatch",
+                "mismatches": mismatches,
+                "expected": target,
+                "actual": {
+                    **interface_summary(actual),
+                },
+            }
+        )
+
+    summary = {
+        "verified_at_epoch": int(time.time()),
+        "vdom": VDOM,
+        "fortigate_host": base_url.replace("https://", "").replace("http://", ""),
+        "total_interfaces_seen": len(interfaces),
+        "target_count": len(targets),
+        "match_count": sum(1 for item in checks if item["status"] == "match"),
+        "name_mismatch_count": sum(1 for item in checks if item["status"] == "name_mismatch"),
+        "ip_conflict_count": sum(1 for item in checks if item["status"] == "ip_conflict"),
+        "missing_count": sum(1 for item in checks if item["status"] == "missing"),
+        "mismatch_count": sum(1 for item in checks if item["status"] == "mismatch"),
+        "candidate_parent_interfaces": sorted(parent_interfaces),
+        "actual_interfaces": actual_interface_summary,
+        "checks": checks,
+    }
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUT_FILE.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    print("# FortiGate interface verification")
+    print(f"Host: {summary['fortigate_host']}")
+    print(f"VDOM: {VDOM}")
+    print(f"Interfaces seen: {summary['total_interfaces_seen']}")
+    print(f"Targets: {summary['target_count']}")
+    print(f"Matches: {summary['match_count']}")
+    print(f"Present with different name: {summary['name_mismatch_count']}")
+    print(f"IP conflicts/different type: {summary['ip_conflict_count']}")
+    print(f"Missing: {summary['missing_count']}")
+    print(f"Mismatches: {summary['mismatch_count']}")
+    print(f"Candidate parent interfaces: {', '.join(summary['candidate_parent_interfaces']) or 'none'}")
+    print(f"Evidence: {OUT_FILE.relative_to(ROOT)}")
+    print("Existing VLAN interfaces:")
+    for item in actual_interface_summary:
+        if item.get("type") == "vlan":
+            print(
+                "  "
+                f"{item.get('name')} vlanid={item.get('vlanid')} "
+                f"parent={item.get('interface')} ip={item.get('ip')} "
+                f"access={item.get('allowaccess') or ''} status={item.get('status') or ''}"
+            )
+    for check in checks:
+        marker = {
+            "match": "OK",
+            "name_mismatch": "NAME_MISMATCH",
+            "ip_conflict": "IP_CONFLICT",
+            "missing": "MISSING",
+            "mismatch": "MISMATCH",
+        }[check["status"]]
+        print(f"{marker}: {check['name']}")
+        if check["status"] in ("name_mismatch", "ip_conflict"):
+            actual = check["actual"]
+            print(
+                "  actual: "
+                f"{actual.get('name')} type={actual.get('type')} "
+                f"parent={actual.get('interface')} vlanid={actual.get('vlanid')} "
+                f"ip={actual.get('ip')}"
+            )
+        if check["status"] == "mismatch":
+            print(f"  fields: {', '.join(check['mismatches'])}")
+
+    return (
+        0
+        if summary["missing_count"] == 0
+        and summary["mismatch_count"] == 0
+        and summary["name_mismatch_count"] == 0
+        and summary["ip_conflict_count"] == 0
+        else 2
+    )
+
+
+if __name__ == "__main__":
+    raise SystemExit(run())

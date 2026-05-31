@@ -21,12 +21,12 @@ Create SDN VLAN zone:
 - Zone ID: ztrunk
 - Type: VLAN
 - Bridge: vmbr0
-- Nodes: pve01,pve02,pve03
+- Nodes: nodeA,nodeB,nodeD,nodeF
 
 Create VNets:
-- vmgmt, VLAN 10, subnet 10.99.99.0/24, gateway 10.99.99.2
-- vceph, VLAN 20, subnet 10.20.20.0/24, gateway 10.20.20.1
-- vvm, VLAN 30, subnet 10.10.30.0/24, gateway 10.10.30.2
+- vmgmt, VLAN 10, subnet 10.10.10.0/24, gateway 10.10.10.2
+- vstore, VLAN 20, subnet 10.20.20.0/24, no FortiGate gateway
+- vsvc, VLAN 30, subnet 10.10.30.0/24, gateway 10.10.30.2
 - vapps, VLAN 40, subnet 10.10.40.0/24, gateway 10.10.40.2
 - vlab, VLAN 50, subnet 10.10.50.0/24, gateway 10.10.50.2
 - vdmz, VLAN 60, subnet 10.10.60.0/24, gateway 10.10.60.2
@@ -50,13 +50,14 @@ Target device:
 - Default gateway: FortiGate 100F at 10.10.10.2
 
 Design:
-- FortiGate 100F is the L3 gateway/firewall for all VLANs.
+- FortiGate 100F is the L3 gateway/firewall for VLAN 10 and routed VLANs 30,40,50,60.
+- VLAN 20 remains on the C9300/storage side and is not routed to the FortiGate.
 - C9300 is the L3 core switch.
 - Do not change inter-VLAN routing behavior without an explicit reviewed plan.
 - VLAN 99 is infrastructure management.
-- VLAN 99 should be allowed only on the FortiGate uplink unless explicitly needed elsewhere.
+- VLAN 99 remains on FortiGate `mgt` hard-switch and should not be trunked to Proxmox unless explicitly needed.
 - Node trunks should carry VLANs 3,10,11.
-- FortiGate trunk should carry VLANs 10,11,100.
+- FortiGate trunk should carry VLANs 10,11,30,40,50,60,100.
 
 Create VLANs:
 - VLAN 10: PROXMOX_MGMT
@@ -80,7 +81,7 @@ Configure trunk to FortiGate:
 - interface TwentyFiveGigE2/1/2
 - description Trunk_to_FortiGate_100F
 - mode trunk
-- allowed VLANs: 10,11,100
+- allowed VLANs: 10,11,30,40,50,60,100
 
 Configure trunks to Proxmox:
 - interfaces TenGigabitEthernet2/0/39, TenGigabitEthernet2/0/41, TenGigabitEthernet2/0/46
