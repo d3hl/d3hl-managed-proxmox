@@ -125,6 +125,12 @@ def fix_homelab_policy(verify_mod, base_url: str, token: str, vdom: str) -> dict
             "http_status": exc.code,
             "body": body[:500],
         }
+    except urllib.error.URLError as exc:
+        return {
+            "status": "error",
+            "name": "HOMELAB-TO-MGMT-LIMITED",
+            "message": str(exc.reason),
+        }
 
 
 def backup_config(verify_mod, base_url: str, token: str, vdom: str) -> dict:
@@ -172,7 +178,10 @@ def run() -> int:
     if policy_fix:
         print(f"Policy align: {policy_fix.get('status')} {policy_fix.get('action', '')}")
         if policy_fix.get("status") == "error":
-            print(f"  HTTP {policy_fix.get('http_status')}: {policy_fix.get('body')}")
+            if policy_fix.get("http_status") is not None:
+                print(f"  HTTP {policy_fix['http_status']}: {policy_fix.get('body')}")
+            else:
+                print(f"  Connection failed: {policy_fix.get('message')}")
             return 1
 
     print("Running repo-vs-live verification...")
