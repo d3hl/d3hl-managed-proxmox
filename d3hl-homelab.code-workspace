@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "agent-contract-master",
+			"path": "../agent-contract-master"
+		},
+		{
+			"name": "proxmox",
+			"path": "."
+		},
+		{
+			"name": "cf-controller",
+			"path": "../cf-controller"
+		}
+	],
+	"settings": {}
+}
