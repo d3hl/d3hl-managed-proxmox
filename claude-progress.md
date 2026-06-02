@@ -7,6 +7,28 @@
 - Standard verification path: Cisco validated and saved; Proxmox SDN/API validation completed; FortiGate VLAN gateways, policies, repo-live verify, and persistent save complete.
 - Current highest-priority unfinished feature: none — all tracked features in `feature_list.json` are `passing`.
 - Current blocker: none for network close-out; QEMU guest agent on VM `444` / `sg-hl-vm01` remains unavailable (in-guest gateway ping not automatable; L3/L2 E2E proven externally).
+- 2026-06-02 harness cleanup completed: local startup, scope, DoD, verification, and session gates are now explicit in `AGENTS.md`; `feature_list.json` has validator-compatible `name`, `description`, and `dependencies` fields while preserving existing status vocabulary.
+
+### Session 024 - Whole-workspace harness cleanup
+
+- Date: 2026-06-02
+- Goal: Implement the minimal harness audit plan across the workspace without creating duplicate state files or mutating live infrastructure.
+- Completed:
+  - Kept `agent-contract-master` as a shared contract repo without adding per-repo `feature_list.json`, `claude-progress.md`, or `init.sh`.
+  - Kept `cf-controller` unchanged; its remaining harness deduction is the intentional `claude-progress.md` alias.
+  - Updated `AGENTS.md` with local startup workflow, verification commands, scope, definition of done, and end-of-session routine.
+  - Updated `feature_list.json` with validator-compatible fields while preserving existing feature meaning and `passing` statuses.
+  - Refreshed `session-handoff.md` with restart markers, files, blockers, risks, and next-session command.
+- Verification run:
+  - `./init.sh` passed for this repo before and after the harness edits.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/d3hl-managed-proxmox` passed at 92/100.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/cf-controller` passed at 92/100.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/agent-contract-master` remained 48/100 by design because it is not a code repo.
+- Known risks or unresolved issues:
+  - The generic validator still expects `progress.md`; this repo intentionally uses `claude-progress.md`.
+  - VM `444` guest-agent access remains unavailable.
+- Next best step:
+  - Run `./init.sh`, then choose any newly added feature from `feature_list.json`.
 
 ## Quick Report - 2026-05-28
 

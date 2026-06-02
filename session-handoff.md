@@ -1,12 +1,33 @@
-# Session Handoff - DeepSeek Proxmox Continuation
+# Session Handoff - d3hl-managed-proxmox
 
-Date: 2026-05-28
+Last Updated: 2026-06-02
+
+## Current Objective
+
+No unfinished tracked feature. All features in `feature_list.json` are currently `passing`.
+
+Recommended Next Step: run `./init.sh`, then choose any newly added feature.
 
 ## Current State
 
-Cisco C9300 live configuration was updated and validated in running-config only.
-Do not assume startup-config has the same changes until `write memory` is
-explicitly run after final validation.
+- Cisco C9300 live configuration has been validated and saved.
+- Proxmox SDN/API validation is complete.
+- FortiGate VLAN gateways, policies, repo-live verification, and persistent save are complete.
+- QEMU guest agent on VM `444` / `sg-hl-vm01` remains unavailable, so in-guest gateway ping is not automatable; L3/L2 E2E is proven externally.
+
+## Files
+
+- `AGENTS.md`
+- `feature_list.json`
+- `claude-progress.md`
+- `session-handoff.md`
+- `init.sh`
+- `data/network-plan.json`
+- `docs/fortigate-e2e-validation.md`
+
+## Historical Network Evidence
+
+Earlier Cisco validation state:
 
 Validated Cisco state:
 
@@ -83,13 +104,17 @@ Use 1Password vault `d3HLPRV`.
 Do not write plaintext secrets into files, prompts, logs, or handoff notes.
 Follow `docs/1password-secrets.md`.
 
-## Risks / Blockers
+## Blockers
 
-- Cisco changes are validated in running-config but not saved with `write memory`.
-- ✅ Node names confirmed: `nodeA, nodeB, nodeD, nodeF`. Repo updated.
-- ✅ vmbr0 is OVS (not Linux bridge) — natively VLAN-aware. Trunks updated on A,B,D.
-- ⚠️ **nodeF esfp1** still access port (tag=10, native-untagged). Needs trunk conversion to `trunks=3,10,11,30,40,50,60`.
-- SDN was empty; all objects are new.
+- None for the tracked network close-out features.
+- VM `444` guest-agent access is still unavailable; do not rely on in-guest command execution for validation until that is fixed.
+
+## Risks
+
+- Node names confirmed: `nodeA, nodeB, nodeD, nodeF`.
+- `vmbr0` is OVS, not a Linux bridge, and is natively VLAN-aware.
+- `nodeF` uses `sfp1` for the `vmbr0` trunk; VLAN 3 uses dedicated `vmbr3` / `nic4`.
+- Do not run live apply or persistent-save commands without explicit user approval and fresh verification.
 
 ## Applied State (2026-05-28 — synced from live)
 
@@ -122,8 +147,13 @@ Follow `docs/1password-secrets.md`.
 | nodeD | 10.10.10.17 | 10.10.10.2 |
 | nodeF | 10.10.10.10 | 10.10.10.2 |
 
-### Next Actions
-1. Full cross-platform validation: Cisco↔Proxmox↔FortiGate
-2. Cisco `write memory` after validation
-3. FortiGate VLAN interface creation for VLANs 30,40,50,60
-4. Test VM attachment to VNets
+## Next Session
+
+Start command:
+
+```bash
+cd /home/d3/Github/d3hl-managed-proxmox
+./init.sh
+```
+
+Recommended Next Step: after baseline passes, choose any newly added feature from `feature_list.json` and keep work to that feature.

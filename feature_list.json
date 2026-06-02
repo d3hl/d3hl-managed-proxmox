@@ -1,6 +1,6 @@
 {
   "project": "Homelab Proxmox SDN Design",
-  "last_updated": "2026-06-01",
+  "last_updated": "2026-06-02",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -17,8 +17,11 @@
       "id": "cisco-001",
       "priority": 1,
       "area": "cisco",
+      "name": "Configure C9300 VLANs, trunks, and SVI",
       "title": "Configure C9300 VLANs, trunks, and SVI",
+      "description": "C9300 has all 7 VLANs, correct trunk configs, and can ping FortiGate 10.10.10.2",
       "user_visible_behavior": "C9300 has all 7 VLANs, correct trunk configs, and can ping FortiGate 10.10.10.2",
+      "dependencies": [],
       "status": "passing",
       "verification": [
         "show vlan brief shows VLANs 10,20,30,40,50,60,99",
@@ -38,8 +41,11 @@
       "id": "fortigate-001",
       "priority": 2,
       "area": "fortigate",
+      "name": "Confirm FortiGate parent interface & create VLAN interfaces",
       "title": "Confirm FortiGate parent interface & create VLAN interfaces",
+      "description": "FortiGate tracks live VLAN 10 as hlvl, keeps VLAN 99 on mgt, and adds only routed VLAN gateways 30,40,50,60 after trunk review",
       "user_visible_behavior": "FortiGate tracks live VLAN 10 as hlvl, keeps VLAN 99 on mgt, and adds only routed VLAN gateways 30,40,50,60 after trunk review",
+      "dependencies": [],
       "status": "passing",
       "verification": [
         "Ansible YAML files parse successfully",
@@ -70,8 +76,11 @@
       "id": "proxmox-001",
       "priority": 3,
       "area": "proxmox",
+      "name": "Proxmox SDN discovery and configuration",
       "title": "Proxmox SDN discovery and configuration",
+      "description": "Proxmox SDN zone ztrunk and VNets exist on nodes A,B,D; nodeF pending",
       "user_visible_behavior": "Proxmox SDN zone ztrunk and VNets exist on nodes A,B,D; nodeF pending",
+      "dependencies": [],
       "status": "passing",
       "verification": [
         "pvesh get /cluster/sdn/zones shows ztrunk",
@@ -97,8 +106,11 @@
       "id": "docs-001",
       "priority": 4,
       "area": "documentation",
+      "name": "Visualize current homelab network configuration",
       "title": "Visualize current homelab network configuration",
+      "description": "Current repo and live-synced network state is represented as a Mermaid network diagram with VLAN, VNet, trunk, and known-risk notes",
       "user_visible_behavior": "Current repo and live-synced network state is represented as a Mermaid network diagram with VLAN, VNet, trunk, and known-risk notes",
+      "dependencies": [],
       "status": "passing",
       "verification": [
         "docs/current-network-diagram.md exists",

@@ -8,6 +8,18 @@ Work only in this repo (`proxmox` root) for files, git, `feature_list.json`, and
 
 Homelab Proxmox SDN design: VLAN-based network with Proxmox VE SDN, FortiGate 100F, Cisco C9300, trunks to Proxmox nodes.
 
+## Startup Workflow
+
+Before writing code:
+
+1. Confirm `pwd` is `/home/d3/Github/d3hl-managed-proxmox`.
+2. Read `claude-progress.md` for Current Verified State, blockers, and next step.
+3. Read `feature_list.json` and choose the highest-priority unfinished feature whose dependencies are satisfied.
+4. Review recent commits with `git log --oneline -5`.
+5. Run `./init.sh` and treat any failure as the first task.
+
+`claude-progress.md` is the canonical progress log for this repo. Do not create a separate `progress.md` unless the shared contract changes.
+
 ## Devices
 
 | Device | Role | IP |
@@ -68,6 +80,40 @@ Parent: `x2`. Use live names: VLAN 10 → `hlvl` on `x2`; VLAN 99 → `mgt`; VLA
 5. Safe order: VLANs → SVI → trunks → FortiGate VLAN IFs → Proxmox SDN → apply SDN
 6. Validate before persistent save
 7. Save only after validation
+
+## Verification Commands
+
+- Baseline verification: `./init.sh`
+- Build/static check: `./init.sh` syncs Python dependencies and validates `data/network-plan.json`.
+- Domain verification: run the Cisco, FortiGate, and Proxmox checks in the Validation section when a feature touches live network behavior.
+- Live apply/save commands require explicit user approval and successful pre-check evidence.
+
+## Scope
+
+- One feature at a time.
+- Stay in scope for the selected `feature_list.json` item.
+- Keep Cloudflare/controller work in `cf-controller`; this repo owns Proxmox SDN, C9300, FortiGate, and homelab network validation.
+- A narrow supporting fix is allowed only when required for verification or restartability.
+- Do not silently change verification rules to make a feature look done.
+
+## Definition of Done
+
+A feature is done only when:
+
+- Target behavior is implemented.
+- Required verification ran successfully.
+- Evidence includes the command, result, and date in `feature_list.json` or `claude-progress.md`.
+- `./init.sh` succeeds from the repo root.
+- `session-handoff.md` leaves a clean restart path if work is still in progress.
+
+## End of Session
+
+Before ending work:
+
+1. Update `claude-progress.md` with Current Verified State, blockers, verification evidence, and recommended next step.
+2. Update `feature_list.json` status, evidence, and any next-step notes for touched features.
+3. Update `session-handoff.md` with files touched, blockers, risks, and next session command.
+4. Leave the repo restartable and record any dirty worktree state.
 
 ## Secrets
 
