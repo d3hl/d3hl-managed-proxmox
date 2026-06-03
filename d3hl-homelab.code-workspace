@@ -11,6 +11,9 @@
 		{
 			"name": "cf-controller",
 			"path": "../cf-controller"
+		},
+		{
+			"path": "../d3hl-rhel-bootc-orchestrator"
 		}
 	],
 	"settings": {}
