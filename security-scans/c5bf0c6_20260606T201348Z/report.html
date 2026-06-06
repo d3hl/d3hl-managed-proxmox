@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Codex Security Scan Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.45; color: #1f2937; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #d1d5db; padding: 0.5rem; text-align: left; }
+    th { background: #f3f4f6; }
+    code { background: #f3f4f6; padding: 0.1rem 0.25rem; }
+    .severity { color: #991b1b; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Codex Security Scan Report</h1>
+  <p><strong>Repository:</strong> <code>/home/d3/Github/d3hl-managed-proxmox</code></p>
+  <p><strong>Scan ID:</strong> <code>c5bf0c6_20260606T201348Z</code></p>
+  <h2>Summary</h2>
+  <table>
+    <tr><th>ID</th><th>Severity</th><th>Title</th></tr>
+    <tr><td>CS-001</td><td class="severity">High</td><td>Tracked FortiGate config backup exposes encrypted private keys and credential material</td></tr>
+  </table>
+  <h2>Finding CS-001</h2>
+  <p>The tracked file <code>ansible/artifacts/fortigate-config-backup.conf</code> contains encrypted API key, password, private-key, and VPN PSK material from a live FortiGate backup.</p>
+  <p>Although <code>ansible/artifacts/</code> is ignored, <code>git ls-files</code> still lists the backup, so it remains tracked.</p>
+  <h2>Recommended Remediation</h2>
+  <ol>
+    <li>Remove the backup from the tracked tree.</li>
+    <li>Purge it from git history if shared beyond this workstation.</li>
+    <li>Rotate affected FortiGate API keys, VPN PSKs, certificate/private-key material, and backup-contained secrets as appropriate.</li>
+    <li>Store only redacted backups outside the repo.</li>
+  </ol>
+</body>
+</html>

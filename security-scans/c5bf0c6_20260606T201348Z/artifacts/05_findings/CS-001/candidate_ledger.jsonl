@@ -1,0 +1,3 @@
+{"phase":"discovery","status":"complete","candidate_id":"CS-001","receipt":"raw candidate recorded from current worktree evidence in ansible/artifacts/fortigate-config-backup.conf and tracked-file checks"}
+{"phase":"validation","status":"complete","candidate_id":"CS-001","receipt":"validated: line-numbered review confirms encrypted API key/password/private-key/PSK material; git check-ignore plus git ls-files proves ignored path is still tracked"}
+{"phase":"attack_path","status":"complete","candidate_id":"CS-001","receipt":"attack path complete: repository reader obtains sensitive FortiGate backup material; impact requires treating exposed encrypted keys/secrets as compromised or at least rotating/revoking affected material"}
