@@ -1,0 +1,176 @@
+{
+  "project": "CF-01",
+  "description": "Cloudflare mesh network implementation",
+  "last_updated": "2026-06-06",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true,
+    "linear_is_execution_layer": true
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "in_progress": "The feature is the current active task.",
+    "blocked": "Work cannot continue until a documented blocker is resolved.",
+    "passing": "Required verification has passed and evidence is recorded."
+  },
+  "linear": {
+    "team_key": "NCD",
+    "project_name": "Cloudflare Control Plane",
+    "sync_task_issue": "NCD-28"
+  },
+  "features": [
+    {
+      "id": "CF-000",
+      "priority": 1,
+      "area": "harness",
+      "title": "Create repo harness and static baseline",
+      "description": "Required harness files exist, startup rules are clear, and static validation runs without live Cloudflare mutations.",
+      "user_visible_behavior": "Agents can start, verify, and resume work safely in the cf-controller repo.",
+      "dependencies": [],
+      "status": "in_progress",
+      "linear_issue": null,
+      "verification": [
+        "./init.sh succeeds",
+        "feature_list.json parses as valid JSON",
+        "required harness files exist"
+      ],
+      "evidence": [
+        "2026-06-06 harness scaffold exists: AGENTS.md, init.sh, feature_list.json, session-handoff.md",
+        "2026-06-06 init.sh baseline updated to validate feature_list.json instead of missing app.py path"
+      ],
+      "notes": "Repo contract established. Linear backlog sync tracked by NCD-28."
+    },
+    {
+      "id": "CF-001",
+      "priority": 2,
+      "area": "terraform",
+      "title": "Terraform Cloudflare DNS baseline",
+      "description": "Wildcard and apex A records for the homelab zone are defined in Terraform with proxied records.",
+      "user_visible_behavior": "Operators can plan and apply DNS records for the Cloudflare zone from code.",
+      "dependencies": ["CF-000"],
+      "status": "in_progress",
+      "linear_issue": null,
+      "verification": [
+        "terraform fmt -check succeeds under terraform/cloudflared",
+        "terraform validate succeeds with credentials injected by tf.sh",
+        "plan shows wildcard and apex A records only"
+      ],
+      "evidence": [
+        "2026-06-05 commit 5080f5a added Cloudflare DNS management with Terraform",
+        "terraform/cloudflared/main.tf defines cloudflare_dns_record wildcard and host resources"
+      ],
+      "notes": "Live apply status not recorded in harness yet."
+    },
+    {
+      "id": "CF-002",
+      "priority": 3,
+      "area": "terraform",
+      "title": "Terraform Cloudflare zone security settings",
+      "description": "TLS 1.3, automatic HTTPS rewrites, and strict SSL mode are managed as code for the zone.",
+      "user_visible_behavior": "Zone security posture is reviewable and reproducible from Terraform.",
+      "dependencies": ["CF-001"],
+      "status": "in_progress",
+      "linear_issue": null,
+      "verification": [
+        "terraform plan shows tls_1_3, automatic_https_rewrites, and ssl resources",
+        "terraform validate succeeds under terraform/cloudflared"
+      ],
+      "evidence": [
+        "2026-06-05 commit d258429 configured Cloudflare zone security",
+        "terraform/cloudflared/main.tf defines cloudflare_zone_setting resources"
+      ],
+      "notes": "Paired with DNS baseline in terraform/cloudflared."
+    },
+    {
+      "id": "CF-003",
+      "priority": 4,
+      "area": "secrets",
+      "title": "Document 1Password-backed Terraform runner contract",
+      "description": "Cloudflare API token, account ID, zone ID, and service-account references are documented without plaintext secrets.",
+      "user_visible_behavior": "Agents can run terraform/cloudflared/tf.sh using op://d3HLPRV references only.",
+      "dependencies": ["CF-000"],
+      "status": "not_started",
+      "linear_issue": null,
+      "verification": [
+        "docs/1password-secrets.md exists",
+        "docs/1password-secrets.md lists item names and fields only",
+        "./init.sh succeeds"
+      ],
+      "evidence": [],
+      "notes": "terraform/cloudflared/tf.sh already uses 1Password reads; docs still missing."
+    },
+    {
+      "id": "CF-004",
+      "priority": 5,
+      "area": "tunnel",
+      "title": "cloudflared tunnel connector deployment",
+      "description": "Define and deploy a Cloudflare tunnel connector for homelab ingress without committing tunnel secrets.",
+      "user_visible_behavior": "Homelab services can be reached through Cloudflare Tunnel with documented credential references.",
+      "dependencies": ["CF-001", "CF-003"],
+      "status": "not_started",
+      "linear_issue": null,
+      "verification": [
+        "tunnel configuration exists under terraform/cloudflared or a documented non-Terraform path",
+        "no plaintext tunnel tokens are committed",
+        "validation runbook documents read-only tunnel status checks"
+      ],
+      "evidence": [],
+      "notes": "Directory name cloudflared implies this scope; only DNS/zone resources exist today."
+    },
+    {
+      "id": "CF-005",
+      "priority": 6,
+      "area": "controller",
+      "title": "Mesh controller service scaffold",
+      "description": "Scaffold the Cloudflare mesh controller API/service shape that this repo will own.",
+      "user_visible_behavior": "The control-plane service boundary, config inputs, and health checks are visible before live deployment.",
+      "dependencies": ["CF-000", "CF-004"],
+      "status": "not_started",
+      "linear_issue": null,
+      "verification": [
+        "controller scaffold directory exists",
+        "startup/readiness contract is documented",
+        "./init.sh succeeds"
+      ],
+      "evidence": [],
+      "notes": "Project summary: Cloudflare mesh controller."
+    },
+    {
+      "id": "CF-006",
+      "priority": 7,
+      "area": "ci",
+      "title": "Add GitHub Actions static checks",
+      "description": "CI runs shell, JSON, and Terraform fmt/validate checks without live Cloudflare credentials.",
+      "user_visible_behavior": "Pull requests get fast feedback before any live Cloudflare apply is attempted.",
+      "dependencies": ["CF-000", "CF-001", "CF-002"],
+      "status": "not_started",
+      "linear_issue": null,
+      "verification": [
+        ".github/workflows static workflow exists",
+        "workflow has no live terraform apply step",
+        "./init.sh succeeds"
+      ],
+      "evidence": [],
+      "notes": "No CI workflow exists yet."
+    },
+    {
+      "id": "CF-007",
+      "priority": 8,
+      "area": "validation",
+      "title": "Define end-to-end validation runbook",
+      "description": "Document read-only checks for DNS, zone settings, tunnel health, and controller readiness.",
+      "user_visible_behavior": "Operators can prove the Cloudflare control plane is ready before enabling live changes.",
+      "dependencies": ["CF-001", "CF-002", "CF-004", "CF-005"],
+      "status": "not_started",
+      "linear_issue": null,
+      "verification": [
+        "docs/validation-checklist.md exists",
+        "runbook separates read-only checks from live apply actions",
+        "./init.sh succeeds"
+      ],
+      "evidence": [],
+      "notes": "No validation runbook exists yet."
+    }
+  ]
+}
