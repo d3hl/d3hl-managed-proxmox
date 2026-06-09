@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "../d3hl_infra_crew"
+		},
+		{
 			"name": "agent-contract-master",
 			"path": "../agent-contract-master"
 		},
