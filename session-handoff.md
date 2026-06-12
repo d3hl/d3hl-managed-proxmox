@@ -1,12 +1,13 @@
 # Session Handoff - d3hl-managed-proxmox
 
-Last Updated: 2026-06-02
+Last Updated: 2026-06-13
 
 ## Current Objective
 
-No unfinished tracked feature. All features in `feature_list.json` are currently `passing`.
+Active feature: `proxmox-tf-vm-001` (in_progress) — first Terraform module in the repo, a bpg/proxmox clone-based VM on VM_SERVICES (VLAN 30, vsvc). Offline-validated; live apply is gated.
 
-Recommended Next Step: run `./init.sh`, then choose any newly added feature.
+Recommended Next Step: to finish the feature, run a gated live plan/apply on the cluster (requires 1Password-injected API token and an operator-approved apply gate under `live_apply_gated`):
+`export TF_VAR_proxmox_api_token="$(op read 'op://d3HLPRV/Proxmox API for AI/username')=$(op read 'op://d3HLPRV/Proxmox API for AI/credential')"` then `op run -- terraform -chdir=terraform/proxmox-vm plan -var="template_vm_id=<id>"`. Record the VM-created evidence, then flip the feature to `passing`.
 
 ## Current State
 
@@ -14,6 +15,7 @@ Recommended Next Step: run `./init.sh`, then choose any newly added feature.
 - Proxmox SDN/API validation is complete.
 - FortiGate VLAN gateways, policies, repo-live verification, and persistent save are complete.
 - QEMU guest agent on VM `444` / `sg-hl-vm01` remains unavailable, so in-guest gateway ping is not automatable; L3/L2 E2E is proven externally.
+- 2026-06-13 first Terraform added under `terraform/proxmox-vm/` (bpg/proxmox ~> 0.107, resolved 0.109.0). `fmt -check`, `init -backend=false`, and `validate` pass; `./init.sh` runs the guarded Terraform step. No secrets in repo; op:// token references injected at runtime. Live plan/apply gated under `live_apply_gated`; no `terraform destroy` in scope.
 
 ## Files
 
@@ -24,6 +26,7 @@ Recommended Next Step: run `./init.sh`, then choose any newly added feature.
 - `init.sh`
 - `data/network-plan.json`
 - `docs/fortigate-e2e-validation.md`
+- `terraform/proxmox-vm/` (providers.tf, variables.tf, main.tf, outputs.tf, terraform.tfvars.example, .terraformignore)
 
 ## Historical Network Evidence
 

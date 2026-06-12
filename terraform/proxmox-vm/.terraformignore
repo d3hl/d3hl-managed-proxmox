@@ -1,0 +1,8 @@
+# Keep local-only and secret-adjacent artifacts out of HCP Terraform CLI uploads.
+*.tfvars
+!*.tfvars.example
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform/
+.env

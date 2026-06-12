@@ -37,6 +37,18 @@ echo "==> Syncing dependencies"
 echo "==> Running baseline verification"
 "${VERIFY_CMD[@]}"
 
+TF_DIR="terraform/proxmox-vm"
+if [ -d "$TF_DIR" ]; then
+  if command -v terraform >/dev/null 2>&1; then
+    echo "==> Validating Terraform ($TF_DIR)"
+    terraform -chdir="$TF_DIR" fmt -check -recursive
+    terraform -chdir="$TF_DIR" init -backend=false -input=false >/dev/null
+    terraform -chdir="$TF_DIR" validate
+  else
+    echo "==> Skipping Terraform validation ($TF_DIR present, terraform not installed)"
+  fi
+fi
+
 echo "==> Startup command"
 printf '    %q' "${START_CMD[@]}"
 printf '\n'

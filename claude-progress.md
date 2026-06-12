@@ -5,9 +5,10 @@
 - Repository root: `/home/d3/Github/d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
 - Standard verification path: Cisco validated and saved; Proxmox SDN/API validation completed; FortiGate VLAN gateways, policies, repo-live verify, and persistent save complete.
-- Current highest-priority unfinished feature: none — all tracked features in `feature_list.json` are `passing`.
+- Current highest-priority unfinished feature: `proxmox-tf-vm-001` (in_progress) — first Terraform module in the repo; offline-validated, live apply gated.
 - Current blocker: none for network close-out; QEMU guest agent on VM `444` / `sg-hl-vm01` remains unavailable (in-guest gateway ping not automatable; L3/L2 E2E proven externally).
 - 2026-06-02 harness cleanup completed: local startup, scope, DoD, verification, and session gates are now explicit in `AGENTS.md`; `feature_list.json` has validator-compatible `name`, `description`, and `dependencies` fields while preserving existing status vocabulary.
+- 2026-06-13 added `terraform/proxmox-vm/` (providers/variables/main/outputs + tfvars.example + .terraformignore): a bpg/proxmox clone-based VM on VM_SERVICES (VLAN 30, vsvc). This is the repo's first `.tf` and begins migrating VM provisioning off the imperative Python/pvesh scripts per the d3HL Terraform-for-provisioning contract. `init.sh` now runs a guarded `terraform fmt/init/validate` step; `.gitignore` excludes tfstate/tfvars. Provider auth uses the `op://d3HLPRV/Proxmox API for AI` token references injected at runtime — no secrets in repo. Offline fmt/init/validate passed (bpg/proxmox 0.109.0 under ~> 0.107); live plan/apply remain gated under `live_apply_gated`.
 
 ### Session 024 - Whole-workspace harness cleanup
 
