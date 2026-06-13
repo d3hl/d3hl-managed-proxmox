@@ -1,6 +1,6 @@
 {
   "project": "Homelab Proxmox SDN Design",
-  "last_updated": "2026-06-13",
+  "last_updated": "2026-06-02",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -122,30 +122,6 @@
         "2026-05-30 docs/multi-agent-deepseek-contract.md reassigned strict FortiGate implementation ownership to Composer"
       ],
       "notes": "Diagram intentionally calls out the FortiGate trunk/VLAN gateway review item and the Cisco Proxmox trunk discrepancy between validated config snapshots and network-plan target."
-    },
-    {
-      "id": "proxmox-tf-vm-001",
-      "priority": 5,
-      "area": "terraform",
-      "name": "Provision Proxmox VMs with the bpg/proxmox Terraform provider",
-      "title": "Provision Proxmox VMs with the bpg/proxmox Terraform provider",
-      "description": "First Terraform module in the repo: a runnable bpg/proxmox VM that clones an existing PVE template onto a cluster node and attaches it to VM_SERVICES (VLAN 30, vsvc), replacing imperative Python/pvesh VM provisioning per the d3HL Terraform-for-provisioning contract.",
-      "user_visible_behavior": "terraform/proxmox-vm validates offline and, under an operator-approved apply gate, applies a cloud-init VM on VLAN 30 via the bpg/proxmox provider.",
-      "dependencies": [
-        "proxmox-001"
-      ],
-      "status": "in_progress",
-      "verification": [
-        "terraform -chdir=terraform/proxmox-vm fmt -check -recursive passes",
-        "terraform -chdir=terraform/proxmox-vm init -backend=false and validate succeed",
-        "./init.sh runs the guarded Terraform fmt/init/validate step and completes",
-        "Gated live evidence (separate, operator-approved): op run -- terraform plan, then apply under live_apply_gated, shows the VM created on VLAN 30 with the qemu agent reporting an address"
-      ],
-      "evidence": [
-        "2026-06-13 terraform fmt -check (rc=0), init -backend=false, and validate ('Success! The configuration is valid.') passed for terraform/proxmox-vm; bpg/proxmox resolved to 0.109.0 under the ~> 0.107 constraint.",
-        "2026-06-13 ./init.sh completed with the new guarded Terraform step reporting 'Validating Terraform (terraform/proxmox-vm) ... Success!' after the network-plan.json baseline check."
-      ],
-      "notes": "Offline-validated only. Live plan/apply require 1Password-injected API token credentials and an operator-approved apply gate (live_apply_gated); no terraform destroy is part of this feature. Status stays in_progress until live apply evidence on the cluster is recorded. Assumes an existing template via template_vm_id (see PVE-TEMPLATE-001); cloud-image template creation is a separate follow-up."
     }
   ]
 }

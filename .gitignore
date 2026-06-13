@@ -2,12 +2,3 @@ __pycache__/
 *.py[cod]
 .venv/
 ansible/artifacts/
-
-# Terraform
-**/.terraform/
-*.tfstate
-*.tfstate.*
-*.tfplan
-*.tfvars
-!*.tfvars.example
-.terraform.lock.hcl
