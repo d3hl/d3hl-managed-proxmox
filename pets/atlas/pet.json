@@ -1,0 +1,6 @@
+{
+  "id": "atlas",
+  "displayName": "Atlas",
+  "description": "A calm Proxmox SDN companion with VLAN-colored accents, a network-cable tail, and a habit of checking the runbook before touching production.",
+  "spritesheetPath": "spritesheet.png"
+}

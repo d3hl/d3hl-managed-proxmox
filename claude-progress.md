@@ -4,9 +4,31 @@
 
 - Repository root: `/home/d3/Github/d3hl-managed-proxmox`
 - Standard startup path: read `AGENTS.md`, `claude-progress.md`, `feature_list.json`, then run `./init.sh` when baseline verification is ready.
-- Standard verification path: Cisco validated and saved; Proxmox SDN/API validation completed; FortiGate VLAN gateways 30,40,50,60 created.
-- Current highest-priority unfinished feature: `fortigate-001` (in progress — FortiGate persistent save still needs explicit approval/path after Cisco save)
-- Current blocker: none for C9300 persistence; VM `444` / `sg-hl-vm01` has E2E VLAN 50 reachability via DHCP lease `10.10.50.10`, though QEMU guest agent remains unavailable.
+- Standard verification path: Cisco validated and saved; Proxmox SDN/API validation completed; FortiGate VLAN gateways, policies, repo-live verify, and persistent save complete.
+- Current highest-priority unfinished feature: none — all tracked features in `feature_list.json` are `passing`.
+- Current blocker: none for network close-out; QEMU guest agent on VM `444` / `sg-hl-vm01` remains unavailable (in-guest gateway ping not automatable; L3/L2 E2E proven externally).
+- 2026-06-02 harness cleanup completed: local startup, scope, DoD, verification, and session gates are now explicit in `AGENTS.md`; `feature_list.json` has validator-compatible `name`, `description`, and `dependencies` fields while preserving existing status vocabulary.
+
+### Session 024 - Whole-workspace harness cleanup
+
+- Date: 2026-06-02
+- Goal: Implement the minimal harness audit plan across the workspace without creating duplicate state files or mutating live infrastructure.
+- Completed:
+  - Kept `agent-contract-master` as a shared contract repo without adding per-repo `feature_list.json`, `claude-progress.md`, or `init.sh`.
+  - Kept `cf-controller` unchanged; its remaining harness deduction is the intentional `claude-progress.md` alias.
+  - Updated `AGENTS.md` with local startup workflow, verification commands, scope, definition of done, and end-of-session routine.
+  - Updated `feature_list.json` with validator-compatible fields while preserving existing feature meaning and `passing` statuses.
+  - Refreshed `session-handoff.md` with restart markers, files, blockers, risks, and next-session command.
+- Verification run:
+  - `./init.sh` passed for this repo before and after the harness edits.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/d3hl-managed-proxmox` passed at 92/100.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/cf-controller` passed at 92/100.
+  - `node /home/d3/.agents/skills/harness-creator/scripts/validate-harness.mjs --target /home/d3/Github/agent-contract-master` remained 48/100 by design because it is not a code repo.
+- Known risks or unresolved issues:
+  - The generic validator still expects `progress.md`; this repo intentionally uses `claude-progress.md`.
+  - VM `444` guest-agent access remains unavailable.
+- Next best step:
+  - Run `./init.sh`, then choose any newly added feature from `feature_list.json`.
 
 ## Quick Report - 2026-05-28
 
@@ -700,8 +722,36 @@ bash configs/proxmox-sdn-pvesh.sh plan
   - Post-save verification passed with the same VLAN, trunk, SVI, and ping results.
 - Evidence captured:
   - `ansible/artifacts/cisco-c9300-verification.json` (ignored artifact)
-- Known risks or unresolved issues:
-  - FortiGate running-config is still not persist-saved.
+- Known risks or unresolved issues (resolved in Session 023):
+  - FortiGate persistent save completed 2026-06-01 (see Session 023).
   - QEMU guest agent for VM 444 is still unavailable, but E2E VLAN 50 connectivity is proven by DHCP lease and workstation pings.
+
+### Session 023 - FortiGate Close-Out and Persistent Save
+
+- Date: 2026-06-01
+- Goal: Run FortiGate discover/repo-live/persist-save, close `fortigate-001`, and record extended E2E evidence.
+- Completed:
+  - Ran `bash configs/fortigate-discover-op-run.sh`: 6/6 interface targets match on parent `x2` (45 interfaces seen).
+  - Ran `bash configs/fortigate-repo-live-verify-op-run.sh`: initial run 22/23 — `HOMELAB-TO-MGMT-LIMITED` service mismatch (`ALL` live vs `DNS,NTP,PING` repo).
+  - Updated `configs/fortigate-api-persist-save.py` to align policy `service` in addition to `srcaddr`.
+  - Ran `CONFIRM_FORTIGATE_PERSISTENT_SAVE=yes bash configs/fortigate-persist-save-op-run.sh`:
+    - Policy ID 13 aligned: service `ALL` → `DNS`, `NTP`, `PING`
+    - Repo-live verify: 23/23 match
+    - Config backup: `ansible/artifacts/fortigate-config-backup.conf` (384,835 bytes)
+  - VLAN 10 reachability: FortiGate-originated `execute ping 10.10.10.1` not available via REST monitor API (HTTP 404 on FortiOS 7.6.6); accepted substitute evidence — C9300 `ping 10.10.10.2 source vlan10` OK (Session 022), co-located VLAN 10 SVI/gateway, workstation pings to `10.10.10.1` and `10.10.10.2` OK.
+  - Extended L3 E2E: workstation pings to all routed FortiGate gateways (`10.10.30.2`, `10.10.40.2`, `10.10.50.2`, `10.10.60.2`) OK; VM path on `vlab` previously proven (Session 021).
+  - Marked `fortigate-001` as `passing` in `feature_list.json`.
+  - Added `docs/fortigate-e2e-validation.md` with E2E matrix.
+- Evidence captured:
+  - `ansible/artifacts/fortigate-verification.json`
+  - `ansible/artifacts/fortigate-discovery.json`
+  - `ansible/artifacts/fortigate-repo-live-verify.json` (23/23)
+  - `ansible/artifacts/fortigate-persistent-save.json`
+  - `ansible/artifacts/fortigate-config-backup.conf`
+- Known risks or unresolved issues:
+  - No running VM on `vsvc`, `vapps`, or `vdmz` for guest-level E2E (L3 gateway pings OK).
+  - QEMU guest agent still unavailable on VM 444.
+  - Live-only FortiGate policies not in repo intent: `HL to Wan-`, `HL to Wifi`, `VSVC-to-WAN`, `WIFI to HL`, `WIFII to wan`, `vpn_d3ipsec_local_allow`.
 - Next best step:
-  - Decide whether to run FortiGate persistent save after final FortiGate verification.
+  - Attach a test VM to `vsvc`/`vapps`/`vdmz` when guest-level E2E on those tiers is needed.
+  - Optional: manual FortiGate CLI `execute ping 10.10.10.1` from `10.10.10.2` for gold-standard VLAN 10 ping record.

@@ -1,5 +1,5 @@
 {
-  "discovered_at_epoch": 1780144765,
+  "discovered_at_epoch": 1780263293,
   "vdom": "root",
   "fortigate_host": "10.99.99.2:7443",
   "interfaces": {
@@ -345,8 +345,8 @@
         "intrazone": "deny"
       }
     ],
-    "policy_count": 12,
-    "homelab_related_policy_count": 11,
+    "policy_count": 13,
+    "homelab_related_policy_count": 12,
     "homelab_related_policies": [
       {
         "policyid": 9,
@@ -667,10 +667,6 @@
           {
             "name": "VAPPS",
             "q_origin_key": "VAPPS"
-          },
-          {
-            "name": "VLAB",
-            "q_origin_key": "VLAB"
           }
         ],
         "dstintf": [
@@ -687,10 +683,6 @@
           {
             "name": "vapps address",
             "q_origin_key": "vapps address"
-          },
-          {
-            "name": "vlab address",
-            "q_origin_key": "vlab address"
           }
         ],
         "dstaddr": [
@@ -701,20 +693,12 @@
         ],
         "service": [
           {
-            "name": "DNS",
-            "q_origin_key": "DNS"
-          },
-          {
-            "name": "NTP",
-            "q_origin_key": "NTP"
-          },
-          {
-            "name": "PING",
-            "q_origin_key": "PING"
+            "name": "ALL",
+            "q_origin_key": "ALL"
           }
         ],
         "nat": "disable",
-        "comments": "Limited return/management traffic from homelab VLANs to management"
+        "comments": "Limited return/management traffic from vsvc/vapps to management; VLAB intentionally excluded"
       },
       {
         "policyid": 14,
@@ -791,6 +775,44 @@
         ],
         "nat": "disable",
         "comments": "Lab VLAN to VM services"
+      },
+      {
+        "policyid": 17,
+        "name": "VSVC-to-WAN",
+        "status": "enable",
+        "action": "accept",
+        "srcintf": [
+          {
+            "name": "VSVC",
+            "q_origin_key": "VSVC"
+          }
+        ],
+        "dstintf": [
+          {
+            "name": "virtual-wan-link",
+            "q_origin_key": "virtual-wan-link"
+          }
+        ],
+        "srcaddr": [
+          {
+            "name": "vsvc address",
+            "q_origin_key": "vsvc address"
+          }
+        ],
+        "dstaddr": [
+          {
+            "name": "all",
+            "q_origin_key": "all"
+          }
+        ],
+        "service": [
+          {
+            "name": "ALL",
+            "q_origin_key": "ALL"
+          }
+        ],
+        "nat": "enable",
+        "comments": "Controlled DMZ egress to WAN with NAT (Copy of DMZ-TO-WAN-NAT)"
       },
       {
         "policyid": 16,

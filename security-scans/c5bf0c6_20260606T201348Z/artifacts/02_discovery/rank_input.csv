@@ -1,0 +1,11 @@
+path,surface,priority,rationale
+configs/*.py,device automation,95,privileged device API/SSH automation and artifact writes
+configs/*.sh,device automation,95,secret injection wrappers and apply gates
+configs/*.ps1,device automation,85,Proxmox API helper scripts and token handling
+mcp/*.py,mcp boundary,95,MCP tool boundary that shells out to ssh/pvesh
+ansible/**/*.yml,ansible intent,85,FortiGate API configuration intent and confirmation gates
+ansible/artifacts/*,artifact secret review,100,tracked live artifacts may contain sensitive device backup data
+data/*.json,intent docs config,75,network intent and topology
+docs/*.md,intent docs config,70,runbooks and secret-handling instructions
+*.md,intent docs config,70,project instructions and progress records
+configs/*.cfg;configs/*.conf;configs/*.interfaces,static device config,80,candidate network configuration snapshots

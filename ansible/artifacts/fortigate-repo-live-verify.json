@@ -1,5 +1,5 @@
 {
-  "verified_at_epoch": 1780185043,
+  "verified_at_epoch": 1780263352,
   "fortigate_host": "10.99.99.2:7443",
   "vdom": "root",
   "parent_interface": "x2",
@@ -11,6 +11,7 @@
   "live_extra_policies": [
     "HL to Wan-",
     "HL to Wifi",
+    "VSVC-to-WAN",
     "WIFI to HL",
     "WIFII to wan",
     "vpn_d3ipsec_local_allow"

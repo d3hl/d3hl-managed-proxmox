@@ -11,8 +11,9 @@ for persistent save, and the exact commands to run after approval.
 - [x] E2E VLAN 50 validation: VM 444 DHCP lease `10.10.50.10` via FortiGate vlab (Session 021)
 - [x] Workstation → VM `10.10.50.10` ping 3/3
 - [x] Workstation → FortiGate gateway `10.10.50.2` ping 3/3
-- [x] Fresh repo-vs-live FortiGate verification passes (`configs/fortigate-repo-live-verify.py`) — 23/23 match after HOMELAB-TO-MGMT-LIMITED align
+- [x] Fresh repo-vs-live FortiGate verification passes (`configs/fortigate-repo-live-verify.py`) — 23/23 match after HOMELAB-TO-MGMT-LIMITED service align (2026-06-01)
 - [x] User approved persistent save (2026-05-31)
+- [x] Persistent save workflow executed with config backup artifact (2026-06-01, Session 023)
 
 ## Repo sources of truth
 
@@ -72,12 +73,17 @@ show firewall policy
 show system zone
 ```
 
-## Cisco persistent save (Codex-owned, after FortiGate verification)
+## Cisco persistent save
 
-Cisco running-config changes are **not yet saved**. Pending items:
+Cisco running-config was saved on **2026-05-31** (Session 022) after verification:
 
-- C9300-to-FortiGate trunk `TwentyFiveGigE2/1/2`: VLANs 10,11,30,40,50,60,100
-- C9300 Proxmox trunks `Te2/0/39,41,46`: VLANs 3,10,11,30,40,50,60
+- C9300-to-FortiGate trunk `TwentyFiveGigE2/1/2`: VLANs `10,11,30,40,50,60,100`
+- C9300 Proxmox trunks `Te2/0/39,41,46`: VLANs `3,10,11,30,40,50,60`
+- `ping 10.10.10.2 source vlan10` OK before and after `write memory`
+
+Evidence: `ansible/artifacts/cisco-c9300-verification.json` (Session 022).
+
+Re-verify after future trunk changes:
 
 ```cisco
 show interfaces trunk
@@ -130,12 +136,25 @@ Reload unsaved running-config or restore pre-change trunk VLAN lists captured in
 |---|---|---|---|
 | 2026-05-30 | Codex | FortiGate running-config policy implementation | No — deferred pending E2E |
 | 2026-05-30 | — | E2E VLAN 50 validated (Session 021) | No — pending repo-live verify + final Codex sign-off |
-| 2026-05-31 | User | FortiGate persistent save (verify 23/23, config backup POST) | Yes |
+| 2026-05-31 | User | FortiGate persistent save approval granted | Approved — execution deferred |
 | 2026-05-31 | Session 022 | Cisco `write memory` | Yes |
+| 2026-06-01 | Session 023 | FortiGate discover + repo-live 23/23 + persist-save + config backup | Yes |
 
-## Next step
+Session 023 artifacts:
 
-1. Run `configs/fortigate-repo-live-verify.py` and confirm zero mismatches.
-2. Codex records final approval in this table.
-3. Codex executes Cisco `write memory`.
-4. Confirm FortiGate config persistence per operating mode.
+- `ansible/artifacts/fortigate-repo-live-verify.json` — 23/23 match
+- `ansible/artifacts/fortigate-persistent-save.json` — policy align + backup metadata
+- `ansible/artifacts/fortigate-config-backup.conf` — 384,835 bytes
+
+Policy alignment during save: `HOMELAB-TO-MGMT-LIMITED` (ID 13) service corrected from `ALL` to `DNS`, `NTP`, `PING` to match repo intent.
+
+## Status
+
+FortiGate and Cisco persistent saves are complete for the current homelab SDN design.
+`fortigate-001` is marked `passing` in `feature_list.json`.
+
+Optional follow-ups (not blockers):
+
+1. Guest-level E2E on `vsvc`/`vapps`/`vdmz` — see `docs/fortigate-e2e-validation.md`.
+2. Manual FortiGate CLI ping `10.10.10.1` from `10.10.10.2` (REST monitor ping unavailable on FortiOS 7.6.6).
+3. Re-run the verification trio above after any FortiGate policy or interface change.

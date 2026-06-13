@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "../d3hl_infra_crew"
+		},
+		{
+			"name": "agent-contract-master",
+			"path": "../agent-contract-master"
+		},
+		{
+			"name": "proxmox",
+			"path": "."
+		},
+		{
+			"name": "cf-controller",
+			"path": "../cf-controller"
+		},
+		{
+			"path": "../d3hl-rhel-bootc-orchestrator"
+		}
+	],
+	"settings": {}
+}

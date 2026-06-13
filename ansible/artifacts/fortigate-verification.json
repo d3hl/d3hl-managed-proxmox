@@ -1,5 +1,5 @@
 {
-  "verified_at_epoch": 1780144764,
+  "verified_at_epoch": 1780263292,
   "vdom": "root",
   "fortigate_host": "10.99.99.2:7443",
   "total_interfaces_seen": 45,
@@ -132,17 +132,6 @@
       "allowaccess": "ping",
       "alias": "VM services",
       "role": "lan",
-      "status": "up"
-    },
-    {
-      "name": "wan-mr",
-      "type": "aggregate",
-      "interface": "",
-      "vlanid": 0,
-      "ip": "158.140.145.243 255.255.255.0",
-      "allowaccess": "fabric",
-      "alias": "MyRepublic",
-      "role": "wan",
       "status": "up"
     },
     {

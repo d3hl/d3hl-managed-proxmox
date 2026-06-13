@@ -71,7 +71,12 @@ def fix_homelab_policy(verify_mod, base_url: str, token: str, vdom: str) -> dict
         entry.get("name") if isinstance(entry, dict) else str(entry)
         for entry in live.get("srcaddr", [])
     }
-    if live_srcaddr == expected_srcaddr:
+    expected_service = set(intent["service"])
+    live_service = {
+        entry.get("name") if isinstance(entry, dict) else str(entry)
+        for entry in live.get("service", [])
+    }
+    if live_srcaddr == expected_srcaddr and live_service == expected_service:
         return {"status": "ok", "action": "no_change", "name": "HOMELAB-TO-MGMT-LIMITED"}
 
     policyid = live["policyid"]
@@ -110,6 +115,7 @@ def fix_homelab_policy(verify_mod, base_url: str, token: str, vdom: str) -> dict
             "name": "HOMELAB-TO-MGMT-LIMITED",
             "policyid": policyid,
             "removed_srcaddr": sorted(live_srcaddr - expected_srcaddr),
+            "changed_service": sorted(live_service ^ expected_service),
         }
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
@@ -118,6 +124,12 @@ def fix_homelab_policy(verify_mod, base_url: str, token: str, vdom: str) -> dict
             "name": "HOMELAB-TO-MGMT-LIMITED",
             "http_status": exc.code,
             "body": body[:500],
+        }
+    except urllib.error.URLError as exc:
+        return {
+            "status": "error",
+            "name": "HOMELAB-TO-MGMT-LIMITED",
+            "message": str(exc.reason),
         }
 
 
@@ -166,7 +178,10 @@ def run() -> int:
     if policy_fix:
         print(f"Policy align: {policy_fix.get('status')} {policy_fix.get('action', '')}")
         if policy_fix.get("status") == "error":
-            print(f"  HTTP {policy_fix.get('http_status')}: {policy_fix.get('body')}")
+            if policy_fix.get("http_status") is not None:
+                print(f"  HTTP {policy_fix['http_status']}: {policy_fix.get('body')}")
+            else:
+                print(f"  Connection failed: {policy_fix.get('message')}")
             return 1
 
     print("Running repo-vs-live verification...")
