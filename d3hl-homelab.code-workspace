@@ -17,6 +17,10 @@
 		},
 		{
 			"path": "../d3hl-rhel-bootc-orchestrator"
+		},
+		{
+			"name": "ncdv-os-1",
+			"path": "../ncdv-os-1"
 		}
 	],
 	"settings": {}
